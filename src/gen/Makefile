@@ -5,7 +5,34 @@ SRC = ./src/
 OBJ = ./obj/
 TARGET = benchGen
 #Dependencies in objects. Add more here when creating new files!
-DEPS = $(OBJ)factory.o $(OBJ)languageAst.o $(OBJ)cAst.o $(OBJ)cppAst.o $(OBJ)rustAst.o $(OBJ)juliaAst.o $(OBJ)goAst.o $(OBJ)generatorFunction.o  $(OBJ)generatorVariable.o $(OBJ)cGeneratorVariable.o $(OBJ)cppGeneratorVariable.o $(OBJ)rustGeneratorVariable.o $(OBJ)juliaGeneratorVariable.o  $(OBJ)goGeneratorVariable.o $(OBJ)juliaGenerator.o $(OBJ)generatorScope.o $(OBJ)languageGenerator.o $(OBJ)cGenerator.o $(OBJ)cppGenerator.o $(OBJ)rustGenerator.o $(OBJ)goGenerator.o $(OBJ)lexer.o $(OBJ)lSystem.o $(OBJ)parser.o $(OBJ)CodeGeneratorDriver.o
+DEPS = $(OBJ)factory.o \
+	   $(OBJ)languageAst.o \
+	   $(OBJ)cAst.o \
+	   $(OBJ)cppAst.o \
+	   $(OBJ)rustAst.o \
+	   $(OBJ)juliaAst.o \
+	   $(OBJ)goAst.o \
+	   $(OBJ)vAst.o \
+	   $(OBJ)generatorFunction.o  \
+	   $(OBJ)generatorVariable.o \
+	   $(OBJ)cGeneratorVariable.o \
+	   $(OBJ)cppGeneratorVariable.o \
+	   $(OBJ)rustGeneratorVariable.o \
+	   $(OBJ)juliaGeneratorVariable.o  \
+	   $(OBJ)goGeneratorVariable.o \
+	   $(OBJ)vGeneratorVariable.o \
+	   $(OBJ)juliaGenerator.o \
+	   $(OBJ)generatorScope.o \
+	   $(OBJ)languageGenerator.o \
+	   $(OBJ)cGenerator.o \
+	   $(OBJ)cppGenerator.o \
+	   $(OBJ)rustGenerator.o \
+	   $(OBJ)goGenerator.o \
+	   $(OBJ)vGenerator.o \
+	   $(OBJ)lexer.o \
+	   $(OBJ)lSystem.o \
+	   $(OBJ)parser.o \
+	   $(OBJ)CodeGeneratorDriver.o
 #SHARED = $(IMP)ast.h $(IMP)enums.h $(IMP)globalIncludes.h $(IMP)globalStructs.h
 
 $(TARGET): $(DEPS) 
@@ -27,6 +54,8 @@ $(OBJ)juliaAst.o: ast/julia/juliaAst.cpp | $(OBJ)
 	$(CC) $(CFLAGS) -I $(IMP) -c $^ -o $@ -Wno-return-type
 $(OBJ)goAst.o: ast/go/goAst.cpp | $(OBJ)
 	$(CC) $(CFLAGS) -I $(IMP) -c $^ -o $@ -Wno-return-type
+$(OBJ)vAst.o: ast/v/vAst.cpp | $(OBJ)
+	$(CC) $(CFLAGS) -I $(IMP) -c $^ -o $@ -Wno-return-type
 $(OBJ)factory.o: generator/factory.cpp | $(OBJ)
 	$(CC) $(CFLAGS) -I $(IMP) -c $^ -o $@ -Wno-return-type
 $(OBJ)generatorFunction.o: generator/generatorFunction.cpp | $(OBJ)
@@ -43,6 +72,8 @@ $(OBJ)juliaGeneratorVariable.o: generator/julia/juliaGeneratorVariable.cpp | $(O
 	$(CC) $(CFLAGS) -I $(IMP) -c $^ -o $@ -Wno-return-type
 $(OBJ)goGeneratorVariable.o: generator/go/goGeneratorVariable.cpp | $(OBJ)
 	$(CC) $(CFLAGS) -I $(IMP) -c $^ -o $@ -Wno-return-type
+$(OBJ)vGeneratorVariable.o: generator/v/vGeneratorVariable.cpp | $(OBJ)
+	$(CC) $(CFLAGS) -I $(IMP) -c $^ -o $@ -Wno-return-type
 $(OBJ)generatorScope.o: generator/generatorScope.cpp | $(OBJ)
 	$(CC) $(CFLAGS) -I $(IMP) -c $^ -o $@ -Wno-return-type
 $(OBJ)languageGenerator.o: generator/languageGenerator.cpp | $(OBJ)
@@ -56,6 +87,8 @@ $(OBJ)rustGenerator.o: generator/rust/rustGenerator.cpp | $(OBJ)
 $(OBJ)juliaGenerator.o: generator/julia/juliaGenerator.cpp | $(OBJ)
 	$(CC) $(CFLAGS) -I $(IMP) -c $^ -o $@ -Wno-return-type
 $(OBJ)goGenerator.o: generator/go/goGenerator.cpp | $(OBJ)
+	$(CC) $(CFLAGS) -I $(IMP) -c $^ -o $@ -Wno-return-type
+$(OBJ)vGenerator.o: generator/v/vGenerator.cpp | $(OBJ)
 	$(CC) $(CFLAGS) -I $(IMP) -c $^ -o $@ -Wno-return-type
 $(OBJ)lexer.o: lexer/lexer.cpp | $(OBJ)
 	$(CC) $(CFLAGS) -I $(IMP) -c $^ -o $@ -Wno-return-type
