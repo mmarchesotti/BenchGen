@@ -24,7 +24,7 @@ void VGenerator::generateRandomNumberGenerator() {
         "fn get_path() u64 {",
         "    path := os.getenv('BENCH_PATH')",
         "    if path != '' {",
-        "        val := strconv.parse_u64(path, 10) or { return 0 }",
+        "        val := strconv.parse_uint(path, 10, 64) or { return 0 }",
         "        return val",
         "    }",
         "    n := u64(rand.u32())",
@@ -39,7 +39,7 @@ void VGenerator::generateMainFunction() {
     mainFunction.addLine({
         "fn main() {",
         "    mut loops_factor := 100",
-        "    mut path_seed := 0",
+        "    mut path_seed := u64(0)",
         "",
         "    args := os.args",
         "    for i := 1; i < args.len; i++ {",
@@ -47,7 +47,7 @@ void VGenerator::generateMainFunction() {
         "            '-path-seed' {",
         "                i++",
         "                if i < args.len {",
-        "                    path_seed = args[i].int()",
+        "                    path_seed = args[i].u64()",
         "                }",
         "            }",
         "            '-loops-factor' {",
@@ -59,7 +59,7 @@ void VGenerator::generateMainFunction() {
         "            else {}",
         "        }",
         "    }",
-        "    rand.seed(path_seed.bytes())",
+        "    rand.seed([u32(path_seed), u32(path_seed >> 32)])",
         "}"
     });
     mainFunction.insertBack = true;
