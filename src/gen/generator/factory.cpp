@@ -4,6 +4,7 @@
 #include "julia/juliaGeneratorVariable.h"
 #include "rust/rustGeneratorVariable.h"
 #include "go/goGeneratorVariable.h"
+#include "v/vGeneratorVariable.h"
 #include "../shared/consts.h"
 
 GeneratorVariable* VariableFactory::createVariable(std::string type, int identifier) {
@@ -40,6 +41,12 @@ GeneratorVariable* VariableFactory::createVariable(std::string type, int identif
         if (type == VarTypes::ARRAY) {
             int size = (iterations*500);
             return new GoGeneratorArray(size, identifier);
+        }
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::V)
+    {
+        if (type == VarTypes::ARRAY) {
+            int size = (iterations*500);
+            return new VGeneratorArray(size, identifier);
         }
     }
 

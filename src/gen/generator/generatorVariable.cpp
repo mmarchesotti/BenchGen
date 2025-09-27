@@ -5,6 +5,7 @@
 #include "go/goGeneratorVariable.h"
 #include "julia/juliaGeneratorVariable.h"
 #include "rust/rustGeneratorVariable.h"
+#include "v/vGeneratorVariable.h"
 
 unsigned int VariableFactory::var_counter = 0;
 
@@ -73,6 +74,9 @@ std::vector<std::string> GeneratorArray::new_(bool inFunction)
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::GO)
     {
         return GoGeneratorArray().new_(inFunction);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::V)
+    {
+        return VGeneratorArray().new_(inFunction);
     }
 }
 
@@ -93,6 +97,9 @@ std::vector<std::string>  GeneratorArray::insert()
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::GO)
     {
         return GoGeneratorArray().insert();
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::V)
+    {
+        return VGeneratorArray().insert();
     }
 }
 
@@ -113,6 +120,9 @@ std::vector<std::string>  GeneratorArray::remove()
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::GO)
     {
         return GoGeneratorArray().remove();
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::V)
+    {
+        return VGeneratorArray().remove();
     }
 }
 
@@ -133,6 +143,9 @@ std::vector<std::string>  GeneratorArray::contains(bool shouldReturn)
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::GO)
     {
         return GoGeneratorArray().contains(shouldReturn);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::V)
+    {
+        return VGeneratorArray().contains(shouldReturn);
     }
 }
 
@@ -153,6 +166,9 @@ std::vector<std::string>  GeneratorArray::free()
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::GO)
     {
         return GoGeneratorArray().free();
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::V)
+    {
+        return VGeneratorArray().free();
     }
 }
 
@@ -173,6 +189,9 @@ std::vector<std::string>  GeneratorArray::genIncludes()
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::GO)
     {
         return GoGeneratorArray().genIncludes();
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::V)
+    {
+        return VGeneratorArray().genIncludes();
     }
 }
 
@@ -193,6 +212,9 @@ std::vector<std::string>  GeneratorArray::genGlobalVars()
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::GO)
     {
         return GoGeneratorArray().genGlobalVars();
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::V)
+    {
+        return VGeneratorArray().genGlobalVars();
     }
 }
 
@@ -213,6 +235,9 @@ std::vector<std::string>  GeneratorArray::genParams(std::string paramName, std::
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::GO)
     {
         return GoGeneratorArray().genParams(paramName, varsParams);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::V)
+    {
+        return VGeneratorArray().genParams(paramName, varsParams);
     }
 }
 

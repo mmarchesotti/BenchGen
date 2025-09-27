@@ -4,6 +4,7 @@
 #include "go/goAst.h"
 #include "julia/juliaAst.h"
 #include "rust/rustAst.h"
+#include "v/vAst.h"
 
 Insert::~Insert() {};
 Remove::~Remove() {};
@@ -34,6 +35,9 @@ void printIndentationSpaces(int ident)
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::GO)
     {
         goprintIndentationSpaces(ident);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::V)
+    {
+        vprintIndentationSpaces(ident);
     }
 }
 
@@ -55,6 +59,9 @@ std::string generateIfCondition(ProgrammingLanguageGenerator& generator)
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::GO)
     {
         return gogenerateIfCondition(generator);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::V)
+    {
+        return vgenerateIfCondition(generator);
     }
 }
 
@@ -75,6 +82,9 @@ Insert get_insert()
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::GO)
     {
         return GoInsert();
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::V)
+    {
+        return VInsert();
     }
 }
 
@@ -95,6 +105,9 @@ Remove get_remove()
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::GO)
     {
         return GoRemove();
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::V)
+    {
+        return VRemove();
     }
 }
 
@@ -115,6 +128,9 @@ New get_new()
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::GO)
     {
         return GoNew();
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::V)
+    {
+        return VNew();
     }
 }
 
@@ -135,6 +151,9 @@ Contains get_contains()
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::GO)
     {
         return GoContains();
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::V)
+    {
+        return VContains();
     }
 }
 
@@ -156,6 +175,9 @@ StatementCode get_statementcode(std::shared_ptr<Node> stmt, std::shared_ptr<Node
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::GO)
     {
         return GoStatementCode(stmt, code);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::V)
+    {
+        return VStatementCode(stmt, code);
     }
 }
 
@@ -177,6 +199,9 @@ Loop get_loop(std::shared_ptr<Node> code)
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::GO)
     {
         return GoLoop(code);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::V)
+    {
+        return VLoop(code);
     }
 }
 
@@ -197,6 +222,9 @@ Call get_call()
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::GO)
     {
         return GoCall();
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::V)
+    {
+        return VCall();
     }
 }
 
@@ -217,6 +245,9 @@ Call get_call(int id, std::shared_ptr<Node> code)
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::GO)
     {
         return GoCall(id, code);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::V)
+    {
+        return VCall(id, code);
     }
 }
 
@@ -238,6 +269,9 @@ Seq get_seq(std::shared_ptr<Node> code)
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::GO)
     {
         return GoSeq(code);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::V)
+    {
+        return VSeq(code);
     }
 }
 
@@ -258,6 +292,9 @@ If get_if(std::shared_ptr<Node> c1, std::shared_ptr<Node> c2)
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::GO)
     {
         return GoIf(c1, c2);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::V)
+    {
+        return VIf(c1, c2);
     }
 }
 
@@ -278,6 +315,9 @@ Id get_id(std::string id)
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::GO)
     {
         return GoId(id);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::V)
+    {
+        return VId(id);
     }
 }
 
@@ -297,6 +337,9 @@ void Loop::gen(ProgrammingLanguageGenerator& generator) {
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::GO)
     {
         return GoLoop(this->code).gen(generator);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::V)
+    {
+        return VLoop(this->code).gen(generator);
     }
 };
 
@@ -316,6 +359,9 @@ void Loop::print(int) {
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::GO)
     {
         return GoLoop(this->code).print(0);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::V)
+    {
+        return VLoop(this->code).print(0);
     }
 };
 
@@ -344,7 +390,11 @@ void Call::gen(ProgrammingLanguageGenerator& generator) {
     {
         GoCall gocall = GoCall(this->id, this->code);
         gocall.conditionalCounts = this->conditionalCounts;
-        gocall.gen(generator); 
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::V)
+    {
+        VCall vcall = VCall(this->id, this->code);
+        vcall.conditionalCounts = this->conditionalCounts;
+        vcall.gen(generator); 
     }
 };
 
@@ -373,7 +423,11 @@ void Call::print(int) {
     {
         GoCall gocall = GoCall(this->id, this->code);
         gocall.conditionalCounts = this->conditionalCounts;
-        gocall.print(0); 
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::V)
+    {
+        VCall vcall = VCall(this->id, this->code);
+        vcall.conditionalCounts = this->conditionalCounts;
+        vcall.print(0); 
     }
 };
 
@@ -401,6 +455,9 @@ void Seq::gen(ProgrammingLanguageGenerator& generator) {
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::GO)
     {
         GoSeq(this->code).gen(generator);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::V)
+    {
+        GoSeq(this->code).gen(generator);
     }
 };
 
@@ -418,6 +475,9 @@ void Seq::print(int) {
     {
         JuliaSeq(this->code).print(0);   
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::GO)
+    {
+        GoSeq(this->code).print(0);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::V)
     {
         GoSeq(this->code).print(0);
     }
@@ -440,6 +500,9 @@ void If::gen(ProgrammingLanguageGenerator& generator) {
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::GO)
     {
         GoIf(this->c1, this->c2).gen(generator);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::V)
+    {
+        GoIf(this->c1, this->c2).gen(generator);
     }
 };
 
@@ -457,6 +520,9 @@ void If::print(int) {
     {
         JuliaIf(this->c1, this->c2).print(0);
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::GO)
+    {
+        GoIf(this->c1, this->c2).print(0);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::V)
     {
         GoIf(this->c1, this->c2).print(0);
     }
@@ -478,6 +544,9 @@ void Id::gen(ProgrammingLanguageGenerator& generator) {
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::GO)
     {
         GoId(this->id).gen(generator);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::V)
+    {
+        GoId(this->id).gen(generator);
     }
 };
 
@@ -497,6 +566,9 @@ void Id::print(int) {
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::GO)
     {
         GoId(this->id).print(0);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::V)
+    {
+        GoId(this->id).print(0);
     }
 };
 
@@ -514,6 +586,9 @@ void Insert::gen(ProgrammingLanguageGenerator& generator) {
     {
         JuliaInsert().gen(generator);   
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::GO)
+    {
+        GoInsert().gen(generator);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::V)
     {
         GoInsert().gen(generator);
     }
@@ -536,6 +611,9 @@ void Insert::print(int) {
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::GO)
     {
         GoInsert().print(0);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::V)
+    {
+        GoInsert().print(0);
     }
 };
 
@@ -553,6 +631,9 @@ void Remove::gen(ProgrammingLanguageGenerator& generator) {
     {
         JuliaRemove().gen(generator);   
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::GO)
+    {
+        GoRemove().gen(generator);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::V)
     {
         GoRemove().gen(generator);
     }
@@ -574,6 +655,9 @@ void Remove::print(int) {
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::GO)
     {
         GoRemove().print(0);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::V)
+    {
+        GoRemove().print(0);
     }
 };
 
@@ -591,6 +675,9 @@ void New::gen(ProgrammingLanguageGenerator& generator) {
     {
         JuliaNew().gen(generator);   
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::GO)
+    {
+        GoNew().gen(generator);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::V)
     {
         GoNew().gen(generator);
     }
@@ -612,6 +699,9 @@ void New::print(int) {
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::GO)
     {
         GoNew().print(0);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::V)
+    {
+        GoNew().print(0);
     }
  };
 
@@ -629,6 +719,9 @@ void Contains::gen(ProgrammingLanguageGenerator& generator) {
     {
         JuliaContains().gen(generator);   
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::GO)
+    {
+        GoContains().gen(generator);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::V)
     {
         GoContains().gen(generator);
     }
@@ -650,6 +743,9 @@ void Contains::print(int) {
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::GO)
     {
         GoContains().print(0);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::V)
+    {
+        GoContains().print(0);
     }
  };
 
@@ -667,6 +763,9 @@ void StatementCode::gen(ProgrammingLanguageGenerator& generator) {
     {
         JuliaStatementCode(this->stmt, this->code).gen(generator);   
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::GO)
+    {
+        GoStatementCode(this->stmt, this->code).gen(generator);  
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::V)
     {
         GoStatementCode(this->stmt, this->code).gen(generator);  
     }
@@ -690,6 +789,9 @@ void StatementCode::print(int) {
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::GO)
     {
         GoStatementCode(this->stmt, this->code).print(0);  
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::V)
+    {
+        GoStatementCode(this->stmt, this->code).print(0);  
     }
 };
 
@@ -709,6 +811,9 @@ void LambdaCode::gen(ProgrammingLanguageGenerator& generator) {
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::GO)
     {
         GoLambdaCode().gen(generator);  
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::V)
+    {
+        GoLambdaCode().gen(generator);  
     }
 };
 
@@ -726,6 +831,9 @@ void LambdaCode::print(int) {
     {
         JuliaLambdaCode().print(0);   
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::GO)
+    {
+        GoLambdaCode().print(0);  
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::V)
     {
         GoLambdaCode().print(0);  
     }
