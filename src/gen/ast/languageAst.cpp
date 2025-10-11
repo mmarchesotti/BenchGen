@@ -457,7 +457,7 @@ void Seq::gen(ProgrammingLanguageGenerator& generator) {
         GoSeq(this->code).gen(generator);
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::V)
     {
-        GoSeq(this->code).gen(generator);
+        VSeq(this->code).gen(generator);
     }
 };
 
@@ -479,7 +479,7 @@ void Seq::print(int) {
         GoSeq(this->code).print(0);
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::V)
     {
-        GoSeq(this->code).print(0);
+        VSeq(this->code).print(0);
     }
  };
 
@@ -502,7 +502,7 @@ void If::gen(ProgrammingLanguageGenerator& generator) {
         GoIf(this->c1, this->c2).gen(generator);
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::V)
     {
-        GoIf(this->c1, this->c2).gen(generator);
+        VIf(this->c1, this->c2).gen(generator);
     }
 };
 
@@ -524,7 +524,7 @@ void If::print(int) {
         GoIf(this->c1, this->c2).print(0);
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::V)
     {
-        GoIf(this->c1, this->c2).print(0);
+        VIf(this->c1, this->c2).print(0);
     }
 };
 
@@ -546,7 +546,7 @@ void Id::gen(ProgrammingLanguageGenerator& generator) {
         GoId(this->id).gen(generator);
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::V)
     {
-        GoId(this->id).gen(generator);
+        VId(this->id).gen(generator);
     }
 };
 
@@ -568,7 +568,7 @@ void Id::print(int) {
         GoId(this->id).print(0);
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::V)
     {
-        GoId(this->id).print(0);
+        VId(this->id).print(0);
     }
 };
 
@@ -590,7 +590,7 @@ void Insert::gen(ProgrammingLanguageGenerator& generator) {
         GoInsert().gen(generator);
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::V)
     {
-        GoInsert().gen(generator);
+        VInsert().gen(generator);
     }
 };
 
@@ -613,7 +613,7 @@ void Insert::print(int) {
         GoInsert().print(0);
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::V)
     {
-        GoInsert().print(0);
+        VInsert().print(0);
     }
 };
 
@@ -635,7 +635,7 @@ void Remove::gen(ProgrammingLanguageGenerator& generator) {
         GoRemove().gen(generator);
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::V)
     {
-        GoRemove().gen(generator);
+        VRemove().gen(generator);
     }
 };
 
@@ -657,7 +657,7 @@ void Remove::print(int) {
         GoRemove().print(0);
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::V)
     {
-        GoRemove().print(0);
+        VRemove().print(0);
     }
 };
 
@@ -679,7 +679,7 @@ void New::gen(ProgrammingLanguageGenerator& generator) {
         GoNew().gen(generator);
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::V)
     {
-        GoNew().gen(generator);
+        VNew().gen(generator);
     }
 };
 
@@ -701,7 +701,7 @@ void New::print(int) {
         GoNew().print(0);
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::V)
     {
-        GoNew().print(0);
+        VNew().print(0);
     }
  };
 
@@ -723,7 +723,7 @@ void Contains::gen(ProgrammingLanguageGenerator& generator) {
         GoContains().gen(generator);
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::V)
     {
-        GoContains().gen(generator);
+        VContains().gen(generator);
     }
 };
 
@@ -745,7 +745,7 @@ void Contains::print(int) {
         GoContains().print(0);
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::V)
     {
-        GoContains().print(0);
+        VContains().print(0);
     }
  };
 
@@ -767,7 +767,7 @@ void StatementCode::gen(ProgrammingLanguageGenerator& generator) {
         GoStatementCode(this->stmt, this->code).gen(generator);  
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::V)
     {
-        GoStatementCode(this->stmt, this->code).gen(generator);  
+        VStatementCode(this->stmt, this->code).gen(generator);  
     }
 };
 
@@ -791,7 +791,7 @@ void StatementCode::print(int) {
         GoStatementCode(this->stmt, this->code).print(0);  
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::V)
     {
-        GoStatementCode(this->stmt, this->code).print(0);  
+        VStatementCode(this->stmt, this->code).print(0);  
     }
 };
 
@@ -813,7 +813,7 @@ void LambdaCode::gen(ProgrammingLanguageGenerator& generator) {
         GoLambdaCode().gen(generator);  
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::V)
     {
-        GoLambdaCode().gen(generator);  
+        VLambdaCode().gen(generator);  
     }
 };
 
@@ -835,6 +835,6 @@ void LambdaCode::print(int) {
         GoLambdaCode().print(0);  
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::V)
     {
-        GoLambdaCode().print(0);  
+        VLambdaCode().print(0);  
     }
 };
