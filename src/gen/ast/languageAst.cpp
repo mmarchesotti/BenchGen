@@ -390,6 +390,7 @@ void Call::gen(ProgrammingLanguageGenerator& generator) {
     {
         GoCall gocall = GoCall(this->id, this->code);
         gocall.conditionalCounts = this->conditionalCounts;
+        gocall.gen(generator); 
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::V)
     {
         VCall vcall = VCall(this->id, this->code);
@@ -423,6 +424,7 @@ void Call::print(int) {
     {
         GoCall gocall = GoCall(this->id, this->code);
         gocall.conditionalCounts = this->conditionalCounts;
+        gocall.print(0); 
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::V)
     {
         VCall vcall = VCall(this->id, this->code);
