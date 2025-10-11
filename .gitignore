@@ -1,2 +1,4 @@
 # VS Code configuration file
 .vscode/
+.gitattributes
+.editorconfig
