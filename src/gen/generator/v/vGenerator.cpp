@@ -212,40 +212,53 @@ void VGenerator::genReadme(std::string dir, std::string target) {
 
 void VGenerator::generateFiles(std::string benchmarkName) {
     std::string benchDir = benchmarkName + "/";
-    std::string mainFile = benchmarkName + ".v";
     std::string sourceDir = benchDir + "src/";
+    std::string mainFilePath = sourceDir + benchmarkName + ".v";
+    std::string typesFilePath = sourceDir + "types.v";
 
     std::filesystem::create_directory(benchDir);
     std::filesystem::create_directory(sourceDir);
 
-    std::ofstream file;
-    file.open(sourceDir + mainFile);
-    file << "module main\n\n";
-
+    std::ofstream mainFile;
+    mainFile.open(mainFilePath);
+    mainFile << "module main\n\n";
     for (auto mod : modules) {
-        file << mod << std::endl;
+        mainFile << mod << std::endl;
     }
-    file << std::endl;
-
-    for (auto var : globalVars) {
-        file << var << std::endl;
-    }
-    file << std::endl;
-
-    for (auto func : functions) {
-        auto lines = func.getLines();
-        for (auto line : lines) {
-            file << line << std::endl;
-        }
-        file << std::endl;
-    }
-    
+    mainFile << std::endl;
     auto mainLines = mainFunction.getLines();
     for (auto line : mainLines) {
-        file << line << std::endl;
+        mainFile << line << std::endl;
     }
-    
+    mainFile.close();
+
+    std::ofstream typesFile;
+    typesFile.open(typesFilePath);
+    typesFile << "module main\n\n";
+    for (auto var : globalVars) {
+        typesFile << var << std::endl;
+    }
+    typesFile.close();
+
+    for (auto func : functions) {
+        std::string funcFileName;
+        if (func.getId() == -1) {
+            funcFileName = "path.v";
+        } else {
+            funcFileName = "func" + std::to_string(func.getId()) + ".v";
+        }
+
+        std::ofstream funcFile;
+        funcFile.open(sourceDir + funcFileName);
+        funcFile << "module main\n\n";
+
+        auto funcLines = func.getLines();
+        for (auto line : funcLines) {
+            funcFile << line << std::endl;
+        }
+        funcFile.close();
+    }
+
     this->genMakefile(benchDir, benchmarkName);
     this->genReadme(benchDir, benchmarkName);
-    file.close();
 }
