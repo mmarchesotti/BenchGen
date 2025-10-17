@@ -15,7 +15,7 @@ std::string vgenerateIfCondition(ProgrammingLanguageGenerator& generator) {
     int ifCounter = generator.ifCounter.top();
     int pathNumber = std::ceil((ifCounter + 1) / 64.0) - 1;
     long long bit = 1LL << (ifCounter % 64);
-    std::string condition = "(PATH" + std::to_string(pathNumber) + " & " + std::to_string(bit) + ") != 0";
+    std::string condition = "(path" + std::to_string(pathNumber) + " & " + std::to_string(bit) + ") != 0";
     return condition;
 }
 

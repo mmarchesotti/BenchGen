@@ -88,7 +88,7 @@ void VGenerator::startFunc(int funcId, int nParameters) {
     std::string funcHeader = "fn func" + std::to_string(funcId) + "(vars " + VariableFactory::genTypeString(varType) + "Param, ";
     
     for (int i = 0; i < nParameters; i++) {
-        funcHeader += "PATH" + std::to_string(i) + " u64, ";
+        funcHeader += "path" + std::to_string(i) + " u64, ";
     }
     funcHeader += "loops_factor int) " + VariableFactory::genTypeString(varType) + " {";
     func.addLine(funcHeader);
