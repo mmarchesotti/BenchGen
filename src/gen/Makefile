@@ -1,5 +1,5 @@
 CC = clang++
-CFLAGS = -std=c++20 -Wall
+CFLAGS = -g -std=c++20 -Wall
 IMP = ./imports/
 SRC = ./src/
 OBJ = ./obj/

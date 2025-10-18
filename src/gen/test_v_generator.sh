@@ -23,12 +23,21 @@ function run_test {
 
     # Generate the V program
     echo "  -> Generating code..."
-    ./benchGen $depth "$rules_file" "$seed_file" "$output_dir" v
+    ./benchGen $depth "$rules_file" "$seed_file" "$output_dir" array v
 
     # Compile the generated V program
+    set -x
     echo "  -> Compiling generated program..."
-    (cd "$output_dir" && make)
+    (cd "$output_dir" && make clean && make)
+    set +x
+
+    ls "$output_dir"
+    ls "$output_dir/src"
     
+    # Execute the compiled program
+    echo "  -> Executing program..."
+    (cd "$output_dir" && ./$test_name)
+
     echo "  -> Test '$test_name' passed!"
 }
 
@@ -54,9 +63,9 @@ echo "  Running Targeted Construct Tests"
 echo "========================================="
 # Create dummy files for targeted tests
 echo "" > empty_rules.txt
-echo "LOOP(NEW)" > seed_loop.txt
-echo "IF(NEW, NEW)" > seed_if.txt
-echo "CALL(IF(NEW, NEW))" > seed_if_in_call.txt
+echo "LOOP(new)" > seed_loop.txt
+echo "IF(new, new)" > seed_if.txt
+echo "CALL(IF(new, new))" > seed_if_in_call.txt
 
 run_test "single_loop" "empty_rules.txt" "seed_loop.txt"
 run_test "single_if" "empty_rules.txt" "seed_if.txt"

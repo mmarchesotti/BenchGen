@@ -1,1 +1,1 @@
-CALL(IF(NEW, NEW))
+CALL(IF(new, new))

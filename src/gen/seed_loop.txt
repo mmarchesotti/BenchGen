@@ -1,1 +1,1 @@
-LOOP(NEW)
+LOOP(new)

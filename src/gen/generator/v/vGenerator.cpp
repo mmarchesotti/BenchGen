@@ -173,15 +173,16 @@ void VGenerator::endFunc() {
 }
 
 void VGenerator::genMakefile(std::string dir, std::string target) {
+    std::string correct_target = std::filesystem::path(dir).filename();
     std::ofstream makefile;
-    makefile.open(dir + "Makefile");
-    makefile << "TARGET = " + target + "\n";
-    makefile << "SRC_DIR = src\n\n";
+    makefile.open(dir + "/Makefile");
+    makefile << "TARGET = " + correct_target + "\n";
+    makefile << "V_MAIN_FILE = src/main/main.v\n\n";
     makefile << "all: $(TARGET)\n\n";
     makefile << "$(TARGET):\n";
-    makefile << "\tv $(SRC_DIR) -o $(TARGET)\n\n";
+    makefile << "\tv $(V_MAIN_FILE) -o $(TARGET)\n\n";
     makefile << "run:\n";
-    makefile << "\tv run $(SRC_DIR)\n\n";
+    makefile << "\tv run $(V_MAIN_FILE)\n\n";
     makefile << "clean:\n";
     makefile << "\trm -f $(TARGET)\n";
 }
@@ -212,35 +213,37 @@ void VGenerator::genReadme(std::string dir, std::string target) {
 
 void VGenerator::generateFiles(std::string benchmarkName) {
     std::string benchDir = benchmarkName + "/";
-    std::string sourceDir = benchDir + "src/";
-    std::string mainFilePath = sourceDir + benchmarkName + ".v";
-    std::string typesFilePath = sourceDir + "types.v";
+    std::string mainDir = benchDir + "src/main/";
+    std::string functionsDir = benchDir + "src/functions/";
 
-    std::filesystem::create_directory(benchDir);
-    std::filesystem::create_directory(sourceDir);
+    std::filesystem::create_directories(mainDir);
+    std::filesystem::create_directories(functionsDir);
 
     std::ofstream mainFile;
-    mainFile.open(mainFilePath);
+    mainFile.open(mainDir + "main.v");
     mainFile << "module main\n\n";
-    for (auto mod : modules) {
+    mainFile << "import functions\n\n";
+    for (const auto& mod : modules) {
         mainFile << mod << std::endl;
     }
     mainFile << std::endl;
     auto mainLines = mainFunction.getLines();
-    for (auto line : mainLines) {
+    for (const auto& line : mainLines) {
         mainFile << line << std::endl;
     }
     mainFile.close();
 
-    std::ofstream typesFile;
-    typesFile.open(typesFilePath);
-    typesFile << "module main\n\n";
-    for (auto var : globalVars) {
-        typesFile << var << std::endl;
+    if (!globalVars.empty()) {
+        std::ofstream typesFile;
+        typesFile.open(functionsDir + "types.v");
+        typesFile << "module functions\n\n";
+        for (const auto& var : globalVars) {
+            typesFile << var << std::endl;
+        }
+        typesFile.close();
     }
-    typesFile.close();
 
-    for (auto func : functions) {
+    for (const auto& func : functions) {
         std::string funcFileName;
         if (func.getId() == -1) {
             funcFileName = "path.v";
@@ -249,11 +252,11 @@ void VGenerator::generateFiles(std::string benchmarkName) {
         }
 
         std::ofstream funcFile;
-        funcFile.open(sourceDir + funcFileName);
-        funcFile << "module main\n\n";
+        funcFile.open(functionsDir + funcFileName);
+        funcFile << "module functions\n\n";
 
         auto funcLines = func.getLines();
-        for (auto line : funcLines) {
+        for (const auto& line : funcLines) {
             funcFile << line << std::endl;
         }
         funcFile.close();

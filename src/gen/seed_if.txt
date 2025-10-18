@@ -1,1 +1,1 @@
-IF(NEW, NEW)
+IF(new, new)
