@@ -1,13 +1,13 @@
-TARGET = 
-V_MAIN_FILE = src/main/main.v
+TARGET = single_loop
+MAIN_MODULE = src/main
 
 all: $(TARGET)
 
 $(TARGET):
-	v $(V_MAIN_FILE) -o $(TARGET)
+	v $(MAIN_MODULE) -o $(TARGET)
 
 run:
-	v run $(V_MAIN_FILE)
+	v run $(MAIN_MODULE)
 
 clean:
 	rm -f $(TARGET)

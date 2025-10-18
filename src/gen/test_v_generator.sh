@@ -17,24 +17,22 @@ function run_test {
     local depth=${4:-1} # Default depth is 1 if not provided
 
     echo "--- Running Test: $test_name ---"
-    
-    # Define the output directory for this specific test
+
     local output_dir="$TEST_OUTPUT_DIR/$test_name"
 
-    # Generate the V program
     echo "  -> Generating code..."
     ./benchGen $depth "$rules_file" "$seed_file" "$output_dir" array v
 
-    # Compile the generated V program
-    set -x
+    # 2. NEW: Show the complete directory structure for debugging
+    #    This is the most important step right now.
+    echo "  -> Verifying generated file structure..."
+    (cd "$output_dir" && ls -R)
+
+    # 3. Compile the generated program
     echo "  -> Compiling generated program..."
     (cd "$output_dir" && make clean && make)
-    set +x
 
-    ls "$output_dir"
-    ls "$output_dir/src"
-    
-    # Execute the compiled program
+    # 4. Execute the program
     echo "  -> Executing program..."
     (cd "$output_dir" && ./$test_name)
 

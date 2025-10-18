@@ -1,4 +1,4 @@
-module main
+module functions
 
 fn get_path() u64 {
     path := os.getenv('BENCH_PATH')

@@ -12,16 +12,45 @@ void VGenerator::generateModules() {
 }
 
 void VGenerator::generateGlobalVars() {
+    // This function now correctly processes the output of the VariableFactory
+    // to create valid multi-module V code with public and mutable fields.
     std::vector<std::string> varGlobalVars = VariableFactory::genGlobalVars(varType);
-    for (auto gVar : varGlobalVars) {
-        globalVars.push_back(gVar);
+    bool in_struct = false;
+
+    for (const auto& gVar : varGlobalVars) {
+        // Trim leading whitespace to inspect the line's content
+        size_t first_char_pos = gVar.find_first_not_of(" \t");
+        std::string content = (first_char_pos == std::string::npos) ? "" : gVar.substr(first_char_pos);
+
+        if (content.rfind("struct ", 0) == 0) {
+            globalVars.push_back("pub " + gVar); // Make the struct itself public
+            // Immediately after opening the struct, add the block to make all fields public and mutable.
+            globalVars.push_back(gVar.substr(0, first_char_pos) + "pub mut:");
+            in_struct = true;
+        } else if (content.rfind("}", 0) == 0) {
+            globalVars.push_back(gVar); // Add the closing brace
+            in_struct = false;
+        } else if (in_struct) {
+            // Since we've already defined a `pub mut:` block, we should only add lines
+            // that are actual field declarations and ignore any block specifiers (like `mut:`)
+            // from the factory. A simple check for a colon that isn't at the end of the line
+            // is a good heuristic for identifying fields.
+            if (!content.empty() && content.find(":") != std::string::npos && content.back() != ':') {
+                 globalVars.push_back(gVar); // This is a field, add it.
+            } else if (content.empty()) {
+                 globalVars.push_back(gVar); // Preserve empty lines.
+            }
+        } else {
+            globalVars.push_back(gVar); // Add any lines that are outside of a struct
+        }
     }
 }
 
 void VGenerator::generateRandomNumberGenerator() {
     GeneratorFunction rngFunction = GeneratorFunction(-1);
+    // The `get_path` function must be public (`pub`) to be visible from the `main` module.
     rngFunction.addLine({
-        "fn get_path() u64 {",
+        "pub fn get_path() u64 {",
         "    path := os.getenv('BENCH_PATH')",
         "    if path != '' {",
         "        val := strconv.parse_uint(path, 10, 64) or { return 0 }",
@@ -69,6 +98,18 @@ void VGenerator::generateMainFunction() {
 
 void VGenerator::addLine(std::string line, int d) {
     std::string indentedLine = currentScope.top().getIndentationTabs(d) + line;
+
+    // WORKAROUND for V compiler's strictness with type aliases in slice literals.
+    // The VariableFactory generates `data: []Array{...}` which the compiler rejects
+    // because the field expects `[]functions.Array`. We replace it with the fully
+    // qualified type name to resolve the conflict.
+    std::string find_str = "[]" + VariableFactory::genTypeString(varType) + "{";
+    std::string replace_str = "[]functions." + VariableFactory::genTypeString(varType) + "{";
+    size_t pos = indentedLine.find(find_str);
+    if (pos != std::string::npos) {
+        indentedLine.replace(pos, find_str.length(), replace_str);
+    }
+    
     currentFunction.top()->addLine(indentedLine);
 }
 
@@ -85,7 +126,8 @@ void VGenerator::startScope() {
 
 void VGenerator::startFunc(int funcId, int nParameters) {
     GeneratorFunction func = GeneratorFunction(funcId);
-    std::string funcHeader = "fn func" + std::to_string(funcId) + "(vars " + VariableFactory::genTypeString(varType) + "Param, ";
+    // Functions must be public (`pub`) to be visible from other modules.
+    std::string funcHeader = "pub fn func" + std::to_string(funcId) + "(vars " + VariableFactory::genTypeString(varType) + "Param, ";
     
     for (int i = 0; i < nParameters; i++) {
         funcHeader += "path" + std::to_string(i) + " u64, ";
@@ -124,7 +166,14 @@ void VGenerator::callFunc(int funcId, int nParameters) {
     std::string param = createParams();
     int id = addVar(varType);
     GeneratorVariable* var = variables[id];
-    std::string line = "mut " + var->name + " := func" + std::to_string(funcId) + "(" + param + ", ";
+    
+    std::string func_call = "func" + std::to_string(funcId);
+    // If the call is being made from `main` (id -1), prefix with the module name.
+    if (currentFunction.top()->getId() == -1) {
+        func_call = "functions." + func_call;
+    }
+
+    std::string line = "mut " + var->name + " := " + func_call + "(" + param + ", ";
 
     for (int i = 0; i < nParameters; i++)
         line += "get_path(), ";
@@ -173,46 +222,37 @@ void VGenerator::endFunc() {
 }
 
 void VGenerator::genMakefile(std::string dir, std::string target) {
-    std::string correct_target = std::filesystem::path(dir).filename();
+    std::string correct_target = std::filesystem::path(target).filename().string();
     std::ofstream makefile;
     makefile.open(dir + "/Makefile");
-    makefile << "TARGET = " + correct_target + "\n";
-    makefile << "V_MAIN_FILE = src/main/main.v\n\n";
+    makefile << "TARGET = " << correct_target << "\n";
+    makefile << "MAIN_MODULE = src/main\n\n";
     makefile << "all: $(TARGET)\n\n";
     makefile << "$(TARGET):\n";
-    makefile << "\tv $(V_MAIN_FILE) -o $(TARGET)\n\n";
+    makefile << "\tv $(MAIN_MODULE) -o $(TARGET)\n\n";
     makefile << "run:\n";
-    makefile << "\tv run $(V_MAIN_FILE)\n\n";
+    makefile << "\tv run $(MAIN_MODULE)\n\n";
     makefile << "clean:\n";
     makefile << "\trm -f $(TARGET)\n";
+    makefile.close();
 }
 
 void VGenerator::genReadme(std::string dir, std::string target) {
-    std::ofstream readme;
-    readme.open(dir + "README.md");
-    readme << "# " + target + " Program\n\n";
-    readme << "This program was generated by the **BenchGen** tool.\n\n";
-    readme << "## Compilation\n\n";
-    readme << "To compile the program:\n\n";
-    readme << "    ```bash\n";
-    readme << "    make\n";
-    readme << "    ```\n\n";
-    readme << "## Run\n\n";
-    readme << "To run the program, execute the following command:\n\n";
-    readme << "```bash\n";
-    readme << "./" + target + "\n";
-    readme << "```\n\n";
-    readme << "### Optional Arguments\n\n";
-    readme << "-   `-path-seed <seed>`: Sets the seed for the random number generator. Default is `0`.\n\n";
-    readme << "-   `-loops-factor <factor>`: Sets the factor for the number of loops. Default is `100`.\n\n";
-    readme << "#### Example:\n\n";
-    readme << "```bash\n";
-    readme << "./" + target + " -loops-factor 50 -path-seed 123\n";
-    readme << "```";
+    std::string correct_target = std::filesystem::path(target).filename().string();
+    std::ofstream readmeFile;
+    readmeFile.open(dir + "/README.md");
+    readmeFile << "# Benchmark: " << correct_target << "\n\n";
+    readmeFile << "This benchmark was auto-generated.\n\n";
+    readmeFile << "To compile and run:\n";
+    readmeFile << "```sh\n";
+    readmeFile << "make\n";
+    readmeFile << "./" << correct_target << "\n";
+    readmeFile << "```\n";
+    readmeFile.close();
 }
 
 void VGenerator::generateFiles(std::string benchmarkName) {
-    std::string benchDir = benchmarkName + "/";
+	std::string benchDir = benchmarkName + "/";
     std::string mainDir = benchDir + "src/main/";
     std::string functionsDir = benchDir + "src/functions/";
 
@@ -222,13 +262,25 @@ void VGenerator::generateFiles(std::string benchmarkName) {
     std::ofstream mainFile;
     mainFile.open(mainDir + "main.v");
     mainFile << "module main\n\n";
-    mainFile << "import functions\n\n";
-    for (const auto& mod : modules) {
+    mainFile << "import functions\n";
+
+    // Write all other module imports first.
+    for (auto mod : modules) {
         mainFile << mod << std::endl;
     }
     mainFile << std::endl;
+
+    // Add the type alias *after* all imports are declared.
+    mainFile << "type " << VariableFactory::genTypeString(varType)
+             << " = functions." << VariableFactory::genTypeString(varType) << "\n";
+    mainFile << "type " << VariableFactory::genTypeString(varType) + "Param"
+             << " = functions." << VariableFactory::genTypeString(varType) + "Param" << "\n\n";
+    
+    // Add a wrapper for get_path to make it available in the main module without a prefix.
+    mainFile << "fn get_path() u64 { return functions.get_path() }\n\n";
+
     auto mainLines = mainFunction.getLines();
-    for (const auto& line : mainLines) {
+    for (auto line : mainLines) {
         mainFile << line << std::endl;
     }
     mainFile.close();
@@ -237,13 +289,13 @@ void VGenerator::generateFiles(std::string benchmarkName) {
         std::ofstream typesFile;
         typesFile.open(functionsDir + "types.v");
         typesFile << "module functions\n\n";
-        for (const auto& var : globalVars) {
+        for (auto var : globalVars) {
             typesFile << var << std::endl;
         }
         typesFile.close();
     }
 
-    for (const auto& func : functions) {
+    for (auto func : functions) {
         std::string funcFileName;
         if (func.getId() == -1) {
             funcFileName = "path.v";
@@ -254,9 +306,12 @@ void VGenerator::generateFiles(std::string benchmarkName) {
         std::ofstream funcFile;
         funcFile.open(functionsDir + funcFileName);
         funcFile << "module functions\n\n";
+        funcFile << "import os\n";
+        funcFile << "import rand\n";
+        funcFile << "import strconv\n\n";
 
         auto funcLines = func.getLines();
-        for (const auto& line : funcLines) {
+        for (auto line : funcLines) {
             funcFile << line << std::endl;
         }
         funcFile.close();
@@ -265,3 +320,4 @@ void VGenerator::generateFiles(std::string benchmarkName) {
     this->genMakefile(benchDir, benchmarkName);
     this->genReadme(benchDir, benchmarkName);
 }
+

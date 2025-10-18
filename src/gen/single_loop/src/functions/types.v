@@ -1,4 +1,4 @@
-module main
+module functions
 
 struct Array {
 mut:
