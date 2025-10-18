@@ -1,9 +1,13 @@
 #include "vGenerator.h"
+#include <filesystem>
+#include <fstream>
+#include <string>
+#include <vector>
 
 void VGenerator::generateModules() {
     modules.push_back("import os");
     modules.push_back("import rand");
-    modules.push_back("import strconv");
+    // 'strconv' is removed from here; it will be added specifically where needed.
     
     std::vector<std::string> varIncludes = VariableFactory::genIncludes(varType);
     for (auto var : varIncludes) {
@@ -12,36 +16,32 @@ void VGenerator::generateModules() {
 }
 
 void VGenerator::generateGlobalVars() {
-    // This function now correctly processes the output of the VariableFactory
-    // to create valid multi-module V code with public and mutable fields.
+    // This function is rewritten to correctly generate public structs with pub mut fields in V.
     std::vector<std::string> varGlobalVars = VariableFactory::genGlobalVars(varType);
     bool in_struct = false;
 
-    for (const auto& gVar : varGlobalVars) {
-        // Trim leading whitespace to inspect the line's content
-        size_t first_char_pos = gVar.find_first_not_of(" \t");
-        std::string content = (first_char_pos == std::string::npos) ? "" : gVar.substr(first_char_pos);
+    for (const auto& line : varGlobalVars) {
+        size_t first_char_pos = line.find_first_not_of(" \t");
+        std::string content = (first_char_pos == std::string::npos) ? "" : line.substr(first_char_pos);
+        std::string indentation = (first_char_pos == std::string::npos) ? "" : line.substr(0, first_char_pos);
 
         if (content.rfind("struct ", 0) == 0) {
-            globalVars.push_back("pub " + gVar); // Make the struct itself public
-            // Immediately after opening the struct, add the block to make all fields public and mutable.
-            globalVars.push_back(gVar.substr(0, first_char_pos) + "pub mut:");
+            // Add `pub struct ... {` and then the `pub mut:` block.
+            globalVars.push_back(indentation + "pub " + content);
+            globalVars.push_back(indentation + "\tpub mut:");
             in_struct = true;
-        } else if (content.rfind("}", 0) == 0) {
-            globalVars.push_back(gVar); // Add the closing brace
-            in_struct = false;
         } else if (in_struct) {
-            // Since we've already defined a `pub mut:` block, we should only add lines
-            // that are actual field declarations and ignore any block specifiers (like `mut:`)
-            // from the factory. A simple check for a colon that isn't at the end of the line
-            // is a good heuristic for identifying fields.
-            if (!content.empty() && content.find(":") != std::string::npos && content.back() != ':') {
-                 globalVars.push_back(gVar); // This is a field, add it.
-            } else if (content.empty()) {
-                 globalVars.push_back(gVar); // Preserve empty lines.
+            if (content.rfind("}", 0) == 0) {
+                // Add the closing brace and exit struct context.
+                globalVars.push_back(line);
+                in_struct = false;
+            } else if (content != "mut:") {
+                // Add the line only if it is not the original 'mut:'.
+                globalVars.push_back(line);
             }
         } else {
-            globalVars.push_back(gVar); // Add any lines that are outside of a struct
+            // This handles any lines that might exist outside of the main struct.
+            globalVars.push_back(line);
         }
     }
 }
@@ -100,9 +100,6 @@ void VGenerator::addLine(std::string line, int d) {
     std::string indentedLine = currentScope.top().getIndentationTabs(d) + line;
 
     // WORKAROUND for V compiler's strictness with type aliases in slice literals.
-    // The VariableFactory generates `data: []Array{...}` which the compiler rejects
-    // because the field expects `[]functions.Array`. We replace it with the fully
-    // qualified type name to resolve the conflict.
     std::string find_str = "[]" + VariableFactory::genTypeString(varType) + "{";
     std::string replace_str = "[]functions." + VariableFactory::genTypeString(varType) + "{";
     size_t pos = indentedLine.find(find_str);
@@ -264,19 +261,16 @@ void VGenerator::generateFiles(std::string benchmarkName) {
     mainFile << "module main\n\n";
     mainFile << "import functions\n";
 
-    // Write all other module imports first.
     for (auto mod : modules) {
         mainFile << mod << std::endl;
     }
     mainFile << std::endl;
 
-    // Add the type alias *after* all imports are declared.
     mainFile << "type " << VariableFactory::genTypeString(varType)
              << " = functions." << VariableFactory::genTypeString(varType) << "\n";
     mainFile << "type " << VariableFactory::genTypeString(varType) + "Param"
              << " = functions." << VariableFactory::genTypeString(varType) + "Param" << "\n\n";
     
-    // Add a wrapper for get_path to make it available in the main module without a prefix.
     mainFile << "fn get_path() u64 { return functions.get_path() }\n\n";
 
     auto mainLines = mainFunction.getLines();
@@ -297,7 +291,9 @@ void VGenerator::generateFiles(std::string benchmarkName) {
 
     for (auto func : functions) {
         std::string funcFileName;
-        if (func.getId() == -1) {
+        bool is_path_func = (func.getId() == -1);
+
+        if (is_path_func) {
             funcFileName = "path.v";
         } else {
             funcFileName = "func" + std::to_string(func.getId()) + ".v";
@@ -308,7 +304,11 @@ void VGenerator::generateFiles(std::string benchmarkName) {
         funcFile << "module functions\n\n";
         funcFile << "import os\n";
         funcFile << "import rand\n";
-        funcFile << "import strconv\n\n";
+        // Only add 'strconv' to the file that actually uses it.
+        if (is_path_func) {
+            funcFile << "import strconv\n";
+        }
+        funcFile << "\n";
 
         auto funcLines = func.getLines();
         for (auto line : funcLines) {
@@ -320,4 +320,5 @@ void VGenerator::generateFiles(std::string benchmarkName) {
     this->genMakefile(benchDir, benchmarkName);
     this->genReadme(benchDir, benchmarkName);
 }
+
 

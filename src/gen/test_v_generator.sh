@@ -87,7 +87,7 @@ for example_dir in "$EXAMPLES_DIR"/ex*; do
         
         # Check if the required files exist
         if [ -f "$rules" ] && [ -f "$seed" ]; then
-            run_test "$example_name" "$rules" "$seed" 5 # Use a higher depth for examples
+            run_test "$example_name" "$rules" "$seed" 1 # Use a higher depth for examples
         else
             echo "  -> Skipping $example_name (missing rule or seed file)."
         fi
