@@ -28,6 +28,8 @@ class ProgrammingLanguage {
     inline static const std::string RUST  = "rust";
     inline static const std::string JULIA = "julia";
     inline static const std::string GO    = "go";
+    inline static const std::string V     = "v";
+
 
     inline static std::string LANGUAGE = "";
 };
