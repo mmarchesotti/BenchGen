@@ -75,7 +75,7 @@ void VLoop::gen(ProgrammingLanguageGenerator& generator) {
     generator.addLine(loopVar + " := 0");
 
     std::string loopLimitVar = "loop_limit" + std::to_string(generator.loopCounter);
-    std::string loopLimitValue = "(1000) / " + std::to_string(generator.loopLevel + 1) + " + 1";
+    std::string loopLimitValue = "(50)/" + std::to_string(generator.loopLevel + 1) + " + 1";
     generator.addLine(loopLimitVar + " := " + loopLimitValue);
 
     std::string forLine = "for " + loopVar.substr(4) + " < " + loopLimitVar + " {";
