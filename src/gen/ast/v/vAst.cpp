@@ -115,7 +115,7 @@ void VSeq::gen(ProgrammingLanguageGenerator& generator) {
 }
 
 void VIf::gen(ProgrammingLanguageGenerator& generator) {
-    std::string condition = vgenerateIfCondition(generator);
+    std::string condition = generateIfCondition(generator);
     generator.ifCounter.top()++;
     std::string line = "if " + condition + " {";
     generator.addLine(line);
