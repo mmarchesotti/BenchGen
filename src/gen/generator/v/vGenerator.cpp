@@ -7,7 +7,6 @@
 void VGenerator::generateModules() {
     modules.push_back("import os");
     modules.push_back("import rand");
-    
     std::vector<std::string> varIncludes = VariableFactory::genIncludes(varType);
     for (auto var : varIncludes) {
         modules.push_back(var);
@@ -92,7 +91,6 @@ void VGenerator::generateMainFunction() {
 void VGenerator::addLine(std::string line, int d) {
     std::string indentedLine = currentScope.top().getIndentationTabs(d) + line;
 
-    // WORKAROUND for V compiler's strictness with type aliases in slice literals.
     std::string find_str = "[]" + VariableFactory::genTypeString(varType) + "{";
     std::string replace_str = "[]functions." + VariableFactory::genTypeString(varType) + "{";
     size_t pos = indentedLine.find(find_str);
@@ -116,7 +114,6 @@ void VGenerator::startScope() {
 
 void VGenerator::startFunc(int funcId, int nParameters) {
     GeneratorFunction func = GeneratorFunction(funcId);
-    // Functions must be public (`pub`) to be visible from other modules.
     std::string funcHeader = "pub fn func" + std::to_string(funcId) + "(vars " + VariableFactory::genTypeString(varType) + "Param, ";
     
     for (int i = 0; i < nParameters; i++) {
@@ -158,7 +155,6 @@ void VGenerator::callFunc(int funcId, int nParameters) {
     GeneratorVariable* var = variables[id];
     
     std::string func_call = "func" + std::to_string(funcId);
-    // If the call is being made from `main` (id -1), prefix with the module name.
     if (currentFunction.top()->getId() == -1) {
         func_call = "functions." + func_call;
     }
@@ -297,7 +293,6 @@ void VGenerator::generateFiles(std::string benchmarkName) {
         funcFile << "module functions\n\n";
         funcFile << "import os\n";
         funcFile << "import rand\n";
-        // Only add 'strconv' to the file that actually uses it.
         if (is_path_func) {
             funcFile << "import strconv\n";
         }
