@@ -131,7 +131,7 @@ void VIf::gen(ProgrammingLanguageGenerator& generator) {
     generator.endScope();
 }
 
-// Printing Methods (No changes needed, but renamed for consistency)
+// Printing Methods
 
 void VStatementCode::print(int ident) {
     vprintIndentationSpaces(ident);
