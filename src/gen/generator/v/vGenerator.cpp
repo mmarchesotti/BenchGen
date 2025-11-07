@@ -7,7 +7,6 @@
 void VGenerator::generateModules() {
     modules.push_back("import os");
     modules.push_back("import rand");
-    // 'strconv' is removed from here; it will be added specifically where needed.
     
     std::vector<std::string> varIncludes = VariableFactory::genIncludes(varType);
     for (auto var : varIncludes) {
@@ -16,7 +15,6 @@ void VGenerator::generateModules() {
 }
 
 void VGenerator::generateGlobalVars() {
-    // This function is rewritten to correctly generate public structs with pub mut fields in V.
     std::vector<std::string> varGlobalVars = VariableFactory::genGlobalVars(varType);
     bool in_struct = false;
 
@@ -26,21 +24,17 @@ void VGenerator::generateGlobalVars() {
         std::string indentation = (first_char_pos == std::string::npos) ? "" : line.substr(0, first_char_pos);
 
         if (content.rfind("struct ", 0) == 0) {
-            // Add `pub struct ... {` and then the `pub mut:` block.
             globalVars.push_back(indentation + "pub " + content);
             globalVars.push_back(indentation + "\tpub mut:");
             in_struct = true;
         } else if (in_struct) {
             if (content.rfind("}", 0) == 0) {
-                // Add the closing brace and exit struct context.
                 globalVars.push_back(line);
                 in_struct = false;
             } else if (content != "mut:") {
-                // Add the line only if it is not the original 'mut:'.
                 globalVars.push_back(line);
             }
         } else {
-            // This handles any lines that might exist outside of the main struct.
             globalVars.push_back(line);
         }
     }
@@ -48,7 +42,6 @@ void VGenerator::generateGlobalVars() {
 
 void VGenerator::generateRandomNumberGenerator() {
     GeneratorFunction rngFunction = GeneratorFunction(-1);
-    // The `get_path` function must be public (`pub`) to be visible from the `main` module.
     rngFunction.addLine({
         "pub fn get_path() u64 {",
         "    path := os.getenv('BENCH_PATH')",
