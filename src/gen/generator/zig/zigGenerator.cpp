@@ -185,14 +185,16 @@ void ZigGenerator::genMakefile(std::string dir, std::string target) {
     std::ofstream buildFile;
     buildFile.open(dir + "build.zig");
     buildFile << "const std = @import(\"std\");\n\n";
-    buildFile << "pub fn build(b: *std.Build) {\n";
+    buildFile << "pub fn build(b: *std.Build) void {\n";
     buildFile << "    const target = b.standardTargetOptions(.{});\n";
     buildFile << "    const optimize = b.standardOptimizeOption(.{});\n\n";
     buildFile << "    const exe = b.addExecutable(.{\n";
     buildFile << "        .name = \"" + target + "\",\n";
-    buildFile << "        .root_source_file = b.path(\"src/main.zig\"),\n";
-    buildFile << "        .target = target,\n";
-    buildFile << "        .optimize = optimize,\n";
+    buildFile << "        .root_module = b.createModule(.{";
+    buildFile << "            .root_source_file = b.path(\"src/main.zig\"),\n";
+    buildFile << "            .target = target,\n";
+	buildFile << "            .optimize = optimize,\n";
+    buildFile << "        }),";
     buildFile << "    });\n\n";
     buildFile << "    b.installArtifact(exe);\n\n";
     buildFile << "    const run_step = b.step(\"run\", \"Run the app\");\n";
@@ -276,10 +278,10 @@ void ZigGenerator::generateFiles(std::string benchmarkName) {
 
     for (auto func : functions) {
         if (func.getId() != -1) {
-            mainFile << "const func" + std.to_string(func.getId()) + " = lib.func" + std::to_string(func.getId()) + ";\n";
+            mainFile << "const func" + std::to_string(func.getId()) + " = lib.func" + std::to_string(func.getId()) + ";\n";
         }
     }
-    mainFile << std.endl;
+    mainFile << std::endl;
 
     auto mainLines = mainFunction.getLines();
     for (auto line : mainLines) {
