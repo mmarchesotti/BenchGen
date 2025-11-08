@@ -400,7 +400,7 @@ ProgrammingLanguageGenerator* ProgrammingLanguageGenerator::getGenerator(std::st
         return new CarbonGenerator(varType);
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ZIG)
     {
-        Zigeturn new VGenerator(varType);
+        return new ZigGenerator(varType);
     }
 
     return nullptr;

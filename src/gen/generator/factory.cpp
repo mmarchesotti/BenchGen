@@ -10,7 +10,6 @@
 #include "../shared/consts.h"
 
 GeneratorVariable* VariableFactory::createVariable(std::string type, int identifier) {
-    int iterations = Parameters::ITERATIONS;
     int size = rand() % 1000;
 
     if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::C)
@@ -51,7 +50,6 @@ GeneratorVariable* VariableFactory::createVariable(std::string type, int identif
         if (type == VarTypes::ARRAY) {
             return new CarbonGeneratorArray(size, identifier);
         }
-    }
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ZIG)
     {
         if (type == VarTypes::ARRAY) {
