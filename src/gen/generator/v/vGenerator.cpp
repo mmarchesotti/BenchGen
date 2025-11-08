@@ -291,9 +291,9 @@ void VGenerator::generateFiles(std::string benchmarkName) {
         std::ofstream funcFile;
         funcFile.open(functionsDir + funcFileName);
         funcFile << "module functions\n\n";
-        funcFile << "import os\n";
-        funcFile << "import rand\n";
         if (is_path_func) {
+            funcFile << "import os\n";
+            funcFile << "import rand\n";
             funcFile << "import strconv\n";
         }
         funcFile << "\n";
