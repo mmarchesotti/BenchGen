@@ -7,6 +7,7 @@
 #include "rust/rustGeneratorVariable.h"
 #include "v/vGeneratorVariable.h"
 #include "carbon/carbonGeneratorVariable.h"
+#include "zig/zigGeneratorVariable.h"
 
 unsigned int VariableFactory::var_counter = 0;
 
@@ -81,6 +82,9 @@ std::vector<std::string> GeneratorArray::new_(bool inFunction)
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::CARBON)
     {
         return CarbonGeneratorArray().new_(inFunction);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ZIG)
+    {
+        return ZigGeneratorArray().new_(inFunction);
     }
 }
 
@@ -107,6 +111,9 @@ std::vector<std::string>  GeneratorArray::insert()
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::CARBON)
     {
         return CarbonGeneratorArray().insert();
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ZIG)
+    {
+        return ZigGeneratorArray().insert();
     }
 }
 
@@ -133,6 +140,9 @@ std::vector<std::string>  GeneratorArray::remove()
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::CARBON)
     {
         return CarbonGeneratorArray().remove();
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ZIG)
+    {
+        return ZigGeneratorArray().remove();
     }
 }
 
@@ -159,6 +169,9 @@ std::vector<std::string>  GeneratorArray::contains(bool shouldReturn)
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::CARBON)
     {
         return CarbonGeneratorArray().contains(shouldReturn);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ZIG)
+    {
+        return ZigGeneratorArray().contains(shouldReturn);
     }
 }
 
@@ -185,6 +198,9 @@ std::vector<std::string>  GeneratorArray::free()
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::CARBON)
     {
         return CarbonGeneratorArray().free();
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ZIG)
+    {
+        return ZigGeneratorArray().free();
     }
 }
 
@@ -211,6 +227,9 @@ std::vector<std::string>  GeneratorArray::genIncludes()
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::CARBON)
     {
         return CarbonGeneratorArray().genIncludes();
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ZIG)
+    {
+        return ZigGeneratorArray().genIncludes();
     }
 }
 
@@ -237,6 +256,9 @@ std::vector<std::string>  GeneratorArray::genGlobalVars()
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::CARBON)
     {
         return CarbonGeneratorArray().genGlobalVars();
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ZIG)
+    {
+        return ZigGeneratorArray().genGlobalVars();
     }
 }
 
@@ -263,6 +285,9 @@ std::vector<std::string>  GeneratorArray::genParams(std::string paramName, std::
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::CARBON)
     {
         return CarbonGeneratorArray().genParams(paramName, varsParams);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ZIG)
+    {
+        return ZigGeneratorArray().genParams(paramName, varsParams);
     }
 }
 

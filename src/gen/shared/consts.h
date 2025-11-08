@@ -30,6 +30,7 @@ class ProgrammingLanguage {
     inline static const std::string GO     = "go";
     inline static const std::string V      = "v";
     inline static const std::string CARBON = "carbon";
+    inline static const std::string Zig   = "zig";
 
 
     inline static std::string LANGUAGE = "";

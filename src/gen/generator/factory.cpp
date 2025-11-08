@@ -6,6 +6,7 @@
 #include "go/goGeneratorVariable.h"
 #include "v/vGeneratorVariable.h"
 #include "carbon/carbonGeneratorVariable.h"
+#include "zig/zigGeneratorVariable.h"
 #include "../shared/consts.h"
 
 GeneratorVariable* VariableFactory::createVariable(std::string type, int identifier) {
@@ -49,6 +50,12 @@ GeneratorVariable* VariableFactory::createVariable(std::string type, int identif
     {
         if (type == VarTypes::ARRAY) {
             return new CarbonGeneratorArray(size, identifier);
+        }
+    }
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ZIG)
+    {
+        if (type == VarTypes::ARRAY) {
+            return new ZigGeneratorArray(size, identifier);
         }
     }
 
