@@ -13,6 +13,7 @@ DEPS = $(OBJ)factory.o \
 	   $(OBJ)juliaAst.o \
 	   $(OBJ)goAst.o \
 	   $(OBJ)vAst.o \
+	   $(OBJ)carbonAst.o \
 	   $(OBJ)generatorFunction.o  \
 	   $(OBJ)generatorVariable.o \
 	   $(OBJ)cGeneratorVariable.o \
@@ -73,6 +74,8 @@ $(OBJ)juliaGeneratorVariable.o: generator/julia/juliaGeneratorVariable.cpp | $(O
 $(OBJ)goGeneratorVariable.o: generator/go/goGeneratorVariable.cpp | $(OBJ)
 	$(CC) $(CFLAGS) -I $(IMP) -c $^ -o $@ -Wno-return-type
 $(OBJ)vGeneratorVariable.o: generator/v/vGeneratorVariable.cpp | $(OBJ)
+	$(CC) $(CFLAGS) -I $(IMP) -c $^ -o $@ -Wno-return-type
+$(OBJ)carbonGeneratorVariable.o: generator/carbon/vGeneratorVariable.cpp | $(OBJ)
 	$(CC) $(CFLAGS) -I $(IMP) -c $^ -o $@ -Wno-return-type
 $(OBJ)generatorScope.o: generator/generatorScope.cpp | $(OBJ)
 	$(CC) $(CFLAGS) -I $(IMP) -c $^ -o $@ -Wno-return-type

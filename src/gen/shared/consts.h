@@ -23,12 +23,13 @@ class Parameters{
 class ProgrammingLanguage {
     public:
     
-    inline static const std::string C     = "c";
-    inline static const std::string CPP   = "cpp";
-    inline static const std::string RUST  = "rust";
-    inline static const std::string JULIA = "julia";
-    inline static const std::string GO    = "go";
-    inline static const std::string V     = "v";
+    inline static const std::string C      = "c";
+    inline static const std::string CPP    = "cpp";
+    inline static const std::string RUST   = "rust";
+    inline static const std::string JULIA  = "julia";
+    inline static const std::string GO     = "go";
+    inline static const std::string V      = "v";
+    inline static const std::string CARBON = "carbon";
 
 
     inline static std::string LANGUAGE = "";

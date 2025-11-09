@@ -5,6 +5,7 @@
 #include "julia/juliaAst.h"
 #include "rust/rustAst.h"
 #include "v/vAst.h"
+#include "carbon/carbonAst.h"
 
 Insert::~Insert() {};
 Remove::~Remove() {};
@@ -17,6 +18,7 @@ Seq::~Seq() {};
 If::~If() {};
 Id::~Id(){};
 LambdaCode::~LambdaCode(){};
+
 
 void printIndentationSpaces(int ident)
 {
@@ -62,6 +64,9 @@ std::string generateIfCondition(ProgrammingLanguageGenerator& generator)
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::V)
     {
         return vgenerateIfCondition(generator);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::CARBON)
+    {
+        return carbongenerateIfCondition(generator);   
     }
 }
 
@@ -85,6 +90,9 @@ Insert get_insert()
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::V)
     {
         return VInsert();
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::CARBON)
+    {
+        return CarbonInsert();
     }
 }
 
@@ -108,6 +116,9 @@ Remove get_remove()
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::V)
     {
         return VRemove();
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::CARBON)
+    {
+        return CarbonRemove();
     }
 }
 
@@ -129,6 +140,9 @@ New get_new()
     {
         return GoNew();
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::V)
+    {
+        return VNew();
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::CARBON)
     {
         return VNew();
     }
@@ -154,6 +168,9 @@ Contains get_contains()
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::V)
     {
         return VContains();
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::CARBON)
+    {
+        return CarbonContains();
     }
 }
 
@@ -178,6 +195,9 @@ StatementCode get_statementcode(std::shared_ptr<Node> stmt, std::shared_ptr<Node
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::V)
     {
         return VStatementCode(stmt, code);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::CARBON)
+    {
+        return CarbonStatementCode(stmt, code);
     }
 }
 
@@ -202,6 +222,9 @@ Loop get_loop(std::shared_ptr<Node> code)
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::V)
     {
         return VLoop(code);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::CARBON)
+    {
+        return CarbonLoop(code);
     }
 }
 
@@ -225,6 +248,9 @@ Call get_call()
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::V)
     {
         return VCall();
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::CARBON)
+    {
+        return CarbonCall();
     }
 }
 
@@ -248,6 +274,9 @@ Call get_call(int id, std::shared_ptr<Node> code)
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::V)
     {
         return VCall(id, code);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::CARBON)
+    {
+        return CarbonCall(id, code);
     }
 }
 
@@ -272,6 +301,9 @@ Seq get_seq(std::shared_ptr<Node> code)
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::V)
     {
         return VSeq(code);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::CARBON)
+    {
+        return CarbonSeq(code);
     }
 }
 
@@ -295,6 +327,9 @@ If get_if(std::shared_ptr<Node> c1, std::shared_ptr<Node> c2)
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::V)
     {
         return VIf(c1, c2);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::CARBON)
+    {
+        return CarbonIf(c1, c2);
     }
 }
 
@@ -318,6 +353,9 @@ Id get_id(std::string id)
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::V)
     {
         return VId(id);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::CARBON)
+    {
+        return CarbonId(id);
     }
 }
 
@@ -340,6 +378,9 @@ void Loop::gen(ProgrammingLanguageGenerator& generator) {
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::V)
     {
         return VLoop(this->code).gen(generator);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::CARBON)
+    {
+        return CarbonLoop(this->code).gen(generator);
     }
 };
 
@@ -362,6 +403,9 @@ void Loop::print(int) {
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::V)
     {
         return VLoop(this->code).print(0);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::CARBON)
+    {
+        return CarbonLoop(this->code).print(0);
     }
 };
 
@@ -396,6 +440,11 @@ void Call::gen(ProgrammingLanguageGenerator& generator) {
         VCall vcall = VCall(this->id, this->code);
         vcall.conditionalCounts = this->conditionalCounts;
         vcall.gen(generator); 
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::CARBON)
+    {
+        CarbonCall carboncall = CarbonCall(this->id, this->code);
+        carboncall.conditionalCounts = this->conditionalCounts;
+        carboncall.gen(generator); 
     }
 };
 
@@ -430,6 +479,11 @@ void Call::print(int) {
         VCall vcall = VCall(this->id, this->code);
         vcall.conditionalCounts = this->conditionalCounts;
         vcall.print(0); 
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::CARBON)
+    {
+        CarbonCall carboncall = CarbonCall(this->id, this->code);
+        carboncall.conditionalCounts = this->conditionalCounts;
+        carboncall.print(0); 
     }
 };
 
@@ -460,6 +514,9 @@ void Seq::gen(ProgrammingLanguageGenerator& generator) {
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::V)
     {
         VSeq(this->code).gen(generator);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::CARBON)
+    {
+        CarbonSeq(this->code).gen(generator);
     }
 };
 
@@ -482,6 +539,9 @@ void Seq::print(int) {
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::V)
     {
         VSeq(this->code).print(0);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::CARBON)
+    {
+        CarbonSeq(this->code).print(0);
     }
  };
 
@@ -505,6 +565,9 @@ void If::gen(ProgrammingLanguageGenerator& generator) {
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::V)
     {
         VIf(this->c1, this->c2).gen(generator);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::CARBON)
+    {
+        CarbonIf(this->c1, this->c2).gen(generator);
     }
 };
 
@@ -527,6 +590,9 @@ void If::print(int) {
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::V)
     {
         VIf(this->c1, this->c2).print(0);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::CARBON)
+    {
+        CarbonIf(this->c1, this->c2).print(0);
     }
 };
 
@@ -549,6 +615,9 @@ void Id::gen(ProgrammingLanguageGenerator& generator) {
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::V)
     {
         VId(this->id).gen(generator);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::CARBON)
+    {
+        CarbonId(this->id).gen(generator);
     }
 };
 
@@ -571,6 +640,9 @@ void Id::print(int) {
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::V)
     {
         VId(this->id).print(0);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::CARBON)
+    {
+        CarbonId(this->id).print(0);
     }
 };
 
@@ -593,6 +665,9 @@ void Insert::gen(ProgrammingLanguageGenerator& generator) {
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::V)
     {
         VInsert().gen(generator);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::CARBON)
+    {
+        CarbonInsert().gen(generator);
     }
 };
 
@@ -616,6 +691,9 @@ void Insert::print(int) {
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::V)
     {
         VInsert().print(0);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::CARBON)
+    {
+        CarbonInsert().print(0);
     }
 };
 
@@ -638,6 +716,9 @@ void Remove::gen(ProgrammingLanguageGenerator& generator) {
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::V)
     {
         VRemove().gen(generator);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::CARBON)
+    {
+        CarbonRemove().gen(generator);
     }
 };
 
@@ -660,6 +741,9 @@ void Remove::print(int) {
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::V)
     {
         VRemove().print(0);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::CARBON)
+    {
+        CarbonRemove().print(0);
     }
 };
 
@@ -682,6 +766,9 @@ void New::gen(ProgrammingLanguageGenerator& generator) {
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::V)
     {
         VNew().gen(generator);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::CARBON)
+    {
+        CarbonNew().gen(generator);
     }
 };
 
@@ -704,6 +791,9 @@ void New::print(int) {
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::V)
     {
         VNew().print(0);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::CARBON)
+    {
+        CarbonNew().print(0);
     }
  };
 
@@ -726,6 +816,9 @@ void Contains::gen(ProgrammingLanguageGenerator& generator) {
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::V)
     {
         VContains().gen(generator);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::CARBON)
+    {
+        CarbonContains().gen(generator);
     }
 };
 
@@ -748,6 +841,9 @@ void Contains::print(int) {
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::V)
     {
         VContains().print(0);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::CARBON)
+    {
+        CarbonContains().print(0);
     }
  };
 
@@ -770,6 +866,9 @@ void StatementCode::gen(ProgrammingLanguageGenerator& generator) {
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::V)
     {
         VStatementCode(this->stmt, this->code).gen(generator);  
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::CARBON)
+    {
+        CarbonStatementCode(this->stmt, this->code).gen(generator);
     }
 };
 
@@ -794,6 +893,9 @@ void StatementCode::print(int) {
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::V)
     {
         VStatementCode(this->stmt, this->code).print(0);  
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::CARBON)
+    {
+        CarbonStatementCode(this->stmt, this->code).print(0);  
     }
 };
 
@@ -816,6 +918,9 @@ void LambdaCode::gen(ProgrammingLanguageGenerator& generator) {
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::V)
     {
         VLambdaCode().gen(generator);  
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::CARBON)
+    {
+        CarbonLambdaCode().gen(generator);
     }
 };
 
@@ -838,5 +943,8 @@ void LambdaCode::print(int) {
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::V)
     {
         VLambdaCode().print(0);  
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::CARBON)
+    {
+        CarbonLambdaCode().print(0);
     }
 };

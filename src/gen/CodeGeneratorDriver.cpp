@@ -55,16 +55,18 @@ int main(int argc, char const* argv[]) {
         language != ProgrammingLanguage::RUST &&
         language != ProgrammingLanguage::JULIA &&
         language != ProgrammingLanguage::GO &&
-        language != ProgrammingLanguage::V)
+        language != ProgrammingLanguage::V &&
+        language != ProgrammingLanguage::CARBON)
     {
         std::cout << "Programming language " + language + " is wrong!" << std::endl;
-        std::cout << "Avaliable '" +
-        ProgrammingLanguage::C + "', '" +
-        ProgrammingLanguage::CPP + "', '" +
-        ProgrammingLanguage::RUST + "', '" +
-        ProgrammingLanguage::JULIA + "', '" +
-        ProgrammingLanguage::GO + "' and '" +
-        ProgrammingLanguage::V + "'"
+        std::cout << "Avaliable '"  +
+        ProgrammingLanguage::C      + "', '" +
+        ProgrammingLanguage::CPP    + "', '" +
+        ProgrammingLanguage::RUST   + "', '" +
+        ProgrammingLanguage::JULIA  + "', '" +
+        ProgrammingLanguage::CARBON + "', '" +
+        ProgrammingLanguage::GO     + "' and '" +
+        ProgrammingLanguage::V      + "'"
         << std::endl;
         return 1;
     }
