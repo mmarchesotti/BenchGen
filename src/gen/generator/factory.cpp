@@ -45,6 +45,12 @@ GeneratorVariable* VariableFactory::createVariable(std::string type, int identif
             int size = (iterations*500);
             return new VGeneratorArray(size, identifier);
         }
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::CARBON)
+    {
+        if (type == VarTypes::ARRAY) {
+            int size = (iterations*500);
+            return new CarbonGeneratorArray(size, identifier);
+        }
     }
 
     // TODO: Error Handling

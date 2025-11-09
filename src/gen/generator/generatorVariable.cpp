@@ -6,6 +6,7 @@
 #include "julia/juliaGeneratorVariable.h"
 #include "rust/rustGeneratorVariable.h"
 #include "v/vGeneratorVariable.h"
+#include "carbon/carbonGeneratorVariable.h"
 
 unsigned int VariableFactory::var_counter = 0;
 
@@ -77,6 +78,9 @@ std::vector<std::string> GeneratorArray::new_(bool inFunction)
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::V)
     {
         return VGeneratorArray().new_(inFunction);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::CARBON)
+    {
+        return CarbonGeneratorArray().new_(inFunction);
     }
 }
 
@@ -100,6 +104,9 @@ std::vector<std::string>  GeneratorArray::insert()
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::V)
     {
         return VGeneratorArray().insert();
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::CARBON)
+    {
+        return CarbonGeneratorArray().insert();
     }
 }
 
@@ -123,6 +130,9 @@ std::vector<std::string>  GeneratorArray::remove()
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::V)
     {
         return VGeneratorArray().remove();
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::CARBON)
+    {
+        return CarbonGeneratorArray().remove();
     }
 }
 
@@ -146,6 +156,9 @@ std::vector<std::string>  GeneratorArray::contains(bool shouldReturn)
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::V)
     {
         return VGeneratorArray().contains(shouldReturn);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::CARBON)
+    {
+        return CarbonGeneratorArray().contains(shouldReturn);
     }
 }
 
@@ -169,6 +182,9 @@ std::vector<std::string>  GeneratorArray::free()
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::V)
     {
         return VGeneratorArray().free();
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::CARBON)
+    {
+        return CarbonGeneratorArray().free();
     }
 }
 
@@ -192,6 +208,9 @@ std::vector<std::string>  GeneratorArray::genIncludes()
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::V)
     {
         return VGeneratorArray().genIncludes();
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::CARBON)
+    {
+        return CarbonGeneratorArray().genIncludes();
     }
 }
 
@@ -215,6 +234,9 @@ std::vector<std::string>  GeneratorArray::genGlobalVars()
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::V)
     {
         return VGeneratorArray().genGlobalVars();
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::CARBON)
+    {
+        return CarbonGeneratorArray().genGlobalVars();
     }
 }
 
@@ -238,6 +260,9 @@ std::vector<std::string>  GeneratorArray::genParams(std::string paramName, std::
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::V)
     {
         return VGeneratorArray().genParams(paramName, varsParams);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::CARBON)
+    {
+        return CarbonGeneratorArray().genParams(paramName, varsParams);
     }
 }
 
