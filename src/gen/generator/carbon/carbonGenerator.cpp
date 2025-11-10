@@ -101,7 +101,7 @@ void CarbonGenerator::startFunc(int funcId, int nParameters) {
     GeneratorScope scope = GeneratorScope();
     currentScope.push(scope);
     this->ifCounter.push(0);
-    addLine("var pCounter: usize = vars.size;");
+    addLine("var pCounter: u32 = vars.size;");
 }
 
 bool CarbonGenerator::functionExists(int funcId) {
@@ -284,7 +284,7 @@ void CarbonGenerator::generateFiles(std::string benchmarkName) {
         includeFile << include << std::endl;
     }
 
-    file << "package main.impl;\n";
+    file << "package main;\n";
     file << std::endl;
 
     // Global variables
@@ -314,7 +314,7 @@ void CarbonGenerator::generateFiles(std::string benchmarkName) {
         std::ofstream funcFile;
         funcFile.open(sourceDir + funcSource);
 
-       // funcFile << "package main.impl;\n";
+        funcFile << "package main;\n";
 
         lines = func.getLines();
         for (auto line : lines) {
