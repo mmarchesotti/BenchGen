@@ -83,11 +83,9 @@ std::vector<std::string> ZigGeneratorArray::genIncludes() {
 
 std::vector<std::string> ZigGeneratorArray::genGlobalVars() {
     std::vector<std::string> temp = {};
-    temp.push_back("const std = @import(\"std\");");
-    temp.push_back("");
     temp.push_back("// DEBUG_FREE(" + this->name + ".id);");
-    temp.push_back("var gpa = std.heap.GeneralPurposeAllocator(.{}){};");
-    temp.push_back("const allocator = gpa.allocator();");
+    temp.push_back("pub var gpa = std.heap.GeneralPurposeAllocator(.{}){};");
+    temp.push_back("pub const allocator = gpa.allocator();");
     temp.push_back("");
     temp.push_back("const " + this->typeString + " = struct {");
     temp.push_back("    data: []u32,");
@@ -107,12 +105,13 @@ std::vector<std::string> ZigGeneratorArray::genParams(std::string paramName, std
     std::vector<std::string> temp = {};
     std::string dataSliceName = paramName + "_data";
 
-    temp.push_back("var " + dataSliceName + " = try allocator.alloc(*" + this->typeString + ", " + std::to_string(varsParams.size()) + ");");
+    temp.push_back("const " + dataSliceName + " = try allocator.alloc(*" + this->typeString + ", " + std::to_string(varsParams.size()) + ");");
+    
     for (int i = 0; i < (int)varsParams.size(); i++) {
         temp.push_back(dataSliceName + "[" + std::to_string(i) + "] = " + varsParams[i]->name + ";");
     }
 
-    temp.push_back("var " + paramName + " = " + this->typeString + "Param{");
+    temp.push_back("const " + paramName + " = " + this->typeString + "Param{");
     temp.push_back("    .data = " + dataSliceName + ",");
     temp.push_back("    .size = " + std::to_string(varsParams.size()) + ",");
     temp.push_back("};");

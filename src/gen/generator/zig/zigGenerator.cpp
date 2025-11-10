@@ -3,7 +3,7 @@
 #include <vector>
 
 void ZigGenerator::generateIncludes() {
-    includes.push_back("const std = @import(\"std\");");
+    includes.push_back("pub const std = @import(\"std\");");
     
     std::vector<std::string> varIncludes = VariableFactory::genIncludes(varType);
     for (auto var : varIncludes) {
@@ -49,21 +49,17 @@ void ZigGenerator::generateMainFunction() {
         "    // Garante que o alocador global seja limpo ao sair",
         "    defer _ = gpa.deinit();", 
         "",
-        "    var loopsFactor: i32 = 100;",
         "    var path_seed: u64 = 0;",
         "",
         "    // Aloca e processa argumentos da linha de comando",
-        "    var args = try std.process.argsAlloc(allocator);",
+        "    const args = try std.process.argsAlloc(allocator);",
         "    defer std.process.argsFree(allocator, args);",
         "",
-        "    var i: usize = 1;",
-        "    while (i < args.len) : (i += 1) {",
-        "        if (std.mem.eql(u8, args[i], \"-path-seed\")) {",
-        "            i += 1;",
-        "            if (i < args.len) { path_seed = std.fmt.parseUnsigned(u64, args[i], 10) catch 0; }",
-        "        } else if (std.mem.eql(u8, args[i], \"-loops-factor\")) {",
-        "            i += 1;",
-        "            if (i < args.len) { loopsFactor = std.fmt.parseInt(i32, args[i], 10) catch 100; }",
+		"    var arg_idx: usize = 1;",
+        "    while (arg_idx < args.len) : (arg_idx += 1) {",
+        "        if (std.mem.eql(u8, args[arg_idx], \"-path-seed\")) {",
+        "            arg_idx += 1;",
+        "            if (arg_idx < args.len) { path_seed = std.fmt.parseUnsigned(u64, args[arg_idx], 10) catch 0; }",
         "        }",
         "    }",
         "    // Reinicializa o PRNG global com a semente fornecida",
@@ -93,21 +89,30 @@ void ZigGenerator::startScope() {
 
 void ZigGenerator::startFunc(int funcId, int nParameters) {
     GeneratorFunction func = GeneratorFunction(funcId);
-    std::string funcHeader = "pub fn func" + std::to_string(funcId) + "(vars: *" + VariableFactory::genTypeString(varType) + "Param, ";
-    
-    for (int i = 0; i < nParameters; i++) {
-        funcHeader += "path" + std::to_string(i) + ": u64, ";
+ 
+	std::string funcHeader = "pub fn func" + std::to_string(funcId) + "(vars: *" + VariableFactory::genTypeString(varType) + "Param";
+    if (nParameters > 0) {
+        funcHeader += ", ";
+        for (int i = 0; i < nParameters; i++) {
+            funcHeader += "_path" + std::to_string(i) + ": u64, ";
+        }
+        funcHeader.pop_back();
+        funcHeader.pop_back();
     }
-    funcHeader += "loopsFactor: i32";
     funcHeader += ") !" + VariableFactory::genTypeString(varType) + " {";
-    
+
     func.addLine(funcHeader);
+
     functions.push_back(func);
     currentFunction.push(&(functions.back()));
     GeneratorScope scope = GeneratorScope();
     currentScope.push(scope);
     this->ifCounter.push(0);
     addLine("var pCounter: usize = vars.size;");
+
+    for (int i = 0; i < nParameters; i++) {
+        addLine("const path" + std::to_string(i) + " = _path" + std::to_string(i) + ";");
+    }
 }
 
 bool ZigGenerator::functionExists(int funcId) {
@@ -134,12 +139,16 @@ void ZigGenerator::callFunc(int funcId, int nParameters) {
     std::string param = createParams();
     int id = addVar(varType);
     GeneratorVariable* var = variables[id];
-    
-    std::string line = "var " + var->name + " = try func" + std::to_string(funcId) + "(&" + param + ", ";
 
-    for (int i = 0; i < nParameters; i++)
-        line += "try get_path(), ";
-    line += "loopsFactor";
+	std::string line = "const " + var->name + " = try func" + std::to_string(funcId) + "(&" + param;
+    if (nParameters > 0) {
+        line += ", ";
+        for (int i = 0; i < nParameters; i++) {
+            line += "try get_path(), ";
+        }
+        line.pop_back();
+        line.pop_back();
+    }
     line += ");";
     addLine(line);
 
@@ -171,6 +180,12 @@ void ZigGenerator::returnFunc(int returnVarPos) {
 
 void ZigGenerator::endScope() {
     std::string line = currentScope.top().getIndentationTabs(-1) + "}";
+    currentFunction.top()->addLine(line);
+    currentScope.pop();
+}
+
+void ZigGenerator::endIfScope() {
+	std::string line = currentScope.top().getIndentationTabs(-1) + "";
     currentFunction.top()->addLine(line);
     currentScope.pop();
 }

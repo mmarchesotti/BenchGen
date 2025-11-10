@@ -55,7 +55,7 @@ class ZigGenerator : public ProgrammingLanguageGenerator {
     void addLine(std::string, int = 0) override;
     void addLine(std::vector<std::string>, int = 0) override;
     void startScope() override;
-    void endIfScope() override {};
+    void endIfScope() override;
     void startFunc(int, int) override;
     bool functionExists(int) override;
     void callFunc(int, int) override;

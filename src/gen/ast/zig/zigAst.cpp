@@ -120,7 +120,7 @@ void ZigIf::gen(ProgrammingLanguageGenerator& generator) {
     generator.startScope();
     c1->gen(generator);
     generator.freeVars();
-    generator.endScope();
+    generator.endIfScope();
     line = "} else {";
     generator.addLine(line);
     generator.startScope();
