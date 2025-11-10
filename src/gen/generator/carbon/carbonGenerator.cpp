@@ -278,13 +278,13 @@ void CarbonGenerator::generateFiles(std::string benchmarkName) {
     std::ofstream includeFile;
     includeFile.open(sourceDir + includeName);
 
-    includeFile << "package main.impl;\n";
+    includeFile << "package main.impl;\n\n";
 
     for (auto include : includes) {
         includeFile << include << std::endl;
     }
 
-    file << "package main;\n";
+    file << "package main.impl;\n\n";
     file << std::endl;
 
     // Global variables
@@ -314,7 +314,7 @@ void CarbonGenerator::generateFiles(std::string benchmarkName) {
         std::ofstream funcFile;
         funcFile.open(sourceDir + funcSource);
 
-        funcFile << "package main;\n";
+        funcFile << "package main.impl;\n\n";
 
         lines = func.getLines();
         for (auto line : lines) {
