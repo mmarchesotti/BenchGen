@@ -11,12 +11,12 @@ void carbonprintIndentationSpaces(int indent) {
 std::string carbongenerateIfCondition(ProgrammingLanguageGenerator& generator) {
     bool isMain = generator.currentFunction.top()->insertBack;
     if (isMain) {
-        return "get_path() & 1";
+        return "(get_path() & 1) != 0";
     }
     int ifCounter = generator.ifCounter.top();
     int pathNumber = std::ceil((ifCounter + 1) / 64.0) - 1;
     int bit = std::pow(2, ifCounter % 64);
-    std::string condition = "PATH" + std::to_string(pathNumber) + " & " + std::to_string(bit);
+    std::string condition = "(PATH" + std::to_string(pathNumber) + " & " + std::to_string(bit)+") != 0";
     return condition;
 }
 
@@ -80,15 +80,15 @@ void CarbonContains::gen(ProgrammingLanguageGenerator& generator) {
 void CarbonLoop::gen(ProgrammingLanguageGenerator& generator) {
 
     std::string loopVar = "loop" + std::to_string(generator.loopCounter);
-    std::string loopVarLine = "unsigned int " + loopVar + " = 0;";
+    std::string loopVarLine = "var " + loopVar + ": u32 = 0;";
     generator.addLine(loopVarLine);
 
     std::string loopLimitVar = "loopLimit" + std::to_string(generator.loopCounter);
     std::string loopLimitValue = "(50)/" + std::to_string(generator.loopLevel + 1) + " + 1";
-    std::string loopLimitLine = "unsigned int " + loopLimitVar + " = " + loopLimitValue + ";";
+    std::string loopLimitLine = "var " + loopLimitVar + ": u32 = " + loopLimitValue + ";";
     generator.addLine(loopLimitLine);
 
-    std::string forLine = "for(; " + loopVar + " < " + loopLimitVar + "; " + loopVar + "++) {";
+    std::string forLine = "for(" + loopVar + " in " + "0..."+loopLimitVar + ") {";
     generator.addLine(forLine);
 
     generator.startScope();

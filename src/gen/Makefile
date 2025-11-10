@@ -22,6 +22,7 @@ DEPS = $(OBJ)factory.o \
 	   $(OBJ)juliaGeneratorVariable.o  \
 	   $(OBJ)goGeneratorVariable.o \
 	   $(OBJ)vGeneratorVariable.o \
+	   $(OBJ)carbonGeneratorVariable.o \
 	   $(OBJ)juliaGenerator.o \
 	   $(OBJ)generatorScope.o \
 	   $(OBJ)languageGenerator.o \
@@ -30,6 +31,7 @@ DEPS = $(OBJ)factory.o \
 	   $(OBJ)rustGenerator.o \
 	   $(OBJ)goGenerator.o \
 	   $(OBJ)vGenerator.o \
+	   $(OBJ)carbonGenerator.o \
 	   $(OBJ)lexer.o \
 	   $(OBJ)lSystem.o \
 	   $(OBJ)parser.o \
@@ -57,6 +59,8 @@ $(OBJ)goAst.o: ast/go/goAst.cpp | $(OBJ)
 	$(CC) $(CFLAGS) -I $(IMP) -c $^ -o $@ -Wno-return-type
 $(OBJ)vAst.o: ast/v/vAst.cpp | $(OBJ)
 	$(CC) $(CFLAGS) -I $(IMP) -c $^ -o $@ -Wno-return-type
+$(OBJ)carbonAst.o: ast/carbon/carbonAst.cpp | $(OBJ)
+	$(CC) $(CFLAGS) -I $(IMP) -c $^ -o $@ -Wno-return-type
 $(OBJ)factory.o: generator/factory.cpp | $(OBJ)
 	$(CC) $(CFLAGS) -I $(IMP) -c $^ -o $@ -Wno-return-type
 $(OBJ)generatorFunction.o: generator/generatorFunction.cpp | $(OBJ)
@@ -75,7 +79,7 @@ $(OBJ)goGeneratorVariable.o: generator/go/goGeneratorVariable.cpp | $(OBJ)
 	$(CC) $(CFLAGS) -I $(IMP) -c $^ -o $@ -Wno-return-type
 $(OBJ)vGeneratorVariable.o: generator/v/vGeneratorVariable.cpp | $(OBJ)
 	$(CC) $(CFLAGS) -I $(IMP) -c $^ -o $@ -Wno-return-type
-$(OBJ)carbonGeneratorVariable.o: generator/carbon/vGeneratorVariable.cpp | $(OBJ)
+$(OBJ)carbonGeneratorVariable.o: generator/carbon/carbonGeneratorVariable.cpp | $(OBJ)
 	$(CC) $(CFLAGS) -I $(IMP) -c $^ -o $@ -Wno-return-type
 $(OBJ)generatorScope.o: generator/generatorScope.cpp | $(OBJ)
 	$(CC) $(CFLAGS) -I $(IMP) -c $^ -o $@ -Wno-return-type
@@ -92,6 +96,8 @@ $(OBJ)juliaGenerator.o: generator/julia/juliaGenerator.cpp | $(OBJ)
 $(OBJ)goGenerator.o: generator/go/goGenerator.cpp | $(OBJ)
 	$(CC) $(CFLAGS) -I $(IMP) -c $^ -o $@ -Wno-return-type
 $(OBJ)vGenerator.o: generator/v/vGenerator.cpp | $(OBJ)
+	$(CC) $(CFLAGS) -I $(IMP) -c $^ -o $@ -Wno-return-type
+$(OBJ)carbonGenerator.o: generator/carbon/carbonGenerator.cpp | $(OBJ)
 	$(CC) $(CFLAGS) -I $(IMP) -c $^ -o $@ -Wno-return-type
 $(OBJ)lexer.o: lexer/lexer.cpp | $(OBJ)
 	$(CC) $(CFLAGS) -I $(IMP) -c $^ -o $@ -Wno-return-type

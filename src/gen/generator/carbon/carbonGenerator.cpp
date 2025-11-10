@@ -1,20 +1,20 @@
 #include "carbonGenerator.h"
 
 void CarbonGenerator::generateIncludes() {
-    includes.push_back("#include <stdio.h>");
-    includes.push_back("#include <stdlib.h>");
-    includes.push_back("#include <string.h>");
-    includes.push_back("#ifdef DEBUG");
-    includes.push_back("    #define DEBUG_NEW(id) printf(\"[NEW]\\t\\tId \%d created\\n\", id)");
-    includes.push_back("    #define DEBUG_COPY(id) printf(\"[COPY]\\t\\tId \%d copied\\n\", id)");
-    includes.push_back("    #define DEBUG_RETURN(id) printf(\"[RETURN]\\tId \%d returned\\n\", id)");
-    includes.push_back("    #define DEBUG_FREE(id) printf(\"[FREE]\\t\\tId \%d freed\\n\", id)");
-    includes.push_back("#else");
-    includes.push_back("    #define DEBUG_NEW(id)");
-    includes.push_back("    #define DEBUG_COPY(id)");
-    includes.push_back("    #define DEBUG_RETURN(id)");
-    includes.push_back("    #define DEBUG_FREE(id)");
-    includes.push_back("#endif");
+    //includes.push_back("#include <stdio.h>");
+    //includes.push_back("#include <stdlib.h>");
+    //includes.push_back("#include <string.h>");
+    //includes.push_back("#ifdef DEBUG");
+    //includes.push_back("    #define DEBUG_NEW(id) printf(\"[NEW]\\t\\tId \%d created\\n\", id)");
+    //includes.push_back("    #define DEBUG_COPY(id) printf(\"[COPY]\\t\\tId \%d copied\\n\", id)");
+    //includes.push_back("    #define DEBUG_RETURN(id) printf(\"[RETURN]\\tId \%d returned\\n\", id)");
+    //includes.push_back("    #define DEBUG_FREE(id) printf(\"[FREE]\\t\\tId \%d freed\\n\", id)");
+    //includes.push_back("#else");
+    //includes.push_back("    #define DEBUG_NEW(id)");
+    //includes.push_back("    #define DEBUG_COPY(id)");
+    //includes.push_back("    #define DEBUG_RETURN(id)");
+    //includes.push_back("    #define DEBUG_FREE(id)");
+    //includes.push_back("#endif");
     std::vector<std::string> varIncludes = VariableFactory::genIncludes(varType);
     for (auto var : varIncludes) {
         globalVars.push_back(var);
@@ -30,33 +30,35 @@ void CarbonGenerator::generateGlobalVars() {
 
 void CarbonGenerator::generateRandomNumberGenerator() {
     GeneratorFunction rngFunction = GeneratorFunction(-1);
-    rngFunction.addLine({"unsigned long get_path() {",
-                         "   const char* path = getenv(\"BENCH_PATH\");",
-                         "   if(path != NULL) { ",
-                         "      return atoi(path);",
+    rngFunction.addLine({"fn get_path() -> u64 {",
+                         "   let path: String* = getenv(\"BENCH_PATH\");",
+                         "   if(path != null) { ",
+                         "      return atoi(*path) as u64;",
                          "   }else {",
-                         "      unsigned long n = rand();",
+                         "      var n: u64 = rand();",
                          "      return (n << 32) | rand();",
                          "   }",
                          "}"});
+        
     functions.push_back(rngFunction);
 }
 
 void CarbonGenerator::generateMainFunction() {
     mainFunction = GeneratorFunction(-1);
-    mainFunction.addLine({"int main(int argc, char** argv) {",
-                          "   int loopsFactor = 100;",
+    mainFunction.addLine({"fn Main(argv: Array<String>) -> i32 {",
+                          "   var loopsFactor: i32 = 100;",
                           "   srand(0);",
-                          "   for (int i = 1; i < argc; i++) {",
-                          "      if (strcmp(argv[i], \"-path-seed\") == 0) {",
-                          "         i++;",
-                          "         if (i < argc) {",
+                          "   var i: i32 = 1;",
+                          "   for (var i: i32 = 0; i < argv.size(); i += 1) {",
+                          "      if (argv[i] == \"-path-seed\") {",
+                          "         i += 1;",
+                          "         if (i < argv.size()) {",
                           "            srand(atoi(argv[i]));",
                           "         }",
                           "      }",
-                          "      else if (strcmp(argv[i], \"-loops-factor\") == 0) {",
-                          "         i++;",
-                          "         if (i < argc) {",
+                          "      else if (argv[i] == \"-loops-factor\") {",
+                          "         i += 1;",
+                          "         if (i < argv.size()) {",
                           "            loopsFactor = atoi(argv[i]);",
                           "         }",
                           "      }",
@@ -86,20 +88,20 @@ void CarbonGenerator::startScope() {
 
 void CarbonGenerator::startFunc(int funcId, int nParameters) {
     GeneratorFunction func = GeneratorFunction(funcId);
-    std::string funcHeader = VariableFactory::genTypeString(varType) + "* func" + std::to_string(funcId) + "(" + VariableFactory::genTypeString(varType) + "_param* vars, ";
+    std::string funcHeader = "fn func" + std::to_string(funcId) + "(vars: &"+ VariableFactory::genTypeString(varType) + "_param, ";
     
     for (int i = 0; i < nParameters; i++) {
-        funcHeader += "const unsigned long PATH" + std::to_string(i) + ", ";
+        funcHeader += "var PATH" + std::to_string(i) + ": u64, ";
     }
-    funcHeader += "int loopsFactor";
-    funcHeader += ") {";
+    funcHeader += "var loopsFactor: i32";
+    funcHeader += ") -> " + VariableFactory::genTypeString(varType) +"{";
     func.addLine(funcHeader);
     functions.push_back(func);
     currentFunction.push(&(functions.back()));
     GeneratorScope scope = GeneratorScope();
     currentScope.push(scope);
     this->ifCounter.push(0);
-    addLine("size_t pCounter = vars->size;");
+    addLine("var pCounter: usize = vars.size;");
 }
 
 bool CarbonGenerator::functionExists(int funcId) {
@@ -128,7 +130,7 @@ void CarbonGenerator::callFunc(int funcId, int nParameters) {
 
     int id = addVar(varType);
     GeneratorVariable* var = variables[id];
-    std::string line = var->typeString + "* " + var->name + " = func" + std::to_string(funcId) + "(&" + param + ", ";
+    std::string line =  "var "+ var->name + ": " + var->typeString + " = func" + std::to_string(funcId) + "(&" + param + ", ";
 
     for (int i = 0; i < nParameters; i++)
         line += "get_path(), ";
@@ -136,8 +138,8 @@ void CarbonGenerator::callFunc(int funcId, int nParameters) {
     line += ");";
     addLine(line);
 
-    line = "DEBUG_RETURN(" + var->name + "->id);";
-    addLine(line);
+    //line = "DEBUG_RETURN(" + var->name + "->id);";
+    //addLine(line);
 
     line = "free(" + param + ".data);";
     addLine(line);
@@ -263,8 +265,8 @@ void CarbonGenerator::genReadme(std::string dir, std::string target) {
 
 void CarbonGenerator::generateFiles(std::string benchmarkName) {
     std::string benchDir = benchmarkName + "/";
-    std::string sourceFile = benchmarkName + ".c";
-    std::string includeName = benchmarkName + ".h";
+    std::string sourceFile = benchmarkName + ".carbon";
+    std::string includeName = benchmarkName + "_head.carbon";
     std::string sourceDir = benchDir + "src/";
 
     std::filesystem::create_directory(benchDir);
@@ -276,14 +278,11 @@ void CarbonGenerator::generateFiles(std::string benchmarkName) {
     std::ofstream includeFile;
     includeFile.open(sourceDir + includeName);
 
-    // Includes
-    includeFile << "#ifndef " + benchmarkName + "\n";
-    includeFile << "#define " + benchmarkName + "\n";
-
     for (auto include : includes) {
         includeFile << include << std::endl;
     }
-    file << "#include \"" << includeName << "\"";
+
+    file << "package main;\n";
     file << std::endl;
 
     // Global variables
@@ -293,13 +292,6 @@ void CarbonGenerator::generateFiles(std::string benchmarkName) {
     includeFile << std::endl;
 
     // Headers
-    for (auto func : functions) {
-        std::string header = func.getLines()[0];
-        header.pop_back();
-        header.pop_back();
-        header += ";";
-        includeFile << header << std::endl;
-    }
     file << std::endl;
 
     // Main function
@@ -313,13 +305,14 @@ void CarbonGenerator::generateFiles(std::string benchmarkName) {
     for (auto func : functions) {
         std::string funcSource;
         if (func.getId() == -1) {
-            funcSource = "path.c";
+            funcSource = "path.carbon";
         } else {
-            funcSource = "func" + std::to_string(func.getId()) + ".c";
+            funcSource = "func" + std::to_string(func.getId()) + ".carbon";
         }
         std::ofstream funcFile;
         funcFile.open(sourceDir + funcSource);
-        funcFile << "#include \"" << includeName << "\" \n";
+
+        funcFile << "package main;\n";
 
         lines = func.getLines();
         for (auto line : lines) {
@@ -328,9 +321,9 @@ void CarbonGenerator::generateFiles(std::string benchmarkName) {
         funcFile << std::endl;
         funcFile.close();
     }
-    includeFile << "#endif";
     this->genMakefile(benchDir, benchmarkName);
     this->genReadme(benchDir, benchmarkName);
     includeFile.close();
     file.close();
 }
+
