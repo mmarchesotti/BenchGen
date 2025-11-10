@@ -2,7 +2,7 @@
 
 
 CarbonGeneratorArray::CarbonGeneratorArray(int size, int id) {
-    this->typeString = "Array";
+    this->typeString = "MArray";
     this->totalSize = size;
     this->id = id;
     this->name = VarTypes::ARRAY + std::to_string(id);
@@ -22,7 +22,7 @@ std::vector<std::string> CarbonGeneratorArray::new_(bool inFunction) {
         temp.push_back("   " + this->name + ".refC = 1;");
         temp.push_back("   " + this->name + ".id = " + std::to_string(this->id) + ";");
         temp.push_back("   " + this->name + ".data = alloc<u32>(" + this->name + ".size);");
-        temp.push_back("   for (var i: i32 = 0; i < "+this->name+".size; i += 1) {");
+        temp.push_back("   for (var i: i32 in 0..."+this->name+".size) {");
         temp.push_back("        "+this->name+".data[i] = 0;");
         temp.push_back("   }");
       //  temp.push_back("   DEBUG_NEW(" + this->name + "->id);");
@@ -33,7 +33,7 @@ std::vector<std::string> CarbonGeneratorArray::new_(bool inFunction) {
         temp.push_back(this->name + ".refC = 1;");
         temp.push_back(this->name + ".id = " + std::to_string(this->id) + ";");
         temp.push_back(this->name + ".data = alloc<u32>(" + this->name + ".size);");
-        temp.push_back("for (var i: i32 = 0; i < "+this->name+".size; i += 1) {");
+        temp.push_back("for (var i: i32 in 0..."+this->name+".size) {");
         temp.push_back("     "+this->name+".data[i] = 0;");
         temp.push_back("}");
        // temp.push_back("DEBUG_NEW(" + this->name + "->id);");
@@ -87,14 +87,14 @@ std::vector<std::string> CarbonGeneratorArray::genIncludes() {
 
 std::vector<std::string> CarbonGeneratorArray::genGlobalVars() {
     std::vector<std::string> temp = {};
-    temp.push_back("class Array {");
+    temp.push_back("class MArray {");
     temp.push_back("   var data: u32*;");
     temp.push_back("   var size: u64;");
     temp.push_back("   var refC: u64;");
     temp.push_back("   var id: i32;");
     temp.push_back("}");
 
-    temp.push_back("class Array_param {");
+    temp.push_back("class MArray_param {");
     temp.push_back("   var data: Array**;");
     temp.push_back("   var size: u64;");
     temp.push_back("}");
