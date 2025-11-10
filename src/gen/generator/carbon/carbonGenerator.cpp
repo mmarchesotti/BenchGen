@@ -278,6 +278,8 @@ void CarbonGenerator::generateFiles(std::string benchmarkName) {
     std::ofstream includeFile;
     includeFile.open(sourceDir + includeName);
 
+    includeFile << "package main;\n";
+
     for (auto include : includes) {
         includeFile << include << std::endl;
     }
