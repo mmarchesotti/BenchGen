@@ -88,10 +88,11 @@ void CarbonLoop::gen(ProgrammingLanguageGenerator& generator) {
     std::string loopLimitLine = "var " + loopLimitVar + ": u32 = " + loopLimitValue + ";";
     generator.addLine(loopLimitLine);
 
-    std::string forLine = "for(" + loopVar + ": in " + "0..."+loopLimitVar + ") {";
+    std::string forLine = "while(" + loopVar +" < "+loopLimitVar + ") {";
     generator.addLine(forLine);
 
     generator.startScope();
+    generator.addLine("     "+loopVar+" += 1;");
     generator.loopLevel++;
     generator.loopCounter++;
     code->gen(generator);
