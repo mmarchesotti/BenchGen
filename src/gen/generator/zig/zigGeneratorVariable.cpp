@@ -18,7 +18,6 @@ std::vector<std::string> ZigGeneratorArray::new_(bool inFunction) {
     temp.push_back("    pCounter -= 1;");
     temp.push_back("    " + this->name + " = vars.data[pCounter];");
     temp.push_back("    " + this->name + ".refC += 1;");
-    temp.push_back("    // DEBUG_COPY(" + this->name + ".id);");
     temp.push_back("} else {");
     temp.push_back("    " + this->name + " = try allocator.create(" +
                    this->typeString + ");");
@@ -29,7 +28,6 @@ std::vector<std::string> ZigGeneratorArray::new_(bool inFunction) {
                    ";");
     temp.push_back("    " + this->name + ".*.data = try allocator.alloc(u32, " +
                    this->name + ".*.size);");
-    temp.push_back("    // DEBUG_COPY(" + this->name + ".id);");
     temp.push_back("}");
   } else {
     temp.push_back(this->name + " = try allocator.create(" + this->typeString +
@@ -40,7 +38,6 @@ std::vector<std::string> ZigGeneratorArray::new_(bool inFunction) {
     temp.push_back(this->name + ".*.id = " + std::to_string(this->id) + ";");
     temp.push_back(this->name + ".*.data = try allocator.alloc(u32, " +
                    this->name + ".*.size);");
-    temp.push_back("    // DEBUG_NEW(" + this->name + ".id);");
   }
   return temp;
 }
@@ -82,7 +79,6 @@ std::vector<std::string> ZigGeneratorArray::free() {
   temp.push_back("if (" + this->name + ".refC == 0) {");
   temp.push_back("    allocator.free(" + this->name + ".data);");
   temp.push_back("    allocator.destroy(" + this->name + ");");
-  temp.push_back("    // DEBUG_FREE(" + this->name + ".id);");
   temp.push_back("}");
   return temp;
 }
@@ -91,7 +87,6 @@ std::vector<std::string> ZigGeneratorArray::genIncludes() { return {}; }
 
 std::vector<std::string> ZigGeneratorArray::genGlobalVars() {
   std::vector<std::string> temp = {};
-  temp.push_back("// DEBUG_FREE(" + this->name + ".id);");
   temp.push_back("pub var gpa = std.heap.GeneralPurposeAllocator(.{}){};");
   temp.push_back("pub const allocator = gpa.allocator();");
   temp.push_back("");
@@ -111,7 +106,7 @@ std::vector<std::string> ZigGeneratorArray::genGlobalVars() {
 
 std::vector<std::string>
 ZigGeneratorArray::genParams(std::string paramName,
-                             std::vector<GeneratorVariable *> varsParams) {
+                             std::vector<GeneratorVariable*> varsParams) {
   std::vector<std::string> temp = {};
   std::string dataSliceName = paramName + "_data";
 

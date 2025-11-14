@@ -1,4 +1,5 @@
 #include "zigGenerator.h"
+
 #include <string>
 #include <vector>
 
@@ -19,7 +20,6 @@ void ZigGenerator::generateGlobalVars() {
   }
 
   globalVars.push_back("");
-  globalVars.push_back("// PRNG Global para execuções determinísticas");
   globalVars.push_back("pub var prng = std.Random.DefaultPrng.init(0);");
   globalVars.push_back("pub const random = prng.random();");
 }
@@ -41,27 +41,17 @@ void ZigGenerator::generateRandomNumberGenerator() {
 void ZigGenerator::generateMainFunction() {
   mainFunction = GeneratorFunction(-1);
   mainFunction.addLine(
-      {"pub fn main() !void {",
-       "    // Garante que o alocador global seja limpo ao sair",
-       "    defer _ = lib.gpa.deinit();",
-       "",
-       "    var path_seed: u64 = 0;",
-       "",
-       "    // Aloca e processa argumentos da linha de comando",
+      {"pub fn main() !void {", "    defer _ = lib.gpa.deinit();", "",
+       "    var path_seed: u64 = 0;", "",
        "    const args = try std.process.argsAlloc(allocator);",
-       "    defer std.process.argsFree(allocator, args);",
-       "",
+       "    defer std.process.argsFree(allocator, args);", "",
        "    var arg_idx: usize = 1;",
        "    while (arg_idx < args.len) : (arg_idx += 1) {",
        "        if (std.mem.eql(u8, args[arg_idx], \"-path-seed\")) {",
        "            arg_idx += 1;",
        "            if (arg_idx < args.len) { path_seed = ",
-       "std.fmt.parseUnsigned(u64, args[arg_idx], 10) catch 0; }",
-       "        }",
-       "    }",
-       "    // Reinicializa o PRNG global com a semente fornecida",
-       "    lib.prng = std.Random.DefaultPrng.init(path_seed);",
-       "}"});
+       "std.fmt.parseUnsigned(u64, args[arg_idx], 10) catch 0; }", "        }",
+       "    }", "    lib.prng = std.Random.DefaultPrng.init(path_seed);", "}"});
   mainFunction.insertBack = true;
   currentFunction.push(&mainFunction);
   startScope();
@@ -126,7 +116,7 @@ bool ZigGenerator::functionExists(int funcId) {
 
 std::string ZigGenerator::createParams() {
   std::string name = "params" + std::to_string(currentScope.top().addParam());
-  std::vector<GeneratorVariable *> varsParams;
+  std::vector<GeneratorVariable*> varsParams;
   for (int i = 0; i < (int)currentScope.top().avaiableVarsID.size(); i++) {
     varsParams.push_back(variables[currentScope.top().avaiableVarsID[i]]);
   }
@@ -139,7 +129,7 @@ std::string ZigGenerator::createParams() {
 void ZigGenerator::callFunc(int funcId, int nParameters) {
   std::string param = createParams();
   int id = addVar(varType);
-  GeneratorVariable *var = variables[id];
+  GeneratorVariable* var = variables[id];
 
   std::string line = "const " + var->name + " = try func" +
                      std::to_string(funcId) + "(&" + param;
@@ -170,14 +160,14 @@ void ZigGenerator::freeVars(bool hasReturn, int returnVarPos) {
   for (int i = 0; i < numberOfAddedVars; i++) {
     int varPos = availableVarsId.size() - i - 1;
     if (!hasReturn || varPos != returnVarPos) {
-      GeneratorVariable *var = variables[availableVarsId[varPos]];
+      GeneratorVariable* var = variables[availableVarsId[varPos]];
       addLine(var->free());
     }
   }
 }
 
 void ZigGenerator::returnFunc(int returnVarPos) {
-  GeneratorVariable *var =
+  GeneratorVariable* var =
       variables[currentScope.top().avaiableVarsID[returnVarPos]];
   addLine("return " + var->name + ";");
 }
@@ -261,6 +251,7 @@ void ZigGenerator::generateFiles(std::string benchmarkName) {
   this->genMakefile(benchDir, benchmarkName);
   this->genReadme(benchDir, benchmarkName);
 
+  // --- Generate lib.zig (core types, globals, utils) ---
   std::ofstream libFile;
   libFile.open(sourceDir + "lib.zig");
 

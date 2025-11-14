@@ -6,7 +6,7 @@ void zigprintIndentationSpaces(int indent) {
   }
 }
 
-std::string ziggenerateIfCondition(ProgrammingLanguageGenerator &generator) {
+std::string ziggenerateIfCondition(ProgrammingLanguageGenerator& generator) {
   bool isMain = generator.currentFunction.top()->insertBack;
   if (isMain) {
     return "(try get_path() & 1) != 0";
@@ -19,60 +19,60 @@ std::string ziggenerateIfCondition(ProgrammingLanguageGenerator &generator) {
   return condition;
 }
 
-void ZigStatementCode::gen(ProgrammingLanguageGenerator &generator) {
+void ZigStatementCode::gen(ProgrammingLanguageGenerator& generator) {
   stmt->gen(generator);
   code->gen(generator);
 }
 
-void ZigLambdaCode::gen(ProgrammingLanguageGenerator &generator) {}
+void ZigLambdaCode::gen(ProgrammingLanguageGenerator& generator) {}
 
-void ZigId::gen(ProgrammingLanguageGenerator &generator) {}
+void ZigId::gen(ProgrammingLanguageGenerator& generator) {}
 
-void ZigInsert::gen(ProgrammingLanguageGenerator &generator) {
+void ZigInsert::gen(ProgrammingLanguageGenerator& generator) {
   int varCount = generator.currentScope.top().avaiableVarsID.size();
   if (varCount == 0)
     return;
 
   int varPos = rand() % varCount;
-  GeneratorVariable *var =
+  GeneratorVariable* var =
       generator.variables[generator.currentScope.top().avaiableVarsID[varPos]];
   std::vector<std::string> lines = var->insert();
   generator.addLine(lines);
 }
 
-void ZigRemove::gen(ProgrammingLanguageGenerator &generator) {
+void ZigRemove::gen(ProgrammingLanguageGenerator& generator) {
   int varCount = generator.currentScope.top().avaiableVarsID.size();
   if (varCount == 0)
     return;
 
   int varPos = rand() % varCount;
-  GeneratorVariable *var =
+  GeneratorVariable* var =
       generator.variables[generator.currentScope.top().avaiableVarsID[varPos]];
   std::vector<std::string> lines = var->remove();
   generator.addLine(lines);
 }
 
-void ZigNew::gen(ProgrammingLanguageGenerator &generator) {
+void ZigNew::gen(ProgrammingLanguageGenerator& generator) {
   int id = generator.addVar(generator.varType);
   std::vector<std::string> lines = generator.variables[id]->new_(
       !generator.currentFunction.top()->insertBack);
   generator.addLine(lines);
 }
 
-void ZigContains::gen(ProgrammingLanguageGenerator &generator) {
+void ZigContains::gen(ProgrammingLanguageGenerator& generator) {
   int varCount = generator.currentScope.top().getVarCounter();
   if (varCount == 0)
     return;
 
   int varPos = rand() % varCount;
-  GeneratorVariable *var =
+  GeneratorVariable* var =
       generator.variables[generator.currentScope.top().avaiableVarsID[varPos]];
   std::vector<std::string> lines =
       var->contains(!generator.currentFunction.top()->insertBack);
   generator.addLine(lines);
 }
 
-void ZigLoop::gen(ProgrammingLanguageGenerator &generator) {
+void ZigLoop::gen(ProgrammingLanguageGenerator& generator) {
   std::string loopVar = "loop" + std::to_string(generator.loopCounter);
   std::string loopVarLine = "var " + loopVar + ": usize = 0;";
   generator.addLine(loopVarLine);
@@ -98,7 +98,7 @@ void ZigLoop::gen(ProgrammingLanguageGenerator &generator) {
   generator.loopLevel--;
 }
 
-void ZigCall::gen(ProgrammingLanguageGenerator &generator) {
+void ZigCall::gen(ProgrammingLanguageGenerator& generator) {
   int nParameters = std::ceil(conditionalCounts / 64.0);
   generator.callFunc(id, nParameters);
   if (!generator.functionExists(id)) {
@@ -118,9 +118,9 @@ void ZigCall::gen(ProgrammingLanguageGenerator &generator) {
   }
 }
 
-void ZigSeq::gen(ProgrammingLanguageGenerator &generator) {}
+void ZigSeq::gen(ProgrammingLanguageGenerator& generator) {}
 
-void ZigIf::gen(ProgrammingLanguageGenerator &generator) {
+void ZigIf::gen(ProgrammingLanguageGenerator& generator) {
   std::string condition = ziggenerateIfCondition(generator);
   generator.ifCounter.top()++;
   std::string line = "if (" + condition + ") {";
