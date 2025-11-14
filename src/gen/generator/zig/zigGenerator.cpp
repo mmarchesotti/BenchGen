@@ -60,7 +60,7 @@ void ZigGenerator::generateMainFunction() {
        "        }",
        "    }",
        "    // Reinicializa o PRNG global com a semente fornecida",
-       "    prng = std.Random.DefaultPrng.init(path_seed);",
+       "    lib.prng = std.Random.DefaultPrng.init(path_seed);",
        "}"});
   mainFunction.insertBack = true;
   currentFunction.push(&mainFunction);
@@ -98,7 +98,7 @@ void ZigGenerator::startFunc(int funcId, int nParameters) {
     funcHeader.pop_back();
     funcHeader.pop_back();
   }
-  funcHeader += ") !" + VariableFactory::genTypeString(varType) + " {";
+  funcHeader += ") !*" + VariableFactory::genTypeString(varType) + " {";
 
   func.addLine(funcHeader);
 
@@ -179,7 +179,7 @@ void ZigGenerator::freeVars(bool hasReturn, int returnVarPos) {
 void ZigGenerator::returnFunc(int returnVarPos) {
   GeneratorVariable *var =
       variables[currentScope.top().avaiableVarsID[returnVarPos]];
-  addLine("return " + var->name + ".*;");
+  addLine("return " + var->name + ";");
 }
 
 void ZigGenerator::endScope() {
@@ -290,8 +290,6 @@ void ZigGenerator::generateFiles(std::string benchmarkName) {
 
   mainFile << "const std = lib.std;\n";
   mainFile << "const allocator = lib.allocator;\n";
-  mainFile << "var prng = lib.prng;\n";
-  mainFile << "const ranaom = lib.random;\n";
   mainFile << "const " + VariableFactory::genTypeString(varType) + " = lib." +
                   VariableFactory::genTypeString(varType) + ";\n";
   mainFile << "const " + VariableFactory::genTypeString(varType) +
@@ -306,6 +304,8 @@ void ZigGenerator::generateFiles(std::string benchmarkName) {
     }
   }
   mainFile << std::endl;
+
+  this->freeVars();
 
   auto mainLines = mainFunction.getLines();
   for (auto line : mainLines) {

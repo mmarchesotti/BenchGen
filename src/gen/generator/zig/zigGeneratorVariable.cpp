@@ -66,7 +66,7 @@ std::vector<std::string> ZigGeneratorArray::contains(bool shouldReturn) {
   temp.push_back("    if (" + this->name +
                  ".data[i] == " + std::to_string(compare) + ") {");
   if (shouldReturn) {
-    temp.push_back("        return " + this->name + ".*;");
+    temp.push_back("        return " + this->name + ";");
   } else {
     temp.push_back("        " + this->name +
                    ".data[i] += " + std::to_string(compare) + ";");
