@@ -265,15 +265,58 @@ void ZigGenerator::generateFiles(std::string benchmarkName) {
   }
   libFile << std::endl;
 
+  // Find and write the get_path function (non-main, id == -1)
   for (auto func : functions) {
-    auto lines = func.getLines();
-    for (auto line : lines) {
-      libFile << line << std::endl;
+    if (func.getId() == -1 && !func.insertBack) {
+      auto lines = func.getLines();
+      for (auto line : lines) {
+        libFile << line << std::endl;
+      }
+      libFile << std::endl;
+      break;  // Assume only one utility function
     }
-    libFile << std::endl;
   }
   libFile.close();
 
+  // --- Generate func(index).zig files ---
+  std::string arrayType = VariableFactory::genTypeString(varType);
+  std::string paramType = arrayType + "Param";
+
+  for (auto& func : functions) {
+    if (func.getId() != -1) {
+      std::string funcFileName =
+          sourceDir + "func" + std::to_string(func.getId()) + ".zig";
+      std::ofstream funcFile;
+      funcFile.open(funcFileName);
+
+      funcFile << "const lib = @import(\"lib.zig\");\n";
+      funcFile << "const std = lib.std;\n";
+      funcFile << "const allocator = lib.allocator;\n";
+      funcFile << "const " + arrayType + " = lib." + arrayType + ";\n";
+      funcFile << "const " + paramType + " = lib." + paramType + ";\n";
+      funcFile << "const get_path = lib.get_path;\n\n";
+
+      // Add imports for *all other* functions
+      for (auto& func_dep : functions) {
+        if (func_dep.getId() != -1 && func_dep.getId() != func.getId()) {
+          std::string depIdStr = std::to_string(func_dep.getId());
+          funcFile << "const func" + depIdStr + " = @import(\"func" + depIdStr +
+                          ".zig\").func" + depIdStr + ";\n";
+        }
+      }
+      funcFile << "\n";
+
+      // Write the function's actual code
+      auto lines = func.getLines();
+      for (auto line : lines) {
+        funcFile << line << std::endl;
+      }
+      funcFile << std::endl;
+      funcFile.close();
+    }
+  }
+
+  // --- Generate main.zig ---
   std::ofstream mainFile;
   mainFile.open(sourceDir + "main.zig");
 
@@ -281,21 +324,21 @@ void ZigGenerator::generateFiles(std::string benchmarkName) {
 
   mainFile << "const std = lib.std;\n";
   mainFile << "const allocator = lib.allocator;\n";
-  mainFile << "const " + VariableFactory::genTypeString(varType) + " = lib." +
-                  VariableFactory::genTypeString(varType) + ";\n";
-  mainFile << "const " + VariableFactory::genTypeString(varType) +
-                  "Param = lib." + VariableFactory::genTypeString(varType) +
-                  "Param;\n";
-  mainFile << "const get_path = lib.get_path;\n";
+  mainFile << "const " + arrayType + " = lib." + arrayType + ";\n";
+  mainFile << "const " + paramType + " = lib." + paramType + ";\n";
+  mainFile << "const get_path = lib.get_path;\n\n";
 
+  // Import all generated functions
   for (auto func : functions) {
     if (func.getId() != -1) {
-      mainFile << "const func" + std::to_string(func.getId()) + " = lib.func" +
-                      std::to_string(func.getId()) + ";\n";
+      std::string funcIdStr = std::to_string(func.getId());
+      mainFile << "const func" + funcIdStr + " = @import(\"func" + funcIdStr +
+                      ".zig\").func" + funcIdStr + ";\n";
     }
   }
   mainFile << std::endl;
 
+  // Call freeVars for the main scope before writing the function
   this->freeVars();
 
   auto mainLines = mainFunction.getLines();
