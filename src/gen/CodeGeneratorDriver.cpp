@@ -57,7 +57,8 @@ int main(int argc, char const* argv[]) {
         language != ProgrammingLanguage::GO &&
         language != ProgrammingLanguage::V &&
         language != ProgrammingLanguage::CARBON &&
-        language != ProgrammingLanguage::ZIG)
+        language != ProgrammingLanguage::ZIG &&
+        language != ProgrammingLanguage::ODIN)
     {
         std::cout << "Programming language " + language + " is wrong!" << std::endl;
         std::cout << "Avaliable '" +
@@ -66,6 +67,7 @@ int main(int argc, char const* argv[]) {
         ProgrammingLanguage::RUST + "', '" +
         ProgrammingLanguage::JULIA + "', '" +
 		ProgrammingLanguage::CARBON + "', '" +
+		ProgrammingLanguage::ODIN + "', '" +
         ProgrammingLanguage::GO + "', '" +
         ProgrammingLanguage::V + "' and '" +
         ProgrammingLanguage::ZIG + "'"

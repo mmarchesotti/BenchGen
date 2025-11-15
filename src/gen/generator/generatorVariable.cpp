@@ -8,6 +8,7 @@
 #include "v/vGeneratorVariable.h"
 #include "carbon/carbonGeneratorVariable.h"
 #include "zig/zigGeneratorVariable.h"
+#include "odin/odinGeneratorVariable.h"
 
 unsigned int VariableFactory::var_counter = 0;
 
@@ -85,6 +86,9 @@ std::vector<std::string> GeneratorArray::new_(bool inFunction)
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ZIG)
     {
         return ZigGeneratorArray().new_(inFunction);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ODIN)
+    {
+        return OdinGeneratorArray().new_(inFunction);
     }
 }
 
@@ -114,6 +118,9 @@ std::vector<std::string>  GeneratorArray::insert()
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ZIG)
     {
         return ZigGeneratorArray().insert();
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ODIN)
+    {
+        return OdinGeneratorArray().insert();
     }
 }
 
@@ -143,6 +150,9 @@ std::vector<std::string>  GeneratorArray::remove()
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ZIG)
     {
         return ZigGeneratorArray().remove();
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ODIN)
+    {
+        return OdinGeneratorArray().remove();
     }
 }
 
@@ -172,6 +182,9 @@ std::vector<std::string>  GeneratorArray::contains(bool shouldReturn)
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ZIG)
     {
         return ZigGeneratorArray().contains(shouldReturn);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ODIN)
+    {
+        return OdinGeneratorArray().contains(shouldReturn);
     }
 }
 
@@ -201,6 +214,9 @@ std::vector<std::string>  GeneratorArray::free()
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ZIG)
     {
         return ZigGeneratorArray().free();
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ODIN)
+    {
+        return OdinGeneratorArray().free();
     }
 }
 
@@ -230,6 +246,9 @@ std::vector<std::string>  GeneratorArray::genIncludes()
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ZIG)
     {
         return ZigGeneratorArray().genIncludes();
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ODIN)
+    {
+        return OdinGeneratorArray().genIncludes();
     }
 }
 
@@ -259,6 +278,9 @@ std::vector<std::string>  GeneratorArray::genGlobalVars()
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ZIG)
     {
         return ZigGeneratorArray().genGlobalVars();
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ODIN)
+    {
+        return OdinGeneratorArray().genGlobalVars();
     }
 }
 
@@ -288,6 +310,9 @@ std::vector<std::string>  GeneratorArray::genParams(std::string paramName, std::
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ZIG)
     {
         return ZigGeneratorArray().genParams(paramName, varsParams);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ODIN)
+    {
+        return OdinGeneratorArray().genParams(paramName, varsParams);
     }
 }
 
