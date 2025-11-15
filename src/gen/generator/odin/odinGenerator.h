@@ -15,8 +15,8 @@
 
 class OdinGenerator : public ProgrammingLanguageGenerator {
    private:
-    std::vector<std::string> includes;
-    std::vector<std::string> globalVars;
+    std::vector<std::string> libIncludes;
+    std::vector<std::string> libGlobalVars;
 
     void generateIncludes();
 
@@ -28,7 +28,6 @@ class OdinGenerator : public ProgrammingLanguageGenerator {
 
     std::string createParams();
 
-    // Odin doesn't use Makefiles, we'll generate a build script
     void genBuildScript(std::string dir, std::string target);
 
     void genReadme(std::string dir, std::string target);

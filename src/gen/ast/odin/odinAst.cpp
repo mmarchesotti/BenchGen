@@ -9,7 +9,6 @@ void odinprintIndentationSpaces(int indent) {
 std::string odingenerateIfCondition(ProgrammingLanguageGenerator& generator) {
   bool isMain = generator.currentFunction.top()->insertBack;
   if (isMain) {
-    // Odin's get_path will return u64, no error
     return "(get_path() & 1) != 0";
   }
   int ifCounter = generator.ifCounter.top();
@@ -23,10 +22,6 @@ std::string odingenerateIfCondition(ProgrammingLanguageGenerator& generator) {
 void OdinStatementCode::gen(ProgrammingLanguageGenerator& generator) {
   stmt->gen(generator);
   code->gen(generator);
-
-  // This logic is preserved from the Zig segfault fix:
-  // We do NOT free vars after every statement in main.
-  // freeVars() will be called once at the end of main's generation.
 }
 
 void OdinLambdaCode::gen(ProgrammingLanguageGenerator& generator) {}
@@ -87,10 +82,10 @@ void OdinLoop::gen(ProgrammingLanguageGenerator& generator) {
   std::string loopLimitValue =
       "(50)/" + std::to_string(generator.loopLevel + 1) + " + 1";
   std::string loopLimitLine =
-      loopLimitVar + " :: " + loopLimitValue + ";"; // Odin constant
+      loopLimitVar + " :: " + loopLimitValue + ";";
   generator.addLine(loopLimitLine);
 
-  std::string forLine = "for " + loopVar + " < " + loopLimitVar + " {"; // Odin 'while' loop
+  std::string forLine = "for " + loopVar + " < " + loopLimitVar + " {";
   generator.addLine(forLine);
 
   generator.startScope();
@@ -128,7 +123,7 @@ void OdinSeq::gen(ProgrammingLanguageGenerator& generator) {}
 void OdinIf::gen(ProgrammingLanguageGenerator& generator) {
   std::string condition = odingenerateIfCondition(generator);
   generator.ifCounter.top()++;
-  std::string line = "if " + condition + " {"; // Odin 'if' (no parens)
+  std::string line = "if " + condition + " {";
   generator.addLine(line);
   generator.startScope();
   c1->gen(generator);
