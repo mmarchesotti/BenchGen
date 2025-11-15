@@ -7,6 +7,7 @@
 #include "v/vAst.h"
 #include "carbon/carbonAst.h"
 #include "zig/zigAst.h"
+#include "odin/odinAst.h"
 
 Insert::~Insert() {};
 Remove::~Remove() {};
@@ -44,9 +45,11 @@ void printIndentationSpaces(int ident)
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ZIG)
     {
         zigprintIndentationSpaces(ident);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ODIN)
+    {
+        odinprintIndentationSpaces(ident);
     }
 }
-
 
 std::string generateIfCondition(ProgrammingLanguageGenerator& generator)
 {
@@ -74,6 +77,9 @@ std::string generateIfCondition(ProgrammingLanguageGenerator& generator)
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ZIG)
     {
         return ziggenerateIfCondition(generator);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ODIN)
+    {
+        return odingenerateIfCondition(generator);
     }
 }
 
@@ -103,6 +109,9 @@ Insert get_insert()
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ZIG)
     {
         return ZigInsert();
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ODIN)
+    {
+        return OdinInsert();
     }
 }
 
@@ -132,6 +141,9 @@ Remove get_remove()
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ZIG)
     {
         return ZigRemove();
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ODIN)
+    {
+        return OdinRemove();
     }
 }
 
@@ -161,6 +173,9 @@ New get_new()
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ZIG)
     {
         return ZigNew();
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ODIN)
+    {
+        return OdinNew();
     }
 }
 
@@ -190,6 +205,9 @@ Contains get_contains()
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ZIG)
     {
         return ZigContains();
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ODIN)
+    {
+        return OdinContains();
     }
 }
 
@@ -220,6 +238,9 @@ StatementCode get_statementcode(std::shared_ptr<Node> stmt, std::shared_ptr<Node
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ZIG)
     {
         return ZigStatementCode(stmt, code);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ODIN)
+    {
+        return OdinStatementCode(stmt, code);
     }
 }
 
@@ -250,6 +271,9 @@ Loop get_loop(std::shared_ptr<Node> code)
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ZIG)
     {
         return ZigLoop(code);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ODIN)
+    {
+        return OdinLoop(code);
     }
 }
 
@@ -279,6 +303,9 @@ Call get_call()
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ZIG)
     {
         return ZigCall();
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ODIN)
+    {
+        return OdinCall();
     }
 }
 
@@ -308,6 +335,9 @@ Call get_call(int id, std::shared_ptr<Node> code)
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ZIG)
     {
         return ZigCall(id, code);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ODIN)
+    {
+        return OdinCall(id, code);
     }
 }
 
@@ -338,6 +368,9 @@ Seq get_seq(std::shared_ptr<Node> code)
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ZIG)
     {
         return ZigSeq(code);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ODIN)
+    {
+        return OdinSeq(code);
     }
 }
 
@@ -367,6 +400,9 @@ If get_if(std::shared_ptr<Node> c1, std::shared_ptr<Node> c2)
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ZIG)
     {
         return ZigIf(c1, c2);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ODIN)
+    {
+        return OdinIf(c1, c2);
     }
 }
 
@@ -396,6 +432,9 @@ Id get_id(std::string id)
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ZIG)
     {
         return ZigId(id);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ODIN)
+    {
+        return OdinId(id);
     }
 }
 
@@ -424,6 +463,9 @@ void Loop::gen(ProgrammingLanguageGenerator& generator) {
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ZIG)
     {
         return ZigLoop(this->code).gen(generator);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ODIN)
+    {
+        return OdinLoop(this->code).gen(generator);
     }
 };
 
@@ -452,6 +494,9 @@ void Loop::print(int) {
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ZIG)
     {
         return ZigLoop(this->code).print(0);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ODIN)
+    {
+        return OdinLoop(this->code).print(0);
     }
 };
 
@@ -496,6 +541,11 @@ void Call::gen(ProgrammingLanguageGenerator& generator) {
         ZigCall zigcall = ZigCall(this->id, this->code);
         zigcall.conditionalCounts = this->conditionalCounts;
         zigcall.gen(generator); 
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ODIN)
+    {
+        OdinCall odincall = OdinCall(this->id, this->code);
+        odincall.conditionalCounts = this->conditionalCounts;
+        odincall.gen(generator); 
     }
 };
 
@@ -540,6 +590,11 @@ void Call::print(int) {
         ZigCall zigcall = ZigCall(this->id, this->code);
         zigcall.conditionalCounts = this->conditionalCounts;
         zigcall.print(0); 
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ODIN)
+    {
+        OdinCall odincall = OdinCall(this->id, this->code);
+        odincall.conditionalCounts = this->conditionalCounts;
+        odincall.print(0); 
     }
 };
 
@@ -576,6 +631,9 @@ void Seq::gen(ProgrammingLanguageGenerator& generator) {
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ZIG)
     {
         ZigSeq(this->code).gen(generator);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ODIN)
+    {
+        OdinSeq(this->code).gen(generator);
     }
 };
 
@@ -604,6 +662,9 @@ void Seq::print(int) {
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ZIG)
     {
         ZigSeq(this->code).print(0);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ODIN)
+    {
+        OdinSeq(this->code).print(0);
     }
  };
 
@@ -633,6 +694,9 @@ void If::gen(ProgrammingLanguageGenerator& generator) {
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ZIG)
     {
         ZigIf(this->c1, this->c2).gen(generator);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ODIN)
+    {
+        OdinIf(this->c1, this->c2).gen(generator);
     }
 };
 
@@ -661,6 +725,9 @@ void If::print(int) {
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ZIG)
     {
         ZigIf(this->c1, this->c2).print(0);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ODIN)
+    {
+        OdinIf(this->c1, this->c2).print(0);
     }
 };
 
@@ -689,6 +756,9 @@ void Id::gen(ProgrammingLanguageGenerator& generator) {
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ZIG)
     {
         ZigId(this->id).gen(generator);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ODIN)
+    {
+        OdinId(this->id).gen(generator);
     }
 };
 
@@ -717,6 +787,9 @@ void Id::print(int) {
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ZIG)
     {
         ZigId(this->id).print(0);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ODIN)
+    {
+        OdinId(this->id).print(0);
     }
 };
 
@@ -745,6 +818,9 @@ void Insert::gen(ProgrammingLanguageGenerator& generator) {
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ZIG)
     {
         ZigInsert().gen(generator);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ODIN)
+    {
+        OdinInsert().gen(generator);
     }
 };
 
@@ -774,6 +850,9 @@ void Insert::print(int) {
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ZIG)
     {
         ZigInsert().print(0);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ODIN)
+    {
+        OdinInsert().print(0);
     }
 };
 
@@ -802,6 +881,9 @@ void Remove::gen(ProgrammingLanguageGenerator& generator) {
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ZIG)
     {
         ZigRemove().gen(generator);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ODIN)
+    {
+        OdinRemove().gen(generator);
     }
 };
 
@@ -830,6 +912,9 @@ void Remove::print(int) {
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ZIG)
     {
         ZigRemove().print(0);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ODIN)
+    {
+        OdinRemove().print(0);
     }
 };
 
@@ -858,6 +943,9 @@ void New::gen(ProgrammingLanguageGenerator& generator) {
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ZIG)
     {
         ZigNew().gen(generator);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ODIN)
+    {
+        OdinNew().gen(generator);
     }
 };
 
@@ -886,6 +974,9 @@ void New::print(int) {
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ZIG)
     {
         ZigNew().print(0);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ODIN)
+    {
+        OdinNew().print(0);
     }
  };
 
@@ -914,6 +1005,9 @@ void Contains::gen(ProgrammingLanguageGenerator& generator) {
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ZIG)
     {
         ZigContains().gen(generator);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ODIN)
+    {
+        OdinContains().gen(generator);
     }
 };
 
@@ -942,6 +1036,9 @@ void Contains::print(int) {
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ZIG)
     {
         ZigContains().print(0);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ODIN)
+    {
+        OdinContains().print(0);
     }
  };
 
@@ -970,6 +1067,9 @@ void StatementCode::gen(ProgrammingLanguageGenerator& generator) {
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ZIG)
     {
         ZigStatementCode(this->stmt, this->code).gen(generator);  
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ODIN)
+    {
+        OdinStatementCode(this->stmt, this->code).gen(generator);  
     }
 };
 
@@ -1000,6 +1100,9 @@ void StatementCode::print(int) {
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ZIG)
     {
         ZigStatementCode(this->stmt, this->code).print(0);  
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ODIN)
+    {
+        OdinStatementCode(this->stmt, this->code).print(0);  
     }
 };
 
@@ -1028,6 +1131,9 @@ void LambdaCode::gen(ProgrammingLanguageGenerator& generator) {
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ZIG)
     {
         ZigLambdaCode().gen(generator);  
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ODIN)
+    {
+        OdinLambdaCode().gen(generator);  
     }
 };
 
@@ -1056,5 +1162,8 @@ void LambdaCode::print(int) {
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ZIG)
     {
         ZigLambdaCode().print(0);  
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ODIN)
+    {
+        OdinLambdaCode().print(0);  
     }
 };
