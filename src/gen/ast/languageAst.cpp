@@ -337,7 +337,7 @@ Seq get_seq(std::shared_ptr<Node> code)
         return CarbonSeq(code);
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ZIG)
     {
-        return VSeq(code);
+        return ZigSeq(code);
     }
 }
 
