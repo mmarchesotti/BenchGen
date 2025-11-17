@@ -25,19 +25,16 @@ void OdinGenerator::generateGlobalVars() {
   for (auto gVar : varGlobalVars) {
     libGlobalVars.push_back(gVar);
   }
-
-  libGlobalVars.push_back("");
-  libGlobalVars.push_back("prng: rand.Rand;");
 }
 
 void OdinGenerator::generateRandomNumberGenerator() {
   GeneratorFunction rngFunction = GeneratorFunction(-1);
   rngFunction.addLine(
       {"get_path :: proc() -> u64 {",
-       "    if path, ok := os.get_env(\"BENCH_PATH\"); ok {",
-       "        if val, err := strconv.parse_u64(path, 10); err == nil {",
-       "            return val;", "        }", "    }",
-       "    return rand.uint64(&prng);", "}"});
+       "    path := os.get_env(\"BENCH_PATH\");",
+       "    if val, ok := strconv.parse_u64(path, 10); ok {",
+       "        return val;", "        }",
+       "    return rand.uint64();", "}"});
   functions.push_back(rngFunction);
 }
 
@@ -45,15 +42,14 @@ void OdinGenerator::generateMainFunction() {
   mainFunction = GeneratorFunction(-1);
   mainFunction.addLine(
       {"main :: proc() {",
-       "    context.allocator = mem.heap_allocator();",
-       "    context.temp_allocator = mem.arena_allocator(mem.heap_allocator());",
-       "    defer mem.arena_allocator_delete(context.temp_allocator);",
        "", "    path_seed: u64 = 0;", "",
        "    for arg, i in os.args {", "        if i == 0 { continue; }",
        "        if arg == \"-path-seed\" && i + 1 < len(os.args) {",
-       "            if val, err := strconv.parse_u64(os.args[i+1], 10); err == nil {",
+       "            if val, ok := strconv.parse_u64(os.args[i+1], 10); ok {",
        "                path_seed = val;", "            }", "        }", "    }",
-       "    rand.init(&prng, path_seed);", "}"});
+       "    random_state := rand.create(path_seed)",
+       "    context.random_generator = runtime.default_random_generator(&random_state)",
+       "}"});
   mainFunction.insertBack = true;
   currentFunction.push(&mainFunction);
   startScope();
@@ -104,7 +100,7 @@ void OdinGenerator::startFunc(int funcId, int nParameters) {
   addLine("pCounter := vars.size;");
 
   for (int i = 0; i < nParameters; i++) {
-    addLine("path" + std::to_string(i) + " :: _path" + std::to_string(i) +
+    addLine("path" + std::to_string(i) + " := _path" + std::to_string(i) +
             ";");
   }
 }
@@ -148,7 +144,7 @@ void OdinGenerator::callFunc(int funcId, int nParameters) {
   line += ");";
   addLine(line);
 
-  addLine("defer mem.delete(" + param + ".data);");
+  addLine("defer delete(" + param + ".data);");
 }
 
 int OdinGenerator::addVar(std::string type) {
@@ -287,7 +283,7 @@ void OdinGenerator::generateFiles(std::string benchmarkName) {
   libFile.close();
 
   // --- Generate func(index).odin files ---
-  for (auto func : functions) {
+  for (auto& func : functions) {
     if (func.getId() != -1) {
       std::string funcFileName =
           sourceDir + "func" + std::to_string(func.getId()) + ".odin";
@@ -295,6 +291,7 @@ void OdinGenerator::generateFiles(std::string benchmarkName) {
       funcFile.open(funcFileName);
 
       funcFile << "package main\n\n";
+
       auto lines = func.getLines();
       for (auto line : lines) {
         funcFile << line << std::endl;
