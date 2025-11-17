@@ -74,7 +74,7 @@ void OdinContains::gen(ProgrammingLanguageGenerator& generator) {
 
 void OdinLoop::gen(ProgrammingLanguageGenerator& generator) {
   std::string loopVar = "loop" + std::to_string(generator.loopCounter);
-  std::string loopVarLine = loopVar + ": int = 0;";
+  std::string loopVarLine = loopVar + ": int = 0";
   generator.addLine(loopVarLine);
 
   std::string loopLimitVar =

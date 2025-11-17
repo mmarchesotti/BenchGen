@@ -12,7 +12,7 @@ OdinGeneratorArray::~OdinGeneratorArray() {}
 
 std::vector<std::string> OdinGeneratorArray::new_(bool inFunction) {
   std::vector<std::string> temp = {" " + this->name + ": ^" +
-                                   this->typeString + ";" };
+                                   this->typeString };
 
   if (inFunction) {
     temp.push_back("if pCounter > 0 {");
@@ -20,24 +20,24 @@ std::vector<std::string> OdinGeneratorArray::new_(bool inFunction) {
     temp.push_back("    " + this->name + " = vars.data[pCounter];");
     temp.push_back("    " + this->name + ".refC += 1;");
     temp.push_back("} else {");
-    temp.push_back("    " + this->name + " = mem.new(" +
+    temp.push_back("    " + this->name + " = new(" +
                    this->typeString + ");");
     temp.push_back("    " + this->name +
                    ".size = " + std::to_string(this->totalSize) + ";");
     temp.push_back("    " + this->name + ".refC = 1;");
     temp.push_back("    " + this->name + ".id = " + std::to_string(this->id) +
                    ";");
-    temp.push_back("    " + this->name + ".data = mem.make([]u32, " +
+    temp.push_back("    " + this->name + ".data = make([]u32, " +
                    this->name + ".size);");
     temp.push_back("}");
   } else {
-    temp.push_back(this->name + " = mem.new(" + this->typeString +
+    temp.push_back(this->name + " = new(" + this->typeString +
                    ");");
     temp.push_back(this->name + ".size = " + std::to_string(this->totalSize) +
                    ";");
     temp.push_back(this->name + ".refC = 1;");
     temp.push_back(this->name + ".id = " + std::to_string(this->id) + ";");
-    temp.push_back(this->name + ".data = mem.make([]u32, " +
+    temp.push_back(this->name + ".data = make([]u32, " +
                    this->name + ".size);");
   }
   return temp;
@@ -78,8 +78,8 @@ std::vector<std::string> OdinGeneratorArray::free() {
   std::vector<std::string> temp = {};
   temp.push_back(this->name + ".refC -= 1;");
   temp.push_back("if " + this->name + ".refC == 0 {");
-  temp.push_back("    mem.delete(" + this->name + ".data);");
-  temp.push_back("    mem.free(" + this->name + ");");
+  temp.push_back("    delete(" + this->name + ".data);");
+  temp.push_back("    free(" + this->name + ");");
   temp.push_back("}");
   return temp;
 }
@@ -110,7 +110,7 @@ OdinGeneratorArray::genParams(std::string paramName,
   std::vector<std::string> temp = {};
   std::string dataSliceName = paramName + "_data";
 
-  temp.push_back(dataSliceName + " := mem.make([]^" +
+  temp.push_back(dataSliceName + " := make([]^" +
                  this->typeString + ", " + std::to_string(varsParams.size()) +
                  ");");
 
