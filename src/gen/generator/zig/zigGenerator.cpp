@@ -224,13 +224,13 @@ void ZigGenerator::genReadme(std::string dir, std::string target) {
   readme << "    ```bash\n";
   readme << "    zig build\n";
   readme << "    ```\n\n";
-  readme << "    O executável estará em `zig-out/bin/" + target + "`.\n\n";
+  readme << "    The executable will be located at `zig-out/bin/" + target + "`.\n\n";
   readme << "## Run\n\n";
-  readme << "Para compilar e executar o programa de uma só vez:\n\n";
+  readme << "To compile and run the program at once:\n\n";
   readme << "```bash\n";
   readme << "zig build run\n";
   readme << "```\n\n";
-  readme << "Para executar o programa compilado com argumentos:\n\n";
+  readme << "To run the compiled program with arguments:\n\n";
   readme << "```bash\n";
   readme << "./zig-out/bin/" + target + " -loops-factor 50 -path-seed 123\n";
   readme << "```\n\n";
