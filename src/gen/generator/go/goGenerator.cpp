@@ -1,7 +1,7 @@
 #include "goGenerator.h"
 
 void GoGenerator::generateIncludes() {
-   
+
     std::vector<std::string> varIncludes = VariableFactory::genIncludes(varType);
     for (auto var : varIncludes) {
         globalVars.push_back(var);
@@ -18,16 +18,22 @@ void GoGenerator::generateGlobalVars() {
 void GoGenerator::generateRandomNumberGenerator() {
     GeneratorFunction rngFunction = GeneratorFunction(-1);
     rngFunction.addLine({
-        "func getPath() uint64 {",
+        "var benchPath, useBenchPath = func() (uint64, bool) {",
         "    path := os.Getenv(\"BENCH_PATH\")",
         "    if path != \"\" {",
         "        val, err := strconv.ParseUint(path, 10, 64)",
         "        if err == nil {",
-        "            return val",
+        "            return val, true",
         "        }",
         "    }",
-        "    n := uint64(rand.Uint32())",
-        "    return (n << 32) | uint64(rand.Uint32())",
+        "    return 0, false",
+        "}()",
+        "",
+        "func getPath() uint64 {",
+        "    if useBenchPath {",
+        "        return benchPath",
+        "    }",
+        "    return rng.Uint64()",
         "}",
     });
     functions.push_back(rngFunction);
@@ -39,14 +45,15 @@ void GoGenerator::generateMainFunction() {
     "package main",
     "",
     "import (",
-    "    \"math/rand\"",
+    "    \"math/rand/v2\"",
     "    \"os\"",
     "    \"strconv\"",
     ")",
     "",
+    "var rng = rand.NewPCG(0, 0)"
+    "",
     "func main() {",
     "    loopsFactor := 100",
-    "    rand.Seed(0)",
     "",
     "    args := os.Args",
     "    for i := 1; i < len(args); i++ {",
@@ -55,7 +62,7 @@ void GoGenerator::generateMainFunction() {
     "            if i < len(args) {",
     "                seed, err := strconv.Atoi(args[i])",
     "                if err == nil {",
-    "                    rand.Seed(int64(seed))",
+    "                    rng.Seed(uint64(seed), uint64(seed))",
     "                }",
     "            }",
     "        } else if args[i] == \"-loops-factor\" {",
@@ -95,7 +102,7 @@ void GoGenerator::startScope() {
 void GoGenerator::startFunc(int funcId, int nParameters) {
     GeneratorFunction func = GeneratorFunction(funcId);
     std::string funcHeader = "func Func" + std::to_string(funcId) + "(vars *" +VariableFactory::genTypeString(varType) + "Param, ";
-    
+
     for (int i = 0; i < nParameters; i++) {
         funcHeader += "PATH" + std::to_string(i) + " uint64 , ";
     }
@@ -107,7 +114,7 @@ void GoGenerator::startFunc(int funcId, int nParameters) {
     GeneratorScope scope = GeneratorScope();
     currentScope.push(scope);
     this->ifCounter.push(0);
-    addLine("var pCounter int = vars.Size;");
+    addLine("var pCounter int = len(vars.Data);");
     addLine("_ = pCounter");
 }
 
@@ -148,9 +155,7 @@ void GoGenerator::callFunc(int funcId, int nParameters) {
     //line = "DEBUG_RETURN(" + var->name + "->id);";
 
     line = param + ".Data = nil";
-    addLine(line);
-    line = param + ".Size = 0";
-    addLine(line);
+    addLine(line);;
 }
 
 int GoGenerator::addVar(std::string type) {
@@ -328,17 +333,11 @@ void GoGenerator::generateFiles(std::string benchmarkName) {
         funcFile.open(sourceDir + funcSource);
 
         funcFile << "package main" << std::endl;
-        
-        funcFile << "import \"math/rand\"" << std::endl;
 
         if(funcSource == "path.go"){
             funcFile << "import \"os\"" << std::endl;
             funcFile << "import \"strconv\"" << std::endl;
         }
-
-        funcFile <<  "var _ = rand.Intn" << std::endl;
-        
-
 
         lines = func.getLines();
         for (auto line : lines) {
