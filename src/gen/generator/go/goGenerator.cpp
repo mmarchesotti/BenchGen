@@ -26,8 +26,7 @@ void GoGenerator::generateRandomNumberGenerator() {
         "            return val",
         "        }",
         "    }",
-        "    n := uint64(rand.Uint32())",
-        "    return (n << 32) | uint64(rand.Uint32())",
+        "    return rng.Uint64()",
         "}",
     });
     functions.push_back(rngFunction);
@@ -39,14 +38,15 @@ void GoGenerator::generateMainFunction() {
     "package main",
     "",
     "import (",
-    "    \"math/rand\"",
+    "    \"math/rand/v2\"",
     "    \"os\"",
     "    \"strconv\"",
     ")",
     "",
+    "var rng = rand.NewPCG(0, 0)"
+    "",
     "func main() {",
     "    loopsFactor := 100",
-    "    rand.Seed(0)",
     "",
     "    args := os.Args",
     "    for i := 1; i < len(args); i++ {",
@@ -55,7 +55,7 @@ void GoGenerator::generateMainFunction() {
     "            if i < len(args) {",
     "                seed, err := strconv.Atoi(args[i])",
     "                if err == nil {",
-    "                    rand.Seed(int64(seed))",
+    "                    rng.Seed(uint64(seed), uint64(seed))",
     "                }",
     "            }",
     "        } else if args[i] == \"-loops-factor\" {",
@@ -327,16 +327,10 @@ void GoGenerator::generateFiles(std::string benchmarkName) {
 
         funcFile << "package main" << std::endl;
 
-        funcFile << "import \"math/rand\"" << std::endl;
-
         if(funcSource == "path.go"){
             funcFile << "import \"os\"" << std::endl;
             funcFile << "import \"strconv\"" << std::endl;
         }
-
-        funcFile <<  "var _ = rand.Intn" << std::endl;
-
-
 
         lines = func.getLines();
         for (auto line : lines) {
