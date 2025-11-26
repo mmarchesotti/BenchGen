@@ -18,13 +18,20 @@ void GoGenerator::generateGlobalVars() {
 void GoGenerator::generateRandomNumberGenerator() {
     GeneratorFunction rngFunction = GeneratorFunction(-1);
     rngFunction.addLine({
-        "func getPath() uint64 {",
+        "var benchPath, useBenchPath = func() (uint64, bool) {",
         "    path := os.Getenv(\"BENCH_PATH\")",
         "    if path != \"\" {",
         "        val, err := strconv.ParseUint(path, 10, 64)",
         "        if err == nil {",
-        "            return val",
+        "            return val, true",
         "        }",
+        "    }",
+        "    return 0, false",
+        "}()",
+        "",
+        "func getPath() uint64 {",
+        "    if useBenchPath {",
+        "        return benchPath",
         "    }",
         "    return rng.Uint64()",
         "}",
