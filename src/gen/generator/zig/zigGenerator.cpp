@@ -97,11 +97,16 @@ void ZigGenerator::startFunc(int funcId, int nParameters) {
   GeneratorScope scope = GeneratorScope();
   currentScope.push(scope);
   this->ifCounter.push(0);
+  
   addLine("var pCounter: usize = vars.size;");
+  
+  addLine("_ = &pCounter;"); 
 
   for (int i = 0; i < nParameters; i++) {
     addLine("const path" + std::to_string(i) + " = _path" + std::to_string(i) +
             ";");
+            
+    addLine("_ = &path" + std::to_string(i) + ";"); 
   }
 }
 
@@ -164,6 +169,8 @@ void ZigGenerator::freeVars(bool hasReturn, int returnVarPos) {
       addLine(var->free());
     }
   }
+
+  currentScope.top().numberOfAddedVars = 0;
 }
 
 void ZigGenerator::returnFunc(int returnVarPos) {
