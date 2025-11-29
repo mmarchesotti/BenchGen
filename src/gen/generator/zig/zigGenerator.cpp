@@ -297,7 +297,7 @@ void ZigGenerator::generateFiles(std::string benchmarkName) {
 
       funcFile << "const lib = @import(\"lib.zig\");\n";
       funcFile << "const std = lib.std;\n";
-      funcFile << "const allocator = lib.allocator;\n";
+      funcFile << "const allocator = std.heap.smp_allocator;\n";
       funcFile << "const " + arrayType + " = lib." + arrayType + ";\n";
       funcFile << "const " + paramType + " = lib." + paramType + ";\n";
       funcFile << "const get_path = lib.get_path;\n\n";
@@ -327,7 +327,7 @@ void ZigGenerator::generateFiles(std::string benchmarkName) {
   mainFile << "const lib = @import(\"lib.zig\");\n\n";
 
   mainFile << "const std = lib.std;\n";
-  mainFile << "const allocator = lib.allocator;\n";
+  mainFile << "const allocator = std.heap.smp_allocator;\n";
   mainFile << "const " + arrayType + " = lib." + arrayType + ";\n";
   mainFile << "const " + paramType + " = lib." + paramType + ";\n";
   mainFile << "const get_path = lib.get_path;\n\n";
