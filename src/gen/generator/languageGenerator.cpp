@@ -10,6 +10,9 @@
 #include "rust/rustGenerator.h"
 #include "v/vGenerator.h"
 #include "carbon/carbonGenerator.h"
+#include "zig/zigGenerator.h"
+#include "odin/odinGenerator.h"
+
 
 ProgrammingLanguageGenerator::ProgrammingLanguageGenerator(){};
 ProgrammingLanguageGenerator::~ProgrammingLanguageGenerator(){};
@@ -36,6 +39,12 @@ void ProgrammingLanguageGenerator::addLine(std::vector<std::string> lines, int d
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::CARBON)
     {
         CarbonGenerator(this->varType).addLine(lines, d);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ZIG)
+    {
+        ZigGenerator(this->varType).addLine(lines, d);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ODIN)
+    {
+        OdinGenerator(this->varType).addLine(lines, d);
     }
 };
 
@@ -61,6 +70,12 @@ void ProgrammingLanguageGenerator::addLine(std::string line, int d){
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::CARBON)
     {
         CarbonGenerator(this->varType).addLine(line, d);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ZIG)
+    {
+        ZigGenerator(this->varType).addLine(line, d);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ODIN)
+    {
+        OdinGenerator(this->varType).addLine(line, d);
     }
 };
 
@@ -86,6 +101,12 @@ void ProgrammingLanguageGenerator::startScope(){
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::CARBON)
     {
         CarbonGenerator(this->varType).startScope();
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ZIG)
+    {
+        ZigGenerator(this->varType).startScope();
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ODIN)
+    {
+        OdinGenerator(this->varType).startScope();
     }
 };
 
@@ -111,6 +132,12 @@ void ProgrammingLanguageGenerator::startFunc(int funcId, int nParameters){
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::CARBON)
     {
         CarbonGenerator(this->varType).startFunc(funcId, nParameters);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ZIG)
+    {
+        ZigGenerator(this->varType).startFunc(funcId, nParameters);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ODIN)
+    {
+        OdinGenerator(this->varType).startFunc(funcId, nParameters);
     }
 };
 
@@ -136,6 +163,12 @@ bool ProgrammingLanguageGenerator::functionExists(int funcId){
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::CARBON)
     {
         CarbonGenerator(this->varType).functionExists(funcId);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ZIG)
+    {
+        ZigGenerator(this->varType).functionExists(funcId);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ODIN)
+    {
+        OdinGenerator(this->varType).functionExists(funcId);
     }
 };
 
@@ -161,6 +194,12 @@ void ProgrammingLanguageGenerator::callFunc(int funcId, int nParameters){
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::CARBON)
     {
         CarbonGenerator(this->varType).callFunc(funcId, nParameters);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ZIG)
+    {
+        ZigGenerator(this->varType).callFunc(funcId, nParameters);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ODIN)
+    {
+        OdinGenerator(this->varType).callFunc(funcId, nParameters);
     }
 };
 
@@ -186,6 +225,12 @@ int ProgrammingLanguageGenerator::addVar(std::string type){
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::CARBON)
     {
         CarbonGenerator(this->varType).addVar(type);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ZIG)
+    {
+        ZigGenerator(this->varType).addVar(type);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ODIN)
+    {
+        OdinGenerator(this->varType).addVar(type);
     }
 };
 
@@ -212,6 +257,12 @@ void ProgrammingLanguageGenerator::freeVars(bool hasReturn, int returnVarPos){
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::CARBON)
     {
         CarbonGenerator(this->varType).freeVars(hasReturn, returnVarPos);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ZIG)
+    {
+        ZigGenerator(this->varType).freeVars(hasReturn, returnVarPos);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ODIN)
+    {
+        OdinGenerator(this->varType).freeVars(hasReturn, returnVarPos);
     }
 };
 
@@ -238,6 +289,12 @@ void ProgrammingLanguageGenerator::returnFunc(int returnVarPos){
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::CARBON)
     {
         CarbonGenerator(this->varType).returnFunc(returnVarPos);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ZIG)
+    {
+        ZigGenerator(this->varType).returnFunc(returnVarPos);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ODIN)
+    {
+        OdinGenerator(this->varType).returnFunc(returnVarPos);
     }
 };
 
@@ -263,6 +320,12 @@ void ProgrammingLanguageGenerator::endScope(){
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::CARBON)
     {
         CarbonGenerator(this->varType).endScope();
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ZIG)
+    {
+        ZigGenerator(this->varType).endScope();
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ODIN)
+    {
+        OdinGenerator(this->varType).endScope();
     }
 };
 
@@ -280,6 +343,12 @@ void ProgrammingLanguageGenerator::endIfScope(){
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::CARBON)
     {
         CarbonGenerator(this->varType).endIfScope();
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::CARBON)
+    {
+        CarbonGenerator(this->varType).endIfScope();
+    }if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ODIN)
+    {
+        ZigGenerator(this->varType).endIfScope();
     }
 };
 
@@ -305,6 +374,12 @@ void ProgrammingLanguageGenerator::endFunc(){
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::CARBON)
     {
         CarbonGenerator(this->varType).endFunc();
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ZIG)
+    {
+        ZigGenerator(this->varType).endFunc();
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ODIN)
+    {
+        OdinGenerator(this->varType).endFunc();
     }
 };
 
@@ -331,6 +406,12 @@ void ProgrammingLanguageGenerator::generateFiles(std::string benchmarkName){
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::CARBON)
     {
         CarbonGenerator(this->varType).generateFiles(benchmarkName);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ZIG)
+    {
+        ZigGenerator(this->varType).generateFiles(benchmarkName);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ODIN)
+    {
+        OdinGenerator(this->varType).generateFiles(benchmarkName);
     }
 };
 
@@ -357,6 +438,12 @@ ProgrammingLanguageGenerator* ProgrammingLanguageGenerator::getGenerator(std::st
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::CARBON)
     {
         return new CarbonGenerator(varType);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ZIG)
+    {
+        return new ZigGenerator(varType);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ODIN)
+    {
+        return new OdinGenerator(varType);
     }
 
     return nullptr;

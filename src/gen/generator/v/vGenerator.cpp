@@ -7,8 +7,6 @@
 void VGenerator::generateModules() {
     modules.push_back("import os");
     modules.push_back("import rand");
-    // 'strconv' is removed from here; it will be added specifically where needed.
-    
     std::vector<std::string> varIncludes = VariableFactory::genIncludes(varType);
     for (auto var : varIncludes) {
         modules.push_back(var);
@@ -16,7 +14,6 @@ void VGenerator::generateModules() {
 }
 
 void VGenerator::generateGlobalVars() {
-    // This function is rewritten to correctly generate public structs with pub mut fields in V.
     std::vector<std::string> varGlobalVars = VariableFactory::genGlobalVars(varType);
     bool in_struct = false;
 
@@ -26,21 +23,17 @@ void VGenerator::generateGlobalVars() {
         std::string indentation = (first_char_pos == std::string::npos) ? "" : line.substr(0, first_char_pos);
 
         if (content.rfind("struct ", 0) == 0) {
-            // Add `pub struct ... {` and then the `pub mut:` block.
             globalVars.push_back(indentation + "pub " + content);
             globalVars.push_back(indentation + "\tpub mut:");
             in_struct = true;
         } else if (in_struct) {
             if (content.rfind("}", 0) == 0) {
-                // Add the closing brace and exit struct context.
                 globalVars.push_back(line);
                 in_struct = false;
             } else if (content != "mut:") {
-                // Add the line only if it is not the original 'mut:'.
                 globalVars.push_back(line);
             }
         } else {
-            // This handles any lines that might exist outside of the main struct.
             globalVars.push_back(line);
         }
     }
@@ -48,7 +41,6 @@ void VGenerator::generateGlobalVars() {
 
 void VGenerator::generateRandomNumberGenerator() {
     GeneratorFunction rngFunction = GeneratorFunction(-1);
-    // The `get_path` function must be public (`pub`) to be visible from the `main` module.
     rngFunction.addLine({
         "pub fn get_path() u64 {",
         "    path := os.getenv('BENCH_PATH')",
@@ -99,7 +91,6 @@ void VGenerator::generateMainFunction() {
 void VGenerator::addLine(std::string line, int d) {
     std::string indentedLine = currentScope.top().getIndentationTabs(d) + line;
 
-    // WORKAROUND for V compiler's strictness with type aliases in slice literals.
     std::string find_str = "[]" + VariableFactory::genTypeString(varType) + "{";
     std::string replace_str = "[]functions." + VariableFactory::genTypeString(varType) + "{";
     size_t pos = indentedLine.find(find_str);
@@ -123,7 +114,6 @@ void VGenerator::startScope() {
 
 void VGenerator::startFunc(int funcId, int nParameters) {
     GeneratorFunction func = GeneratorFunction(funcId);
-    // Functions must be public (`pub`) to be visible from other modules.
     std::string funcHeader = "pub fn func" + std::to_string(funcId) + "(vars " + VariableFactory::genTypeString(varType) + "Param, ";
     
     for (int i = 0; i < nParameters; i++) {
@@ -165,7 +155,6 @@ void VGenerator::callFunc(int funcId, int nParameters) {
     GeneratorVariable* var = variables[id];
     
     std::string func_call = "func" + std::to_string(funcId);
-    // If the call is being made from `main` (id -1), prefix with the module name.
     if (currentFunction.top()->getId() == -1) {
         func_call = "functions." + func_call;
     }
@@ -302,10 +291,9 @@ void VGenerator::generateFiles(std::string benchmarkName) {
         std::ofstream funcFile;
         funcFile.open(functionsDir + funcFileName);
         funcFile << "module functions\n\n";
-        funcFile << "import os\n";
-        funcFile << "import rand\n";
-        // Only add 'strconv' to the file that actually uses it.
         if (is_path_func) {
+            funcFile << "import os\n";
+            funcFile << "import rand\n";
             funcFile << "import strconv\n";
         }
         funcFile << "\n";

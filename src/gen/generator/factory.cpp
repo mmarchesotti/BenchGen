@@ -6,10 +6,11 @@
 #include "go/goGeneratorVariable.h"
 #include "v/vGeneratorVariable.h"
 #include "carbon/carbonGeneratorVariable.h"
+#include "zig/zigGeneratorVariable.h"
+#include "odin/odinGeneratorVariable.h"
 #include "../shared/consts.h"
 
 GeneratorVariable* VariableFactory::createVariable(std::string type, int identifier) {
-    int iterations = Parameters::ITERATIONS;
     int size = rand() % 1000;
 
     if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::C)
@@ -49,6 +50,16 @@ GeneratorVariable* VariableFactory::createVariable(std::string type, int identif
     {
         if (type == VarTypes::ARRAY) {
             return new CarbonGeneratorArray(size, identifier);
+        }
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ZIG)
+    {
+        if (type == VarTypes::ARRAY) {
+            return new ZigGeneratorArray(size, identifier);
+        }
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ODIN)
+    {
+        if (type == VarTypes::ARRAY) {
+            return new OdinGeneratorArray(size, identifier);
         }
     }
 

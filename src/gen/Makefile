@@ -14,6 +14,8 @@ DEPS = $(OBJ)factory.o \
 	   $(OBJ)goAst.o \
 	   $(OBJ)vAst.o \
 	   $(OBJ)carbonAst.o \
+	   $(OBJ)zigAst.o \
+	   $(OBJ)odinAst.o \
 	   $(OBJ)generatorFunction.o  \
 	   $(OBJ)generatorVariable.o \
 	   $(OBJ)cGeneratorVariable.o \
@@ -23,6 +25,8 @@ DEPS = $(OBJ)factory.o \
 	   $(OBJ)goGeneratorVariable.o \
 	   $(OBJ)vGeneratorVariable.o \
 	   $(OBJ)carbonGeneratorVariable.o \
+	   $(OBJ)zigGeneratorVariable.o \
+	   $(OBJ)odinGeneratorVariable.o \
 	   $(OBJ)juliaGenerator.o \
 	   $(OBJ)generatorScope.o \
 	   $(OBJ)languageGenerator.o \
@@ -32,6 +36,8 @@ DEPS = $(OBJ)factory.o \
 	   $(OBJ)goGenerator.o \
 	   $(OBJ)vGenerator.o \
 	   $(OBJ)carbonGenerator.o \
+	   $(OBJ)zigGenerator.o \
+	   $(OBJ)odinGenerator.o \
 	   $(OBJ)lexer.o \
 	   $(OBJ)lSystem.o \
 	   $(OBJ)parser.o \
@@ -61,6 +67,10 @@ $(OBJ)vAst.o: ast/v/vAst.cpp | $(OBJ)
 	$(CC) $(CFLAGS) -I $(IMP) -c $^ -o $@ -Wno-return-type
 $(OBJ)carbonAst.o: ast/carbon/carbonAst.cpp | $(OBJ)
 	$(CC) $(CFLAGS) -I $(IMP) -c $^ -o $@ -Wno-return-type
+$(OBJ)zigAst.o: ast/zig/zigAst.cpp | $(OBJ)
+	$(CC) $(CFLAGS) -I $(IMP) -c $^ -o $@ -Wno-return-type
+$(OBJ)odinAst.o: ast/odin/odinAst.cpp | $(OBJ)
+	$(CC) $(CFLAGS) -I $(IMP) -c $^ -o $@ -Wno-return-type
 $(OBJ)factory.o: generator/factory.cpp | $(OBJ)
 	$(CC) $(CFLAGS) -I $(IMP) -c $^ -o $@ -Wno-return-type
 $(OBJ)generatorFunction.o: generator/generatorFunction.cpp | $(OBJ)
@@ -81,6 +91,10 @@ $(OBJ)vGeneratorVariable.o: generator/v/vGeneratorVariable.cpp | $(OBJ)
 	$(CC) $(CFLAGS) -I $(IMP) -c $^ -o $@ -Wno-return-type
 $(OBJ)carbonGeneratorVariable.o: generator/carbon/carbonGeneratorVariable.cpp | $(OBJ)
 	$(CC) $(CFLAGS) -I $(IMP) -c $^ -o $@ -Wno-return-type
+$(OBJ)zigGeneratorVariable.o: generator/zig/zigGeneratorVariable.cpp | $(OBJ)
+	$(CC) $(CFLAGS) -I $(IMP) -c $^ -o $@ -Wno-return-type
+$(OBJ)odinGeneratorVariable.o: generator/odin/odinGeneratorVariable.cpp | $(OBJ)
+	$(CC) $(CFLAGS) -I $(IMP) -c $^ -o $@ -Wno-return-type
 $(OBJ)generatorScope.o: generator/generatorScope.cpp | $(OBJ)
 	$(CC) $(CFLAGS) -I $(IMP) -c $^ -o $@ -Wno-return-type
 $(OBJ)languageGenerator.o: generator/languageGenerator.cpp | $(OBJ)
@@ -98,6 +112,10 @@ $(OBJ)goGenerator.o: generator/go/goGenerator.cpp | $(OBJ)
 $(OBJ)vGenerator.o: generator/v/vGenerator.cpp | $(OBJ)
 	$(CC) $(CFLAGS) -I $(IMP) -c $^ -o $@ -Wno-return-type
 $(OBJ)carbonGenerator.o: generator/carbon/carbonGenerator.cpp | $(OBJ)
+	$(CC) $(CFLAGS) -I $(IMP) -c $^ -o $@ -Wno-return-type
+$(OBJ)zigGenerator.o: generator/zig/zigGenerator.cpp | $(OBJ)
+	$(CC) $(CFLAGS) -I $(IMP) -c $^ -o $@ -Wno-return-type
+$(OBJ)odinGenerator.o: generator/odin/odinGenerator.cpp | $(OBJ)
 	$(CC) $(CFLAGS) -I $(IMP) -c $^ -o $@ -Wno-return-type
 $(OBJ)lexer.o: lexer/lexer.cpp | $(OBJ)
 	$(CC) $(CFLAGS) -I $(IMP) -c $^ -o $@ -Wno-return-type

@@ -71,21 +71,21 @@ void VContains::gen(ProgrammingLanguageGenerator& generator) {
 }
 
 void VLoop::gen(ProgrammingLanguageGenerator& generator) {
-    std::string loopVar = "mut loop" + std::to_string(generator.loopCounter);
-    generator.addLine(loopVar + " := 0");
+    std::string loopVar = "loop" + std::to_string(generator.loopCounter);
+    generator.addLine("mut " + loopVar + " := 0");
 
     std::string loopLimitVar = "loop_limit" + std::to_string(generator.loopCounter);
-    std::string loopLimitValue = "(1000) / " + std::to_string(generator.loopLevel + 1) + " + 1";
+    std::string loopLimitValue = "(50)/" + std::to_string(generator.loopLevel + 1) + " + 1";
     generator.addLine(loopLimitVar + " := " + loopLimitValue);
 
-    std::string forLine = "for " + loopVar.substr(4) + " < " + loopLimitVar + " {";
+    std::string forLine = "for " + loopVar + " < " + loopLimitVar + " {";
     generator.addLine(forLine);
 
     generator.startScope();
     generator.loopLevel++;
     generator.loopCounter++;
     code->gen(generator);
-    generator.addLine(loopVar.substr(4) + "++");
+    generator.addLine(loopVar + "++");
     generator.freeVars();
     generator.endScope();
     generator.loopLevel--;
@@ -115,7 +115,7 @@ void VSeq::gen(ProgrammingLanguageGenerator& generator) {
 }
 
 void VIf::gen(ProgrammingLanguageGenerator& generator) {
-    std::string condition = vgenerateIfCondition(generator);
+    std::string condition = generateIfCondition(generator);
     generator.ifCounter.top()++;
     std::string line = "if " + condition + " {";
     generator.addLine(line);
@@ -131,7 +131,7 @@ void VIf::gen(ProgrammingLanguageGenerator& generator) {
     generator.endScope();
 }
 
-// Printing Methods (No changes needed, but renamed for consistency)
+// Printing Methods
 
 void VStatementCode::print(int ident) {
     vprintIndentationSpaces(ident);
