@@ -8,7 +8,7 @@ The BenchGen project aims to synthesize programs that are sufficiently expressiv
 
 BenchGen implements an [L-System](https://en.wikipedia.org/wiki/L-system) to generate programs from a seed string and a set of production rules, enabling the creation of large programs through iterative expansion of the L-System. 
 The program generator is entirely written in C++.
-To know more about how BenchGen works, you can read a brief [report](https://lac-dcc.github.io/pubs/TechReports/LaC_TechReport022025.pdf) about it.
+To know more about how BenchGen works, you can read a brief [report](https://arxiv.org/abs/2512.17616) about it.
 
 The BenchGen project is sponsored by FAPEMIG and by Google.
 
@@ -123,3 +123,19 @@ Visit our documentation avaliable [here](https://benchgen.github.io/index.html)
 ## Acknowledgements
 
 The BenchGen project is financed by [FAPEMIG](http://www.fapemig.br/pt/) and Google. We appreciate their support and contributions to the development of this project.
+
+## Citation
+
+To cite the BenchGen project, use the following BibTeX command below.
+
+```bibtex
+@misc{dasilva2025multilanguagebenchmarkgenerationlsystems,
+      title={Multi-Language Benchmark Generation via L-Systems}, 
+      author={Vinícius Francisco da Silva and Heitor Leite and Fernando Magno Quintão Pereira},
+      year={2025},
+      eprint={2512.17616},
+      archivePrefix={arXiv},
+      primaryClass={cs.PL},
+      url={https://arxiv.org/abs/2512.17616}, 
+}
+```
