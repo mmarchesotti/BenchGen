@@ -68,7 +68,20 @@ void CppGenerator::generateMainFunction() {
     mainFunction.addLine({"#include <iostream>",
                           "#include <string>",
                           "#include <random>\n\n",
-                          "int main(int argc, char** argv) {",
+                          "static unsigned long benchgen_state = 1;",
+                          "",
+                          "void benchgen_srand(unsigned long seed) {",
+                          "    benchgen_state = seed;",
+                          "}",
+                          "",
+                          "unsigned long benchgen_rand(void) {",
+                          "    benchgen_state = 6364136223846793005ULL * benchgen_state + 1ULL;",
+                          "    return benchgen_state >> 32;",
+                          "}",
+                          ""
+    });
+
+    mainFunction.addLine({"int main(int argc, char** argv) {",
                           "   int loopsFactor = 100;",
                           "   std::mt19937 rng(0);",
                           "   for (int i = 1; i < argc; i++) {",
@@ -322,6 +335,9 @@ void CppGenerator::generateFiles(std::string benchmarkName) {
     includeFile << std::endl;
 
     // Headers
+    includeFile << "void benchgen_srand(unsigned long seed);\n";
+    includeFile << "unsigned long benchgen_rand(void);\n";
+    
     for (auto func : functions) {
         std::string header = func.getLines()[0];
         
