@@ -33,7 +33,7 @@ void ZigGenerator::generateRandomNumberGenerator() {
        "        return std.fmt.parseUnsigned(u64, path, 10);",
        "    } else |err| {",
        "        if (err == error.EnvironmentVariableNotFound) {",
-       "            return random.int(u64);", "        } else {",
+       "            return benchgen_rand();", "        } else {",
        "            return err;", "        }", "    }", "}"});
   functions.push_back(rngFunction);
 }
@@ -51,7 +51,8 @@ void ZigGenerator::generateMainFunction() {
        "            arg_idx += 1;",
        "            if (arg_idx < args.len) { path_seed = ",
        "std.fmt.parseUnsigned(u64, args[arg_idx], 10) catch 0; }", "        }",
-       "    }", "    lib.prng = std.Random.DefaultPrng.init(path_seed);", "}"});
+       "",
+       "    }", "    lib.benchgen_srand(path_seed);", "}"});
   mainFunction.insertBack = true;
   currentFunction.push(&mainFunction);
   startScope();
@@ -270,6 +271,16 @@ void ZigGenerator::generateFiles(std::string benchmarkName) {
   for (auto var : globalVars) {
     libFile << var << std::endl;
   }
+
+  libFile << "var benchgen_state: u64 = 1;\n\n";
+  libFile << "pub fn benchgen_srand(seed: u64) void {\n";
+  libFile << "    benchgen_state = seed;\n";
+  libFile << "}\n\n";
+  libFile << "pub fn benchgen_rand() u32 {\n";
+  libFile << "    benchgen_state = 6364136223846793005 *% benchgen_state +% 1;\n";
+  libFile << "    return @intCast(benchgen_state >> 32);\n";
+  libFile << "}\n";
+
   libFile << std::endl;
 
   for (auto func : functions) {
