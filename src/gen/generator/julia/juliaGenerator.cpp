@@ -37,8 +37,8 @@ void JuliaGenerator::generateRandomNumberGenerator() {
                          "   if path !== nothing",
                          "       return parse(UInt64, path)",
                          "   else",
-                         "       n = rand(UInt32)",
-                         "       return (UInt64(n) << 32) | UInt64(rand(UInt32))",
+                         "       n = benchgen_rand()",
+                         "       return (UInt64(n) << 32) | UInt64(benchgen_rand())",
                          "   end",
                          "end"});
 
@@ -49,13 +49,13 @@ void JuliaGenerator::generateMainFunction() {
     mainFunction = GeneratorFunction(-1);
     mainFunction.addLine({"function main()",
                           "   loopsFactor = 100",
-                          "   Random.seed!(0)",
+                          "   benchgen_srand(UInt64(0))",
                           "   i = 1",
                           "   while i <= length(ARGS)",
                           "       if ARGS[i] == \"-path-seed\"",
                           "           i += 1",
                           "           if i <= length(ARGS)",
-                          "               Random.seed!(parse(Int, ARGS[i]))",
+                          "               benchgen_srand(parse(Int, ARGS[i]))",
                           "           end",
                           "       elseif ARGS[i] == \"-loops-factor\"",
                           "           i += 1",
@@ -286,6 +286,16 @@ void JuliaGenerator::generateFiles(std::string benchmarkName) {
     for (auto include : includes) {
         includeFile << include << std::endl;
     }
+
+    includeFile << "benchgen_state::UInt64 = 1\n\n";
+    includeFile << "function benchgen_srand(seed::UInt64)\n";
+    includeFile << "    global benchgen_state = seed\n";
+    includeFile << "end\n\n";
+    includeFile << "function benchgen_rand()::UInt32\n";
+    includeFile << "    global benchgen_state\n";
+    includeFile << "    benchgen_state = UInt64(6364136223846793005) * benchgen_state + UInt64(1)\n";
+    includeFile << "    return UInt32(benchgen_state >> 32)\n";
+    includeFile << "end\n";
 
     for(auto func : funcs)
     {
