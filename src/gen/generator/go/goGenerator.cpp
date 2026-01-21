@@ -33,7 +33,7 @@ void GoGenerator::generateRandomNumberGenerator() {
         "    if useBenchPath {",
         "        return benchPath",
         "    }",
-        "    return rng.Uint64()",
+        "    return uint64(BenchgenRand())",
         "}",
     });
     functions.push_back(rngFunction);
@@ -45,12 +45,10 @@ void GoGenerator::generateMainFunction() {
     "package main",
     "",
     "import (",
-    "    \"math/rand/v2\"",
     "    \"os\"",
     "    \"strconv\"",
     ")",
     "",
-    "var rng = rand.NewPCG(0, 0)"
     "",
     "func main() {",
     "    loopsFactor := 100",
@@ -62,7 +60,7 @@ void GoGenerator::generateMainFunction() {
     "            if i < len(args) {",
     "                seed, err := strconv.Atoi(args[i])",
     "                if err == nil {",
-    "                    rng.Seed(uint64(seed), uint64(seed))",
+    "                    BenchgenSrand(uint64(seed))",
     "                }",
     "            }",
     "        } else if args[i] == \"-loops-factor\" {",
@@ -304,6 +302,15 @@ void GoGenerator::generateFiles(std::string benchmarkName) {
     }
 
     file << std::endl;
+
+    includeFile << "var benchgenState uint64 = 1\n\n";
+    includeFile << "func BenchgenSrand(seed uint64) {\n";
+    includeFile << "	benchgenState = seed\n";
+    includeFile << "}\n\n";
+    includeFile << "func BenchgenRand() uint32 {\n";
+    includeFile << "	benchgenState = 6364136223846793005*benchgenState + 1\n";
+    includeFile << "	return uint32(benchgenState >> 32)\n";
+    includeFile << "}\n";
 
     // Global variables
     for (auto var : globalVars) {
