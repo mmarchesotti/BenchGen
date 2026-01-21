@@ -6,7 +6,6 @@
 
 void VGenerator::generateModules() {
     modules.push_back("import os");
-    modules.push_back("import rand");
     std::vector<std::string> varIncludes = VariableFactory::genIncludes(varType);
     for (auto var : varIncludes) {
         modules.push_back(var);
@@ -48,8 +47,8 @@ void VGenerator::generateRandomNumberGenerator() {
         "        val := strconv.parse_uint(path, 10, 64) or { return 0 }",
         "        return val",
         "    }",
-        "    n := u64(rand.u32())",
-        "    return (n << 32) | u64(rand.u32())",
+        "    n := u64(benchgen_rand())",
+        "    return (n << 32) | u64(benchgen_rand())",
         "}",
     });
     functions.push_back(rngFunction);
@@ -80,7 +79,8 @@ void VGenerator::generateMainFunction() {
         "            else {}",
         "        }",
         "    }",
-        "    rand.seed([u32(path_seed), u32(path_seed >> 32)])",
+            "",
+        "    functions.benchgen_srand(path_seed)",
         "}"
     });
     mainFunction.insertBack = true;
@@ -215,7 +215,7 @@ void VGenerator::genMakefile(std::string dir, std::string target) {
     makefile << "MAIN_MODULE = src/main\n\n";
     makefile << "all: $(TARGET)\n\n";
     makefile << "$(TARGET):\n";
-    makefile << "\tv $(MAIN_MODULE) -o $(TARGET)\n\n";
+    makefile << "\tv -enable-globals $(MAIN_MODULE) -o $(TARGET)\n\n";
     makefile << "run:\n";
     makefile << "\tv run $(MAIN_MODULE)\n\n";
     makefile << "clean:\n";
@@ -275,6 +275,23 @@ void VGenerator::generateFiles(std::string benchmarkName) {
         for (auto var : globalVars) {
             typesFile << var << std::endl;
         }
+
+        typesFile << "__global(\n";
+        typesFile << "  benchgen_state u64\n";
+        typesFile << ")\n\n";
+        typesFile <<  "pub fn benchgen_srand(seed u64) {\n";
+        typesFile <<        "unsafe {\n";
+        typesFile <<            "benchgen_state = seed\n";
+        typesFile <<        "}\n";
+        typesFile <<  "}\n\n";
+        typesFile <<   "pub fn benchgen_rand() u32 {\n";
+        typesFile <<        "unsafe {\n";
+        typesFile <<            "benchgen_state = 6364136223846793005 * benchgen_state + 1\n";
+        typesFile <<                "return u32(benchgen_state >> 32)\n";
+        typesFile <<        "}\n";
+        typesFile <<   "}\n";
+
+
         typesFile.close();
     }
 
@@ -293,7 +310,6 @@ void VGenerator::generateFiles(std::string benchmarkName) {
         funcFile << "module functions\n\n";
         if (is_path_func) {
             funcFile << "import os\n";
-            funcFile << "import rand\n";
             funcFile << "import strconv\n";
         }
         funcFile << "\n";
