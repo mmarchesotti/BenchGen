@@ -30,28 +30,46 @@ void CGenerator::generateGlobalVars() {
 
 void CGenerator::generateRandomNumberGenerator() {
     GeneratorFunction rngFunction = GeneratorFunction(-1);
-    rngFunction.addLine({"unsigned long get_path() {",
-                         "   const char* path = getenv(\"BENCH_PATH\");",
-                         "   if(path != NULL) { ",
-                         "      return atoi(path);",
-                         "   }else {",
-                         "      unsigned long n = rand();",
-                         "      return (n << 32) | rand();",
-                         "   }",
-                         "}"});
+        rngFunction.addLine({
+    "unsigned long get_path() {",
+    "    const char* path = getenv(\"BENCH_PATH\");",
+    "    if (path != NULL) {",
+    "        return (unsigned long)atoi(path);",
+    "    } else {",
+    "        unsigned long hi = benchgen_rand();",
+    "        unsigned long lo = benchgen_rand();",
+    "        return (hi << 32) | lo;",
+    "    }",
+    "}"
+    });
+
+    
     functions.push_back(rngFunction);
 }
 
 void CGenerator::generateMainFunction() {
     mainFunction = GeneratorFunction(-1);
+    mainFunction.addLine({
+    "static unsigned long benchgen_state = 1;",
+    "",
+    "void benchgen_srand(unsigned long seed) {",
+    "    benchgen_state = seed;",
+    "}",
+    "",
+    "unsigned long benchgen_rand(void) {",
+    "    benchgen_state = 6364136223846793005ULL * benchgen_state + 1ULL;",
+    "    return benchgen_state >> 32;",
+    "}",
+    ""
+    });
     mainFunction.addLine({"int main(int argc, char** argv) {",
                           "   int loopsFactor = 100;",
-                          "   srand(0);",
+                          "   benchgen_srand(0);",
                           "   for (int i = 1; i < argc; i++) {",
                           "      if (strcmp(argv[i], \"-path-seed\") == 0) {",
                           "         i++;",
                           "         if (i < argc) {",
-                          "            srand(atoi(argv[i]));",
+                          "            benchgen_srand(atoi(argv[i]));",
                           "         }",
                           "      }",
                           "      else if (strcmp(argv[i], \"-loops-factor\") == 0) {",
@@ -293,6 +311,10 @@ void CGenerator::generateFiles(std::string benchmarkName) {
     includeFile << std::endl;
 
     // Headers
+    includeFile << "void benchgen_srand(unsigned long seed);\n";
+    includeFile << "unsigned long benchgen_rand(void);\n";
+
+    
     for (auto func : functions) {
         std::string header = func.getLines()[0];
         header.pop_back();
