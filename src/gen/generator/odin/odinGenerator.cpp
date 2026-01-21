@@ -11,7 +11,6 @@ void OdinGenerator::generateIncludes() {
   libIncludes.push_back("import \"core:mem\"");
   libIncludes.push_back("import \"base:runtime\"");
   libIncludes.push_back("import \"core:strconv\"");
-  libIncludes.push_back("import \"core:math/rand\"");
 
   std::vector<std::string> varIncludes = VariableFactory::genIncludes(varType);
   for (auto var : varIncludes) {
@@ -34,7 +33,7 @@ void OdinGenerator::generateRandomNumberGenerator() {
        "    path := os.get_env(\"BENCH_PATH\");",
        "    if val, ok := strconv.parse_u64(path, 10); ok {",
        "        return val;", "        }",
-       "    return rand.uint64();", "}"});
+       "    return u64(benchgen_rand());", "}"});
   functions.push_back(rngFunction);
 }
 
@@ -47,8 +46,8 @@ void OdinGenerator::generateMainFunction() {
        "        if arg == \"-path-seed\" && i + 1 < len(os.args) {",
        "            if val, ok := strconv.parse_u64(os.args[i+1], 10); ok {",
        "                path_seed = val;", "            }", "        }", "    }",
-       "    random_state := rand.create(path_seed)",
-       "    context.random_generator = runtime.default_random_generator(&random_state)",
+       "    benchgen_srand(path_seed)",
+        "",
        "}"});
   mainFunction.insertBack = true;
   currentFunction.push(&mainFunction);
@@ -263,8 +262,18 @@ void OdinGenerator::generateFiles(std::string benchmarkName) {
   for (auto include : libIncludes) {
     libFile << include << std::endl;
   }
-  libFile << std::endl;
 
+  libFile << "benchgen_state: u64 = 1\n\n";
+  libFile <<  "benchgen_srand :: proc(seed: u64) {\n";
+  libFile <<  "    benchgen_state = seed\n";
+  libFile <<  "}\n\n";
+  libFile <<  "benchgen_rand :: proc() -> u32 {\n";
+  libFile <<  "    benchgen_state = 6364136223846793005 * benchgen_state + 1\n";
+  libFile <<  "    return u32(benchgen_state >> 32)\n";
+  libFile <<  "}\n";
+
+  libFile << std::endl;
+  
   for (auto var : libGlobalVars) {
     libFile << var << std::endl;
   }
@@ -311,7 +320,6 @@ void OdinGenerator::generateFiles(std::string benchmarkName) {
   mainFile << "import \"core:mem\"\n";
   mainFile << "import \"base:runtime\"\n";
   mainFile << "import \"core:strconv\"\n";
-  mainFile << "import \"core:math/rand\"\n\n";
 
 
   this->freeVars();
