@@ -9,6 +9,7 @@
 #include "carbon/carbonGeneratorVariable.h"
 #include "zig/zigGeneratorVariable.h"
 #include "odin/odinGeneratorVariable.h"
+#include "mlir/mlirGeneratorVariable.h"
 
 unsigned int VariableFactory::var_counter = 0;
 
@@ -19,6 +20,10 @@ GeneratorSortedList::~GeneratorSortedList(){};
 GeneratorArray::GeneratorArray() {};
 GeneratorArray::GeneratorArray(int totalSize, int id) {};
 GeneratorArray::~GeneratorArray() {};
+
+GeneratorScalar::GeneratorScalar() {};
+GeneratorScalar::~GeneratorScalar() {};
+
 
 std::vector<std::string> GeneratorSortedList::new_(bool inFunction)
 {
@@ -91,6 +96,7 @@ std::vector<std::string> GeneratorArray::new_(bool inFunction)
         return OdinGeneratorArray().new_(inFunction);
     }
 }
+
 
 std::vector<std::string>  GeneratorArray::insert()
 {
@@ -315,6 +321,69 @@ std::vector<std::string>  GeneratorArray::genParams(std::string paramName, std::
         return OdinGeneratorArray().genParams(paramName, varsParams);
     }
 }
+
+
+std::vector<std::string> GeneratorScalar::new_(bool inFunction) {;
+    return MlirGeneratorScalar().new_(inFunction);
+}
+
+std::vector<std::string> GeneratorScalar::arithmetic(std::string opt) {
+    return MlirGeneratorScalar().arithmetic(opt);
+}
+
+std::vector<std::string> GeneratorScalar::conditional() {
+    return MlirGeneratorScalar().conditional();
+}
+
+std::vector<std::string> GeneratorScalar::logical(bool shouldReturn) {
+    return MlirGeneratorScalar().logical(shouldReturn);
+}
+
+std::vector<std::string> GeneratorScalar::free() {
+    return MlirGeneratorScalar().free();
+}
+
+std::vector<std::string> GeneratorScalar::unary(std::string op) {
+    return MlirGeneratorScalar().unary(op);
+}
+
+std::vector<std::string> GeneratorScalar::select(bool shouldReturn) {
+    return MlirGeneratorScalar().select(shouldReturn);
+}
+
+std::vector<std::string> GeneratorScalar::logical_sc(bool shouldReturn) {
+    return MlirGeneratorScalar().logical_sc(shouldReturn);
+}
+
+
+std::vector<std::string> GeneratorScalar::incdec(bool isInc) {
+    return MlirGeneratorScalar().incdec(isInc);
+}
+
+std::vector<std::string> GeneratorScalar::reduction() {
+    return MlirGeneratorScalar().reduction();
+}
+
+std::vector<std::string> GeneratorScalar::call(std::string funcName) {
+    return MlirGeneratorScalar().call(funcName);
+}
+
+std::vector<std::string> GeneratorScalar::insert() {
+    return {};
+}
+std::vector<std::string> GeneratorScalar::remove() {
+    return {};
+}
+std::vector<std::string> GeneratorScalar::contains(bool shouldReturn) {
+    return {};
+}
+std::vector<std::string> GeneratorScalar::genIncludes() {
+    return {};
+}
+std::vector<std::string> GeneratorScalar::genGlobalVars() {
+    return {};
+}
+std::vector<std::string> GeneratorScalar::genParams(std::string paramName, std::vector<GeneratorVariable*> varsParams) {}
 
 std::string VariableFactory::genTypeString(std::string type) {
     GeneratorVariable* var = createVariable(type, 0);

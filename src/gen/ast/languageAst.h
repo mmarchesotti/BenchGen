@@ -275,6 +275,121 @@ class If : public Node {
     virtual ~If();
 };
 
+/**
+ * @brief Represents a scalar arithmetic operation.
+ */
+class ArithOp : public Node {
+public:
+
+    void gen(ProgrammingLanguageGenerator&) override;
+    void print(int indent) override;
+
+    virtual ~ArithOp();
+};
+
+/**
+ * @brief Represents a scalar conditional operation.
+ */
+class CondOp : public Node {
+protected:
+    std::shared_ptr<Node> c1;
+    std::shared_ptr<Node> c2;
+
+public:
+    
+    CondOp(std::shared_ptr<Node> c1, std::shared_ptr<Node> c2) : c1(c1), c2(c2) {
+
+    }
+
+    void gen(ProgrammingLanguageGenerator&) override;
+    void print(int indent) override;
+
+    virtual ~CondOp();
+};
+
+/**
+ * @brief Represents a scalar logical operation.
+ */
+class LogicOp : public Node {
+public:
+    void gen(ProgrammingLanguageGenerator&) override;
+    void print(int indent) override;
+
+    virtual ~LogicOp();
+};
+
+/**
+ * @brief Represents a scalar free operation.
+ */
+class FreeOp : public Node {
+public:
+
+    void gen(ProgrammingLanguageGenerator&) override;
+    void print(int indent) override;
+
+    virtual ~FreeOp();
+};
+
+/**
+ * @brief Represents a scalar unary operation.
+ */
+class UnaryOp : public Node {
+public:
+
+    void gen(ProgrammingLanguageGenerator&) override;
+    void print(int indent) override;
+
+    virtual ~UnaryOp();
+};
+
+/**
+ * @brief Represents a scalar select operation.
+ */
+class SelectOp : public Node {
+public:
+
+    void gen(ProgrammingLanguageGenerator&) override;
+    void print(int indent) override;
+
+    virtual ~SelectOp();
+};
+
+/**
+ * @brief Represents a scalar logical short-circuit operation.
+ */
+class LogicSCOp : public Node {
+public:
+
+    void gen(ProgrammingLanguageGenerator&) override;
+    void print(int indent) override;
+
+    virtual ~LogicSCOp();
+};
+
+/**
+ * @brief Represents a scalar increment/decrement operation.
+ */
+class IncDecOp : public Node {
+public:
+    void gen(ProgrammingLanguageGenerator&) override;
+    void print(int indent) override;
+
+    virtual ~IncDecOp();
+};
+
+/**
+ * @brief Represents a scalar reduction operation.
+ */
+class ReductionOp : public Node {
+public:
+
+    void gen(ProgrammingLanguageGenerator&) override;
+    void print(int indent) override;
+
+    virtual ~ReductionOp();
+};
+
+
 Insert get_insert();
 
 Remove get_remove();
@@ -296,4 +411,16 @@ Id get_id(std::string id);
 Seq get_seq(std::shared_ptr<Node> code);
 
 If get_if(std::shared_ptr<Node> c1, std::shared_ptr<Node> c2);
+
+ArithOp get_arith();
+CondOp get_cond(std::shared_ptr<Node> c1, std::shared_ptr<Node> c2);
+LogicOp get_logic();
+FreeOp get_free();
+UnaryOp get_unary();
+SelectOp get_select();
+LogicSCOp get_logicsc();
+IncDecOp get_incdec();
+ReductionOp get_reduction();
+
+
 #endif

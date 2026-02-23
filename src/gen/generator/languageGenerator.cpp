@@ -7,6 +7,7 @@
 #include "cpp/cppGenerator.h"
 #include "go/goGenerator.h"
 #include "julia/juliaGenerator.h"
+#include "mlir/mlirGenerator.h"
 #include "rust/rustGenerator.h"
 #include "v/vGenerator.h"
 #include "carbon/carbonGenerator.h"
@@ -45,6 +46,9 @@ void ProgrammingLanguageGenerator::addLine(std::vector<std::string> lines, int d
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ODIN)
     {
         OdinGenerator(this->varType).addLine(lines, d);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::MLIR)
+    {
+        MlirGenerator(this->varType).addLine(lines, d);
     }
 };
 
@@ -76,6 +80,9 @@ void ProgrammingLanguageGenerator::addLine(std::string line, int d){
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ODIN)
     {
         OdinGenerator(this->varType).addLine(line, d);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::MLIR)
+    {
+        MlirGenerator(this->varType).addLine(line, d);
     }
 };
 
@@ -107,6 +114,9 @@ void ProgrammingLanguageGenerator::startScope(){
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ODIN)
     {
         OdinGenerator(this->varType).startScope();
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::MLIR)
+    {
+        MlirGenerator(this->varType).startScope();
     }
 };
 
@@ -138,6 +148,9 @@ void ProgrammingLanguageGenerator::startFunc(int funcId, int nParameters){
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ODIN)
     {
         OdinGenerator(this->varType).startFunc(funcId, nParameters);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::MLIR)
+    {
+        MlirGenerator(this->varType).startFunc(funcId, nParameters);
     }
 };
 
@@ -169,6 +182,9 @@ bool ProgrammingLanguageGenerator::functionExists(int funcId){
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ODIN)
     {
         OdinGenerator(this->varType).functionExists(funcId);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::MLIR)
+    {
+        MlirGenerator(this->varType).functionExists(funcId);
     }
 };
 
@@ -200,6 +216,9 @@ void ProgrammingLanguageGenerator::callFunc(int funcId, int nParameters){
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ODIN)
     {
         OdinGenerator(this->varType).callFunc(funcId, nParameters);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::MLIR)
+    {
+        MlirGenerator(this->varType).callFunc(funcId, nParameters);
     }
 };
 
@@ -231,6 +250,9 @@ int ProgrammingLanguageGenerator::addVar(std::string type){
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ODIN)
     {
         OdinGenerator(this->varType).addVar(type);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::MLIR)
+    {
+        MlirGenerator(this->varType).addVar(type);
     }
 };
 
@@ -263,6 +285,9 @@ void ProgrammingLanguageGenerator::freeVars(bool hasReturn, int returnVarPos){
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ODIN)
     {
         OdinGenerator(this->varType).freeVars(hasReturn, returnVarPos);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::MLIR)
+    {
+        MlirGenerator(this->varType).freeVars(hasReturn, returnVarPos);
     }
 };
 
@@ -295,6 +320,9 @@ void ProgrammingLanguageGenerator::returnFunc(int returnVarPos){
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ODIN)
     {
         OdinGenerator(this->varType).returnFunc(returnVarPos);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::MLIR)
+    {
+        MlirGenerator(this->varType).returnFunc(returnVarPos);
     }
 };
 
@@ -326,6 +354,9 @@ void ProgrammingLanguageGenerator::endScope(){
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ODIN)
     {
         OdinGenerator(this->varType).endScope();
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::MLIR)
+    {
+        MlirGenerator(this->varType).endScope();
     }
 };
 
@@ -349,6 +380,9 @@ void ProgrammingLanguageGenerator::endIfScope(){
     }if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ODIN)
     {
         ZigGenerator(this->varType).endIfScope();
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::MLIR)
+    {
+        MlirGenerator(this->varType).endIfScope();
     }
 };
 
@@ -380,6 +414,9 @@ void ProgrammingLanguageGenerator::endFunc(){
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ODIN)
     {
         OdinGenerator(this->varType).endFunc();
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::MLIR)
+    {
+        MlirGenerator(this->varType).endFunc();
     }
 };
 
@@ -412,6 +449,9 @@ void ProgrammingLanguageGenerator::generateFiles(std::string benchmarkName){
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ODIN)
     {
         OdinGenerator(this->varType).generateFiles(benchmarkName);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::MLIR)
+    {
+        MlirGenerator(this->varType).generateFiles(benchmarkName);
     }
 };
 
@@ -444,6 +484,9 @@ ProgrammingLanguageGenerator* ProgrammingLanguageGenerator::getGenerator(std::st
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ODIN)
     {
         return new OdinGenerator(varType);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::MLIR)
+    {
+        return new MlirGenerator(varType);
     }
 
     return nullptr;

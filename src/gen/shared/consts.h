@@ -14,11 +14,18 @@ class VarTypes {
     // Constant string representing the "array" variable type
     inline static const std::string ARRAY      = "array";
     inline static const std::string SORTEDLIST = "sortedlist";
+    inline static const std::string SCALAR     = "scalar";
+    inline static const std::string TENSOR     = "tensor";
 };
 
 class Parameters{
     public:
     inline static int ITERATIONS = -1;
+};
+
+class Registers{
+    public:
+    inline static int REGISTER_COUNTER = 0;
 };
 class ProgrammingLanguage {
     public:
@@ -32,6 +39,7 @@ class ProgrammingLanguage {
     inline static const std::string CARBON = "carbon";
     inline static const std::string ZIG    = "zig";
     inline static const std::string ODIN   = "odin";
+    inline static const std::string MLIR   = "mlir";
 
 
     inline static std::string LANGUAGE = "";

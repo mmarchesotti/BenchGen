@@ -43,10 +43,10 @@ int main(int argc, char const* argv[]) {
     std::string varType = argv[5];
     std::string language = argv[6];
 
-    if(varType != VarTypes::ARRAY && varType != VarTypes::SORTEDLIST)
+    if(varType != VarTypes::ARRAY && varType != VarTypes::SORTEDLIST && varType != VarTypes::SCALAR)
     {
         std::cout << "Variable " + varType + " is wrong!" << std::endl;
-        std::cout << "Variables '" + VarTypes::ARRAY + "' and '" + VarTypes::SORTEDLIST + "' is avaliable!" << std::endl;
+        std::cout << "Variables '" + VarTypes::ARRAY + "' and '" + VarTypes::SORTEDLIST + "' and '"  + VarTypes::SCALAR + " is avaliable!" << std::endl;
         return 1;
     }
 
@@ -58,7 +58,8 @@ int main(int argc, char const* argv[]) {
         language != ProgrammingLanguage::V &&
         language != ProgrammingLanguage::CARBON &&
         language != ProgrammingLanguage::ZIG &&
-        language != ProgrammingLanguage::ODIN)
+        language != ProgrammingLanguage::ODIN &&
+        language != ProgrammingLanguage::MLIR)
     {
         std::cout << "Programming language " + language + " is wrong!" << std::endl;
         std::cout << "Avaliable '" +
@@ -69,6 +70,7 @@ int main(int argc, char const* argv[]) {
 		ProgrammingLanguage::CARBON + "', '" +
 		ProgrammingLanguage::ODIN + "', '" +
         ProgrammingLanguage::GO + "', '" +
+        ProgrammingLanguage::MLIR + "', '" +
         ProgrammingLanguage::V + "' and '" +
         ProgrammingLanguage::ZIG + "'"
         << std::endl;
@@ -88,8 +90,9 @@ int main(int argc, char const* argv[]) {
 
     tokenizeInput(inputTokens, lexer, inputFile);
 
+   
     applyLSystem(inputTokens, lexer, iterations, productionRulesFile);
-
+    
     std::shared_ptr<Node> AST = parseTokensToAST(parser, inputTokens);
     
     generateCode(*generator, AST);
