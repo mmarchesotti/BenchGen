@@ -2,6 +2,7 @@
 #include "c/cGeneratorVariable.h"
 #include "cpp/cppGeneratorVariable.h"
 #include "julia/juliaGeneratorVariable.h"
+#include "mlir/mlirGeneratorVariable.h"
 #include "rust/rustGeneratorVariable.h"
 #include "go/goGeneratorVariable.h"
 #include "v/vGeneratorVariable.h"
@@ -60,6 +61,11 @@ GeneratorVariable* VariableFactory::createVariable(std::string type, int identif
     {
         if (type == VarTypes::ARRAY) {
             return new OdinGeneratorArray(size, identifier);
+        }
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::MLIR)
+    {
+        if (type == VarTypes::SCALAR) {
+            return new MlirGeneratorScalar(size, identifier);
         }
     }
 

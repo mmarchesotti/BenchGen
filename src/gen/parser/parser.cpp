@@ -23,6 +23,15 @@ std::shared_ptr<Node> Parser::parse_CODE() {
         case TOK_CALL:
         case TOK_SEQ:
         case TOK_IF:
+        case TOK_ARITH:
+        case TOK_COND:
+        case TOK_LOGIC:
+        case TOK_FREE:
+        case TOK_UNARY:
+        case TOK_SELECT:
+        case TOK_BINARY:
+        case TOK_INCDEC:
+        case TOK_REDUCTION:
         case TOK_ID: {
             std::shared_ptr<Node> n = parse_STATEMENT();
             return std::make_shared<StatementCode>(get_statementcode(n, parse_CODE()));
@@ -39,19 +48,69 @@ std::shared_ptr<Node> Parser::parse_CODE() {
 }
 
 std::shared_ptr<Node> Parser::parse_STATEMENT() {
+    
     switch (tokens[tokenIndex].type) {
-        case TOK_INSERT:
+        case TOK_ARITH: {
+            match(tokens[tokenIndex].type);   
+            return std::make_shared<ArithOp>(get_arith());
+        }
+        case TOK_COND:  {
+            match(TOK_COND);
+            match(TOK_OPAREN);
+            
+            if (!currentCall.empty()) {
+                currentCall.top()->conditionalCounts++;
+            }
+            std::shared_ptr<Node> c1 = parse_CODE();
+            match(TOK_COMMA);
+            std::shared_ptr<Node> c2 = parse_CODE();
+            match(TOK_CPAREN);
+            return std::make_shared<CondOp>(get_cond(c1, c2));
+        }
+        case TOK_LOGIC: {
+            match(tokens[tokenIndex].type);
+            return std::make_shared<LogicOp>(get_logic());
+        }
+        case TOK_FREE: {
+            match(tokens[tokenIndex].type);
+            return std::make_shared<FreeOp>(get_free());
+        }
+        case TOK_UNARY: {
+            match(tokens[tokenIndex].type);
+            return std::make_shared<UnaryOp>(get_unary());
+        }
+        case TOK_SELECT: {
+            match(tokens[tokenIndex].type);
+            return std::make_shared<SelectOp>(get_select());
+        }
+        case TOK_BINARY: {
+            match(tokens[tokenIndex].type);
+            return std::make_shared<LogicSCOp>(get_logicsc());
+        }
+        case TOK_INCDEC: {
+            match(tokens[tokenIndex].type);
+            return std::make_shared<IncDecOp>(get_incdec());
+        }
+        case TOK_REDUCTION: {
+            match(tokens[tokenIndex].type);
+            return std::make_shared<ReductionOp>(get_reduction());
+        }
+        case TOK_INSERT: {
             match(tokens[tokenIndex].type);
             return std::make_shared<Insert>(get_insert());
-        case TOK_REMOVE:
+        }
+        case TOK_REMOVE: {
             match(tokens[tokenIndex].type);
             return std::make_shared<Remove>(get_remove());
-        case TOK_NEW:
+        }
+        case TOK_NEW: {
             match(tokens[tokenIndex].type);
             return std::make_shared<New>(get_new());
-        case TOK_CONTAINS:
+        }
+        case TOK_CONTAINS: {
             match(tokens[tokenIndex].type);
             return std::make_shared<Contains>(get_contains());
+        }
         case TOK_LOOP: {
             match(tokens[tokenIndex].type);
             match(TOK_OPAREN);

@@ -8,6 +8,7 @@
 #include "carbon/carbonAst.h"
 #include "zig/zigAst.h"
 #include "odin/odinAst.h"
+#include "mlir/mlirAst.h"
 
 Insert::~Insert() {};
 Remove::~Remove() {};
@@ -20,6 +21,15 @@ Seq::~Seq() {};
 If::~If() {};
 Id::~Id(){};
 LambdaCode::~LambdaCode(){};
+ArithOp::~ArithOp() {};
+CondOp::~CondOp() {};
+LogicOp::~LogicOp() {};
+FreeOp::~FreeOp() {};
+UnaryOp::~UnaryOp() {};
+SelectOp::~SelectOp() {};
+LogicSCOp::~LogicSCOp() {};
+IncDecOp::~IncDecOp() {};
+ReductionOp::~ReductionOp() {};
 
 
 void printIndentationSpaces(int ident)
@@ -48,6 +58,9 @@ void printIndentationSpaces(int ident)
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ODIN)
     {
         odinprintIndentationSpaces(ident);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::MLIR)
+    {
+        mlirprintIndentationSpaces(ident);
     }
 }
 
@@ -80,6 +93,9 @@ std::string generateIfCondition(ProgrammingLanguageGenerator& generator)
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ODIN)
     {
         return odingenerateIfCondition(generator);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::MLIR)
+    {
+        return mlirgenerateIfCondition(generator);
     }
 }
 
@@ -176,6 +192,9 @@ New get_new()
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ODIN)
     {
         return OdinNew();
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::MLIR)
+    {
+        return MlirNew();
     }
 }
 
@@ -241,6 +260,9 @@ StatementCode get_statementcode(std::shared_ptr<Node> stmt, std::shared_ptr<Node
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ODIN)
     {
         return OdinStatementCode(stmt, code);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::MLIR)
+    {
+        return MlirStatementCode(stmt, code);
     }
 }
 
@@ -435,7 +457,146 @@ Id get_id(std::string id)
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ODIN)
     {
         return OdinId(id);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::MLIR)
+    {
+        return MlirId(id);
     }
+}
+
+void ArithOp::gen(ProgrammingLanguageGenerator& generator)
+{
+    MlirArithOp().gen(generator);
+}
+
+void CondOp::gen(ProgrammingLanguageGenerator& generator)
+{
+    MlirCondOp(this->c1, this->c2).gen(generator);
+} 
+
+void LogicOp::gen(ProgrammingLanguageGenerator& generator)
+{
+    MlirLogicOp().gen(generator);
+}
+
+void FreeOp::gen(ProgrammingLanguageGenerator& generator)
+{
+    MlirFreeOp().gen(generator);
+}
+
+void UnaryOp::gen(ProgrammingLanguageGenerator& generator)
+{
+    MlirUnaryOp().gen(generator);
+}
+
+void SelectOp::gen(ProgrammingLanguageGenerator& generator)
+{
+    MlirSelectOp().gen(generator);
+}
+
+void LogicSCOp::gen(ProgrammingLanguageGenerator& generator)
+{
+    MlirLogicSCOp().gen(generator);
+}
+
+void IncDecOp::gen(ProgrammingLanguageGenerator& generator)
+{
+    MlirIncDecOp().gen(generator);
+}
+
+void ReductionOp::gen(ProgrammingLanguageGenerator& generator)
+{
+    MlirReductionOp().gen(generator);
+}
+
+
+void ArithOp::print(int)
+{
+    MlirArithOp().print(0);
+}
+
+void CondOp::print(int)
+{
+    MlirCondOp(this->c1, this->c2).print(0);
+} 
+
+void LogicOp::print(int)
+{
+    MlirLogicOp().print(0);
+}
+
+void FreeOp::print(int)
+{
+    MlirFreeOp().print(0);
+}
+
+void UnaryOp::print(int)
+{
+    MlirUnaryOp().print(0);
+}
+
+void SelectOp::print(int)
+{
+    MlirSelectOp().print(0);
+}
+
+void LogicSCOp::print(int)
+{
+    MlirLogicSCOp().print(0);
+}
+
+void IncDecOp::print(int)
+{
+    MlirIncDecOp().print(0);
+}
+
+void ReductionOp::print(int)
+{
+    MlirReductionOp().print(0);
+}
+
+
+ArithOp get_arith()
+{
+    return MlirArithOp();
+}
+
+CondOp get_cond(std::shared_ptr<Node> c1, std::shared_ptr<Node> c2)
+{
+    return MlirCondOp(c1, c2);
+} 
+
+LogicOp get_logic()
+{
+    return MlirLogicOp();
+}
+
+FreeOp get_free()
+{
+    return MlirFreeOp();
+}
+
+UnaryOp get_unary()
+{
+    return MlirUnaryOp();
+}
+
+SelectOp get_select()
+{
+    return MlirSelectOp();
+}
+LogicSCOp get_logicsc()
+{
+    return MlirLogicSCOp();
+}
+
+IncDecOp get_incdec()
+{
+    return MlirIncDecOp();
+}
+
+ReductionOp get_reduction()
+{
+    return MlirReductionOp();
 }
 
 void Loop::gen(ProgrammingLanguageGenerator& generator) {
@@ -548,6 +709,9 @@ void Call::gen(ProgrammingLanguageGenerator& generator) {
         odincall.gen(generator); 
     }
 };
+
+
+
 
 void Call::print(int) { 
     if (ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::C)
@@ -759,6 +923,9 @@ void Id::gen(ProgrammingLanguageGenerator& generator) {
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ODIN)
     {
         OdinId(this->id).gen(generator);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::MLIR)
+    {
+        MlirId(this->id).gen(generator);
     }
 };
 
@@ -790,6 +957,9 @@ void Id::print(int) {
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ODIN)
     {
         OdinId(this->id).print(0);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::MLIR)
+    {
+        MlirId(this->id).print(0);
     }
 };
 
@@ -946,6 +1116,9 @@ void New::gen(ProgrammingLanguageGenerator& generator) {
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ODIN)
     {
         OdinNew().gen(generator);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::MLIR)
+    {
+        MlirNew().gen(generator);
     }
 };
 
@@ -977,6 +1150,9 @@ void New::print(int) {
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ODIN)
     {
         OdinNew().print(0);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::MLIR)
+    {
+        MlirNew().print(0);
     }
  };
 
@@ -1070,6 +1246,9 @@ void StatementCode::gen(ProgrammingLanguageGenerator& generator) {
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ODIN)
     {
         OdinStatementCode(this->stmt, this->code).gen(generator);  
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::MLIR)
+    {
+        MlirStatementCode(this->stmt, this->code).gen(generator);  
     }
 };
 
@@ -1103,6 +1282,9 @@ void StatementCode::print(int) {
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ODIN)
     {
         OdinStatementCode(this->stmt, this->code).print(0);  
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::MLIR)
+    {
+        MlirStatementCode(this->stmt, this->code).print(0);  
     }
 };
 
@@ -1167,3 +1349,5 @@ void LambdaCode::print(int) {
         OdinLambdaCode().print(0);  
     }
 };
+
+

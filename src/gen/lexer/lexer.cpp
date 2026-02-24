@@ -99,6 +99,15 @@ void Lexer::loadConfiguration() {
     LexerRule lrComment;
     LexerRule lrId;
     LexerRule lrError;
+    LexerRule lrArith;
+    LexerRule lrCond;
+    LexerRule lrLogic;
+    LexerRule lrFree;
+    LexerRule lrUnary;
+    LexerRule lrSelect;
+    LexerRule lrBinary;
+    LexerRule lrIncdec;
+    LexerRule lrReduction;
 
     lrIf.type = TOK_IF;
     lrLoop.type = TOK_LOOP;
@@ -116,6 +125,15 @@ void Lexer::loadConfiguration() {
     lrComment.type = TOK_COMMENT;
     lrId.type = TOK_ID;
     lrError.type = TOK_ERROR;
+    lrArith.type = TOK_ARITH;
+    lrCond.type = TOK_COND;
+    lrLogic.type = TOK_LOGIC;
+    lrFree.type = TOK_FREE;
+    lrUnary.type = TOK_UNARY;    
+    lrSelect.type = TOK_SELECT;   
+    lrBinary.type = TOK_BINARY;  
+    lrIncdec.type = TOK_INCDEC;   
+    lrReduction.type = TOK_REDUCTION;
 
     lrIf.regex = "IF";
     lrLoop.regex = "LOOP";
@@ -125,6 +143,16 @@ void Lexer::loadConfiguration() {
     lrRemove.regex = "remove";
     lrNew.regex = "new";
     lrContains.regex = "contains";
+    lrArith.regex = "ARITH";
+    lrCond.regex = "COND";
+    lrLogic.regex = "LOGIC";
+    lrFree.regex = "FREE";
+    lrUnary.regex = "UNARY";    
+    lrSelect.regex = "SELECT";   
+    lrBinary.regex = "BINARY";  
+    lrIncdec.regex = "INCDEC";   
+    lrReduction.regex = "REDUCTION";
+
     lrEnd.regex = "[;]";
     lrOParen.regex = "[(]";
     lrCParen.regex = "[)]";
@@ -133,10 +161,12 @@ void Lexer::loadConfiguration() {
     lrComment.regex = "[#]";
     lrId.regex = "[a-zA-Z]+[a-zA-Z0-9]*";
     lrError.regex = ".";
-
+    
     rules = {
         lrIf, lrLoop, lrCall, lrSeq, lrInsert, lrRemove, lrNew, lrContains, lrEnd,
-        lrOParen, lrCParen, lrComma, lrEqual, lrComment, lrId, lrError};
+        lrOParen, lrCParen, lrComma, lrEqual,
+            lrArith, lrCond, lrLogic, lrFree, lrUnary, lrSelect, lrBinary, 
+            lrIncdec, lrReduction, lrComment, lrId, lrError};
 }
 
 std::vector<Token> Lexer::getTokens(std::string fileName) {
