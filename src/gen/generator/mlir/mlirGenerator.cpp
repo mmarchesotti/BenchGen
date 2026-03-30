@@ -8,9 +8,10 @@ void MlirGenerator::generateMainFunction() {
   mainFunction = GeneratorFunction(-1);
   mainFunction.addLine(
       {"module {",
-       "  func.func @bench() {"
+       "  func.func @main() -> f32 {"
         "",
-       "       func.return\n    }",
+          "    %ret = arith.constant 0.0 : f32\n",
+       "       func.return %ret : f32\n    }",
        "}",
   });
   mainFunction.insertBack = true;
