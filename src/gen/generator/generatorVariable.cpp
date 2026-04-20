@@ -94,6 +94,9 @@ std::vector<std::string> GeneratorArray::new_(bool inFunction)
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ODIN)
     {
         return OdinGeneratorArray().new_(inFunction);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::D)
+    {
+        return DGeneratorArray().new_(inFunction);
     }
 }
 
@@ -127,6 +130,9 @@ std::vector<std::string>  GeneratorArray::insert()
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ODIN)
     {
         return OdinGeneratorArray().insert();
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::D)
+    {
+        return DGeneratorArray().insert();
     }
 }
 
@@ -159,6 +165,9 @@ std::vector<std::string>  GeneratorArray::remove()
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ODIN)
     {
         return OdinGeneratorArray().remove();
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::D)
+    {
+        return DGeneratorArray().remove();
     }
 }
 
@@ -191,6 +200,9 @@ std::vector<std::string>  GeneratorArray::contains(bool shouldReturn)
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ODIN)
     {
         return OdinGeneratorArray().contains(shouldReturn);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::D)
+    {
+        return DGeneratorArray().contains(shouldReturn);
     }
 }
 
@@ -223,6 +235,9 @@ std::vector<std::string>  GeneratorArray::free()
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ODIN)
     {
         return OdinGeneratorArray().free();
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::D)
+    {
+        return DGeneratorArray().free();
     }
 }
 
@@ -255,6 +270,9 @@ std::vector<std::string>  GeneratorArray::genIncludes()
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ODIN)
     {
         return OdinGeneratorArray().genIncludes();
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::D)
+    {
+        return DGeneratorArray().genIncludes();
     }
 }
 
@@ -287,6 +305,9 @@ std::vector<std::string>  GeneratorArray::genGlobalVars()
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ODIN)
     {
         return OdinGeneratorArray().genGlobalVars();
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::D)
+    {
+        return DGeneratorArray().genGlobalVars();
     }
 }
 
@@ -319,6 +340,9 @@ std::vector<std::string>  GeneratorArray::genParams(std::string paramName, std::
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ODIN)
     {
         return OdinGeneratorArray().genParams(paramName, varsParams);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::D)
+    {
+        return DGeneratorArray().genParams(paramName, varsParams);
     }
 }
 

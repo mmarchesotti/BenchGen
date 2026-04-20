@@ -62,13 +62,17 @@ GeneratorVariable* VariableFactory::createVariable(std::string type, int identif
         if (type == VarTypes::ARRAY) {
             return new OdinGeneratorArray(size, identifier);
         }
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::D)
+    {
+        if (type == VarTypes::ARRAY) {
+            return new DGeneratorArray(size, identifier);
+        }
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::MLIR)
     {
         if (type == VarTypes::SCALAR) {
             return new MlirGeneratorScalar(size, identifier);
         }
     }
-
     // TODO: Error Handling
     return nullptr;
 }
