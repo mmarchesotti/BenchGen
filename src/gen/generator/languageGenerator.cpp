@@ -374,12 +374,12 @@ void ProgrammingLanguageGenerator::endIfScope(){
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::CARBON)
     {
         CarbonGenerator(this->varType).endIfScope();
-    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::CARBON)
+	}else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ZIG)
+	{
+		ZigGenerator(this->varType).endIfScope();
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ODIN)
     {
-        CarbonGenerator(this->varType).endIfScope();
-    }if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ODIN)
-    {
-        ZigGenerator(this->varType).endIfScope();
+        OdinGenerator(this->varType).endIfScope();
     }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::MLIR)
     {
         MlirGenerator(this->varType).endIfScope();
