@@ -8,6 +8,7 @@
 #include "carbon/carbonAst.h"
 #include "zig/zigAst.h"
 #include "odin/odinAst.h"
+#include "d/dAst.h"
 #include "mlir/mlirAst.h"
 
 Insert::~Insert() {};

@@ -9,6 +9,7 @@
 #include "carbon/carbonGeneratorVariable.h"
 #include "zig/zigGeneratorVariable.h"
 #include "odin/odinGeneratorVariable.h"
+#include "d/dGeneratorVariable.h"
 #include "mlir/mlirGeneratorVariable.h"
 
 unsigned int VariableFactory::var_counter = 0;

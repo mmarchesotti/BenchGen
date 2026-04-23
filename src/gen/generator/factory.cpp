@@ -9,6 +9,7 @@
 #include "carbon/carbonGeneratorVariable.h"
 #include "zig/zigGeneratorVariable.h"
 #include "odin/odinGeneratorVariable.h"
+#include "d/dGeneratorVariable.h"
 #include "../shared/consts.h"
 
 GeneratorVariable* VariableFactory::createVariable(std::string type, int identifier) {

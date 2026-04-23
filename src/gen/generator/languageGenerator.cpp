@@ -13,6 +13,7 @@
 #include "carbon/carbonGenerator.h"
 #include "zig/zigGenerator.h"
 #include "odin/odinGenerator.h"
+#include "d/dGenerator.h"
 
 
 ProgrammingLanguageGenerator::ProgrammingLanguageGenerator(){};
