@@ -69,7 +69,7 @@ class CppGenerator : public ProgrammingLanguageGenerator {
      * @param dir The directory where the Makefile should be created.
      * @param target The target executable name.
      */
-    void genMakefile(std::filesystem::path dir, std::string target);
+    void genMakefile(std::string dir, std::string target);
 
     /**
      * @brief Generates a README file for the generated program.
@@ -79,7 +79,7 @@ class CppGenerator : public ProgrammingLanguageGenerator {
      * @param dir The directory where the README file should be created.
      * @param target The target executable name.
      */
-    void genReadme(std::filesystem::path dir, std::string target);
+    void genReadme(std::string dir, std::string target);
 
    public:
 
