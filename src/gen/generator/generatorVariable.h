@@ -6,7 +6,7 @@
 
 #include "../shared/enums.h"
 #include "../shared/globalStructs.h"
-#include "../shared/varTypes.h"
+#include "../shared/consts.h"
 
 /**
  * @brief Abstract base class for variable generation.
@@ -17,6 +17,7 @@
 class GeneratorVariable {
    public:
     int id;                  // Unique identifier for the variable
+    std::vector<int> ids;
     std::string name;        // Name of the variable
     std::string typeString;  // String representing the type of the variable
 
@@ -106,20 +107,20 @@ class GeneratorVariable {
 
 class GeneratorSortedList : public GeneratorVariable {
    public:
-    GeneratorSortedList() {};
+    GeneratorSortedList();
 
     GeneratorSortedList(int id);
 
     ~GeneratorSortedList();
 
-    std::vector<std::string> new_(bool inFunction = false) override;
-    std::vector<std::string> insert() override;
-    std::vector<std::string> remove() override;
-    std::vector<std::string> contains(bool shouldReturn = false) override;
-    std::vector<std::string> free() override;
-    std::vector<std::string> genIncludes() override;
-    std::vector<std::string> genGlobalVars() override;
-    std::vector<std::string> genParams(std::string paramName, std::vector<GeneratorVariable*> varsParams) override;
+    virtual std::vector<std::string> new_(bool inFunction = false) override;
+    virtual std::vector<std::string> insert() override;
+    virtual std::vector<std::string> remove() override;
+    virtual std::vector<std::string> contains(bool shouldReturn = false) override;
+    virtual std::vector<std::string> free() override;
+    virtual std::vector<std::string> genIncludes() override;
+    virtual std::vector<std::string> genGlobalVars() override;
+    virtual std::vector<std::string> genParams(std::string paramName, std::vector<GeneratorVariable*> varsParams) override;
 };
 
 class GeneratorGString : public GeneratorVariable {
@@ -244,7 +245,7 @@ class GeneratorArray : public GeneratorVariable {
     /**
      * @brief Default constructor for the Array class.
      */
-    GeneratorArray() {};
+    GeneratorArray();
 
     /**
      * @brief Constructs an Array with a specified size, values, and identifier.
@@ -259,15 +260,64 @@ class GeneratorArray : public GeneratorVariable {
      */
     ~GeneratorArray();
 
-    std::vector<std::string> new_(bool inFunction = false) override;
-    std::vector<std::string> insert() override;
-    std::vector<std::string> remove() override;
-    std::vector<std::string> contains(bool shouldReturn = false) override;
-    std::vector<std::string> free() override;
-    std::vector<std::string> genIncludes() override;
-    std::vector<std::string> genGlobalVars() override;
-    std::vector<std::string> genParams(std::string paramName, std::vector<GeneratorVariable*> varsParams) override;
+    virtual std::vector<std::string> new_(bool inFunction = false) override;
+    virtual std::vector<std::string> insert() override;
+    virtual std::vector<std::string> remove() override;
+    virtual std::vector<std::string> contains(bool shouldReturn = false) override;
+    virtual std::vector<std::string> free() override;
+    virtual std::vector<std::string> genIncludes() override;
+    virtual std::vector<std::string> genGlobalVars() override;
+    virtual std::vector<std::string> genParams(std::string paramName, std::vector<GeneratorVariable*> varsParams) override;
 };
+
+
+/**
+ * @brief Class representing an Scalar variable.
+ *
+ * This class provides methods for operations specific to Scalar variables.
+ */
+class GeneratorScalar : public GeneratorVariable {
+   public:
+    int totalSize;  // The total size of the Scalar
+
+    /**
+     * @brief Default constructor for the Scalar class.
+     */
+    GeneratorScalar();
+
+    /**
+     * @brief Constructs an Scalar with a specified size, values, and identifier.
+     *
+     * @param totalSize The size of the Scalar.
+     * @param id The unique identifier for the Scalar.
+     */
+    GeneratorScalar(int totalSize, std::vector<int> ids);
+
+    /**
+     * @brief Destructor for the Scalar class.
+     */
+    ~GeneratorScalar();
+
+    virtual std::vector<std::string> new_(bool inFunction = false) override;
+    virtual std::vector<std::string> arithmetic(std::string opt);
+    virtual std::vector<std::string> conditional();
+    virtual std::vector<std::string> logical(bool shouldReturn = false);
+    virtual std::vector<std::string> free() override;
+    virtual std::vector<std::string> unary(std::string op);
+    virtual std::vector<std::string> select(bool shouldReturn);
+    virtual std::vector<std::string> logical_sc(bool shouldReturn);
+    virtual std::vector<std::string> incdec(bool isInc);
+    virtual std::vector<std::string> reduction();
+    virtual std::vector<std::string> call(std::string funcName);
+
+    virtual std::vector<std::string> insert() override;
+    virtual std::vector<std::string> remove() override;
+    virtual std::vector<std::string> contains(bool shouldReturn = false) override;
+    virtual std::vector<std::string> genIncludes() override;
+    virtual std::vector<std::string> genGlobalVars() override;
+    virtual std::vector<std::string> genParams(std::string paramName, std::vector<GeneratorVariable*> varsParams) override;
+};
+
 
 /**
  * @brief Factory class for creating generator variables.

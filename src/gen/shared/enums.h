@@ -31,6 +31,15 @@ enum TokenType {
 
     TOK_CALL_ID = -17,  // Token specifically for function call identifiers
 
+    TOK_ARITH = -18,
+    TOK_COND  = -19,
+    TOK_LOGIC = -20,
+    TOK_FREE  = -21,
+    TOK_UNARY = -22,
+    TOK_SELECT = -23,
+    TOK_BINARY = -24,
+    TOK_INCDEC = -25,
+    TOK_REDUCTION = -26,
     TOK_ERROR = -1  // Token indicating an error or unrecognized token
 };
 

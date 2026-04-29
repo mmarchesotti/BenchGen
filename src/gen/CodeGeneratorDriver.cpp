@@ -4,7 +4,9 @@
 #include "lSystem/lSystem.h"
 #include "lexer/lexer.h"
 #include "parser/parser.h"
-#include "shared/varTypes.h"
+#include "shared/consts.h"
+#include "ast/languageAst.h"
+#include <memory>
 
 void tokenizeInput(std::vector<Token>& inputTokens, Lexer& lexer, const std::string& inputFile);
 
@@ -12,15 +14,15 @@ void applyLSystem(std::vector<Token>& inputTokens, Lexer& lexer, int iterations,
 
 std::shared_ptr<Node> parseTokensToAST(Parser& parser, const std::vector<Token>& tokenSequence);
 
-void generateCode(Generator& generator, std::shared_ptr<Node>& AST);
+void generateCode(ProgrammingLanguageGenerator& generator, std::shared_ptr<Node>& AST);
 
-void generateFiles(Generator& generator, std::string bench_name);
+void generateFiles(ProgrammingLanguageGenerator& generator, std::string bench_name);
 
 int main(int argc, char const* argv[]) {
     if (argc < 6) {
         std::cout << "ERROR! Missing arguments!" << std::endl;
-        std::cout << "Please provide Number of Iterations, Production Rules, Seed String File, Output Folder Name and Variable Type." << std::endl;
-        std::cout << "Usage: ./main <number_of_iterations> <production_rules_file> <seed_string_file> <bench_name> <var_type>" << std::endl;
+        std::cout << "Please provide Number of Iterations, Production Rules, Seed String File, Output Folder Name, Variable Type and Programming Language." << std::endl;
+        std::cout << "Usage: ./main <number_of_iterations> <production_rules_file> <seed_string_file> <bench_name> <var_type> <programming_language>" << std::endl;
         return 1;
     }
     
@@ -39,30 +41,69 @@ int main(int argc, char const* argv[]) {
     std::string inputFile = argv[3];
     std::string bench_name = argv[4];
     std::string varType = argv[5];
+    std::string language = argv[6];
 
-    if(varType != VarTypes::ARRAY && varType != VarTypes::SORTEDLIST && varType != VarTypes::GHASH_TABLE && varType != VarTypes::GLIST && varType != VarTypes::GARRAY && varType != VarTypes::GTREE  && varType != VarTypes::GQUEUE && varType != VarTypes::GSTRING)
+    if(varType != VarTypes::ARRAY && varType != VarTypes::SORTEDLIST && varType != VarTypes::SCALAR
+        && varType != VarTypes::GHASH_TABLE && varType != VarTypes::GLIST && varType != VarTypes::GARRAY
+        && varType != VarTypes::GTREE && varType != VarTypes::GQUEUE && varType != VarTypes::GSTRING)
     {
         std::cout << "Variable " + varType + " is wrong!" << std::endl;
-        std::cout << "Variables '" + VarTypes::ARRAY + "', '" + VarTypes::SORTEDLIST + "', '" + VarTypes::GHASH_TABLE +"', '" + VarTypes::GLIST + "', '" + VarTypes::GARRAY + "', '" + VarTypes::GQUEUE  + "', '" + VarTypes::GSTRING + "' and '" + VarTypes::GTREE + "' is avaliable!" << std::endl;
+        std::cout << "Variables '" + VarTypes::ARRAY + "', '" + VarTypes::SORTEDLIST + "', '" + VarTypes::SCALAR
+            + "', '" + VarTypes::GHASH_TABLE + "', '" + VarTypes::GLIST + "', '" + VarTypes::GARRAY
+            + "', '" + VarTypes::GQUEUE + "', '" + VarTypes::GSTRING + "' and '" + VarTypes::GTREE + "' is avaliable!" << std::endl;
         return 1;
     }
 
+    if(language != ProgrammingLanguage::C &&
+        language != ProgrammingLanguage::CPP &&
+        language != ProgrammingLanguage::RUST &&
+        language != ProgrammingLanguage::JULIA &&
+        language != ProgrammingLanguage::GO &&
+        language != ProgrammingLanguage::V &&
+        language != ProgrammingLanguage::CARBON &&
+        language != ProgrammingLanguage::ZIG &&
+        language != ProgrammingLanguage::ODIN &&
+        language != ProgrammingLanguage::D &&
+        language != ProgrammingLanguage::MLIR)
+    {
+        std::cout << "Programming language " + language + " is wrong!" << std::endl;
+        std::cout << "Avaliable '" +
+        ProgrammingLanguage::C + "', '" +
+        ProgrammingLanguage::CPP + "', '" +
+        ProgrammingLanguage::RUST + "', '" +
+        ProgrammingLanguage::JULIA + "', '" +
+		ProgrammingLanguage::CARBON + "', '" +
+		ProgrammingLanguage::ODIN + "', '" +
+        ProgrammingLanguage::GO + "', '" +
+        ProgrammingLanguage::MLIR + "', '" +
+        ProgrammingLanguage::D + "', '" +
+        ProgrammingLanguage::V + "' and '" +
+        ProgrammingLanguage::ZIG + "'"
+        << std::endl;
+        return 1;
+    }
+
+    ProgrammingLanguage::LANGUAGE = language;
+    Parameters::ITERATIONS = iterations;
 
     Lexer lexer = Lexer();
     Parser parser = Parser();
-    Generator generator = Generator(varType);
+
+    
+    std::unique_ptr<ProgrammingLanguageGenerator> generator(ProgrammingLanguageGenerator().getGenerator(language, varType));
 
     std::vector<Token> inputTokens;
 
     tokenizeInput(inputTokens, lexer, inputFile);
 
+   
     applyLSystem(inputTokens, lexer, iterations, productionRulesFile);
-
+    
     std::shared_ptr<Node> AST = parseTokensToAST(parser, inputTokens);
+    
+    generateCode(*generator, AST);
 
-    generateCode(generator, AST);
-
-    generateFiles(generator, bench_name);
+    generateFiles(*generator, bench_name);
 
     std::cout << "Done!" << std::endl;
 
@@ -85,12 +126,11 @@ std::shared_ptr<Node> parseTokensToAST(Parser& parser, const std::vector<Token>&
     return AST;
 }
 
-void generateCode(Generator& generator, std::shared_ptr<Node>& AST) {
-    path_stack_init();
+void generateCode(ProgrammingLanguageGenerator& generator, std::shared_ptr<Node>& AST) {
     AST->gen(generator);
     generator.freeVars();
 }
 
-void generateFiles(Generator& generator, std::string bench_name) {
-    generator.generateFiles(bench_name);
+void generateFiles(ProgrammingLanguageGenerator& generator, std::string bench_name) {
+   generator.generateFiles(bench_name);
 }

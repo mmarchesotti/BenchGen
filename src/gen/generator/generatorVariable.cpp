@@ -1,6 +1,414 @@
 #include "generatorVariable.h"
 
+#include "c/cGeneratorVariable.h"
+#include "cpp/cppGeneratorVariable.h"
+#include "go/goGeneratorVariable.h"
+#include "julia/juliaGeneratorVariable.h"
+#include "rust/rustGeneratorVariable.h"
+#include "v/vGeneratorVariable.h"
+#include "carbon/carbonGeneratorVariable.h"
+#include "zig/zigGeneratorVariable.h"
+#include "odin/odinGeneratorVariable.h"
+#include "d/dGeneratorVariable.h"
+#include "mlir/mlirGeneratorVariable.h"
+
 unsigned int VariableFactory::var_counter = 0;
+
+
+GeneratorSortedList::GeneratorSortedList() {};
+GeneratorSortedList::GeneratorSortedList(int id){};
+GeneratorSortedList::~GeneratorSortedList(){};
+GeneratorArray::GeneratorArray() {};
+GeneratorArray::GeneratorArray(int totalSize, int id) {};
+GeneratorArray::~GeneratorArray() {};
+
+GeneratorScalar::GeneratorScalar() {};
+GeneratorScalar::~GeneratorScalar() {};
+
+
+std::vector<std::string> GeneratorSortedList::new_(bool inFunction)
+{
+    return CGeneratorSortedList().new_(inFunction);
+}
+
+std::vector<std::string>  GeneratorSortedList::insert()
+{
+    return CGeneratorSortedList().insert();
+}
+
+std::vector<std::string>  GeneratorSortedList::remove()
+{
+    return CGeneratorSortedList().remove();  
+}
+
+std::vector<std::string>  GeneratorSortedList::contains(bool shouldReturn)
+{
+    return CGeneratorSortedList().contains(shouldReturn);
+}
+
+std::vector<std::string>  GeneratorSortedList::free()
+{
+    return CGeneratorSortedList().free();
+}
+
+std::vector<std::string>  GeneratorSortedList::genIncludes()
+{
+    return CGeneratorSortedList().genIncludes();
+}
+
+std::vector<std::string>  GeneratorSortedList::genGlobalVars()
+{
+    return CGeneratorSortedList().genGlobalVars();
+}
+
+std::vector<std::string>  GeneratorSortedList::genParams(std::string paramName, std::vector<GeneratorVariable*> varsParams)
+{
+    return CGeneratorSortedList().genParams(paramName, varsParams);
+}
+
+std::vector<std::string> GeneratorArray::new_(bool inFunction)
+{
+    if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::C)
+    {
+        return CGeneratorArray().new_(inFunction);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::CPP)
+    {
+        return CppGeneratorArray().new_(inFunction);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::RUST)
+    {
+        return RustGeneratorArray().new_(inFunction);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::JULIA)
+    {
+        return JuliaGeneratorArray().new_(inFunction);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::GO)
+    {
+        return GoGeneratorArray().new_(inFunction);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::V)
+    {
+        return VGeneratorArray().new_(inFunction);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::CARBON)
+    {
+        return CarbonGeneratorArray().new_(inFunction);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ZIG)
+    {
+        return ZigGeneratorArray().new_(inFunction);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ODIN)
+    {
+        return OdinGeneratorArray().new_(inFunction);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::D)
+    {
+        return DGeneratorArray().new_(inFunction);
+    }
+}
+
+
+std::vector<std::string>  GeneratorArray::insert()
+{
+    if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::C)
+    {
+        return CGeneratorArray().insert();
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::CPP)
+    {
+        return CppGeneratorArray().insert();
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::RUST)
+    {
+        return RustGeneratorArray().insert();
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::JULIA)
+    {
+        return JuliaGeneratorArray().insert();
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::GO)
+    {
+        return GoGeneratorArray().insert();
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::V)
+    {
+        return VGeneratorArray().insert();
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::CARBON)
+    {
+        return CarbonGeneratorArray().insert();
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ZIG)
+    {
+        return ZigGeneratorArray().insert();
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ODIN)
+    {
+        return OdinGeneratorArray().insert();
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::D)
+    {
+        return DGeneratorArray().insert();
+    }
+}
+
+std::vector<std::string>  GeneratorArray::remove()
+{
+    if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::C)
+    {
+        return CGeneratorArray().remove();
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::CPP)
+    {
+        return CppGeneratorArray().remove();
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::RUST)
+    {
+        return RustGeneratorArray().remove();
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::JULIA)
+    {
+        return JuliaGeneratorArray().remove();
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::GO)
+    {
+        return GoGeneratorArray().remove();
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::V)
+    {
+        return VGeneratorArray().remove();
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::CARBON)
+    {
+        return CarbonGeneratorArray().remove();
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ZIG)
+    {
+        return ZigGeneratorArray().remove();
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ODIN)
+    {
+        return OdinGeneratorArray().remove();
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::D)
+    {
+        return DGeneratorArray().remove();
+    }
+}
+
+std::vector<std::string>  GeneratorArray::contains(bool shouldReturn)
+{
+    if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::C)
+    {
+        return CGeneratorArray().contains(shouldReturn);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::CPP)
+    {
+        return CppGeneratorArray().contains(shouldReturn);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::RUST)
+    {
+        return CppGeneratorArray().contains(shouldReturn);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::JULIA)
+    {
+        return JuliaGeneratorArray().contains(shouldReturn);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::GO)
+    {
+        return GoGeneratorArray().contains(shouldReturn);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::V)
+    {
+        return VGeneratorArray().contains(shouldReturn);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::CARBON)
+    {
+        return CarbonGeneratorArray().contains(shouldReturn);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ZIG)
+    {
+        return ZigGeneratorArray().contains(shouldReturn);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ODIN)
+    {
+        return OdinGeneratorArray().contains(shouldReturn);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::D)
+    {
+        return DGeneratorArray().contains(shouldReturn);
+    }
+}
+
+std::vector<std::string>  GeneratorArray::free()
+{
+    if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::C)
+    {
+        return CGeneratorArray().free();
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::CPP)
+    {
+        return CppGeneratorArray().free();
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::RUST)
+    {
+        return CppGeneratorArray().free(); 
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::JULIA)
+    {
+        return JuliaGeneratorArray().free();   
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::GO)
+    {
+        return GoGeneratorArray().free();
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::V)
+    {
+        return VGeneratorArray().free();
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::CARBON)
+    {
+        return CarbonGeneratorArray().free();
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ZIG)
+    {
+        return ZigGeneratorArray().free();
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ODIN)
+    {
+        return OdinGeneratorArray().free();
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::D)
+    {
+        return DGeneratorArray().free();
+    }
+}
+
+std::vector<std::string>  GeneratorArray::genIncludes()
+{
+    if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::C)
+    {
+        return CGeneratorArray().genIncludes();
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::CPP)
+    {
+        return CppGeneratorArray().genIncludes();
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::RUST)
+    {
+        return RustGeneratorArray().genIncludes();
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::JULIA)
+    {
+        return JuliaGeneratorArray().genIncludes();   
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::GO)
+    {
+        return GoGeneratorArray().genIncludes();
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::V)
+    {
+        return VGeneratorArray().genIncludes();
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::CARBON)
+    {
+        return CarbonGeneratorArray().genIncludes();
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ZIG)
+    {
+        return ZigGeneratorArray().genIncludes();
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ODIN)
+    {
+        return OdinGeneratorArray().genIncludes();
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::D)
+    {
+        return DGeneratorArray().genIncludes();
+    }
+}
+
+std::vector<std::string>  GeneratorArray::genGlobalVars()
+{
+    if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::C)
+    {
+        return CGeneratorArray().genGlobalVars();
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::CPP)
+    {
+        return CppGeneratorArray().genGlobalVars();
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::RUST)
+    {
+        return RustGeneratorArray().genGlobalVars();   
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::JULIA)
+    {
+        return JuliaGeneratorArray().genGlobalVars();   
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::GO)
+    {
+        return GoGeneratorArray().genGlobalVars();
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::V)
+    {
+        return VGeneratorArray().genGlobalVars();
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::CARBON)
+    {
+        return CarbonGeneratorArray().genGlobalVars();
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ZIG)
+    {
+        return ZigGeneratorArray().genGlobalVars();
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ODIN)
+    {
+        return OdinGeneratorArray().genGlobalVars();
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::D)
+    {
+        return DGeneratorArray().genGlobalVars();
+    }
+}
+
+std::vector<std::string>  GeneratorArray::genParams(std::string paramName, std::vector<GeneratorVariable*> varsParams)
+{
+    if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::C)
+    {
+        return CGeneratorArray().genParams(paramName, varsParams);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::CPP)
+    {
+        return CppGeneratorArray().genParams(paramName, varsParams);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::RUST)
+    {
+        return RustGeneratorArray().genParams(paramName, varsParams);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::JULIA)
+    {
+        return JuliaGeneratorArray().genParams(paramName, varsParams);   
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::GO)
+    {
+        return GoGeneratorArray().genParams(paramName, varsParams);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::V)
+    {
+        return VGeneratorArray().genParams(paramName, varsParams);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::CARBON)
+    {
+        return CarbonGeneratorArray().genParams(paramName, varsParams);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ZIG)
+    {
+        return ZigGeneratorArray().genParams(paramName, varsParams);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::ODIN)
+    {
+        return OdinGeneratorArray().genParams(paramName, varsParams);
+    }else if(ProgrammingLanguage::LANGUAGE == ProgrammingLanguage::D)
+    {
+        return DGeneratorArray().genParams(paramName, varsParams);
+    }
+}
+
+
+std::vector<std::string> GeneratorScalar::new_(bool inFunction) {;
+    return MlirGeneratorScalar().new_(inFunction);
+}
+
+std::vector<std::string> GeneratorScalar::arithmetic(std::string opt) {
+    return MlirGeneratorScalar().arithmetic(opt);
+}
+
+std::vector<std::string> GeneratorScalar::conditional() {
+    return MlirGeneratorScalar().conditional();
+}
+
+std::vector<std::string> GeneratorScalar::logical(bool shouldReturn) {
+    return MlirGeneratorScalar().logical(shouldReturn);
+}
+
+std::vector<std::string> GeneratorScalar::free() {
+    return MlirGeneratorScalar().free();
+}
+
+std::vector<std::string> GeneratorScalar::unary(std::string op) {
+    return MlirGeneratorScalar().unary(op);
+}
+
+std::vector<std::string> GeneratorScalar::select(bool shouldReturn) {
+    return MlirGeneratorScalar().select(shouldReturn);
+}
+
+std::vector<std::string> GeneratorScalar::logical_sc(bool shouldReturn) {
+    return MlirGeneratorScalar().logical_sc(shouldReturn);
+}
+
+
+std::vector<std::string> GeneratorScalar::incdec(bool isInc) {
+    return MlirGeneratorScalar().incdec(isInc);
+}
+
+std::vector<std::string> GeneratorScalar::reduction() {
+    return MlirGeneratorScalar().reduction();
+}
+
+std::vector<std::string> GeneratorScalar::call(std::string funcName) {
+    return MlirGeneratorScalar().call(funcName);
+}
+
+std::vector<std::string> GeneratorScalar::insert() {
+    return {};
+}
+std::vector<std::string> GeneratorScalar::remove() {
+    return {};
+}
+std::vector<std::string> GeneratorScalar::contains(bool shouldReturn) {
+    return {};
+}
+std::vector<std::string> GeneratorScalar::genIncludes() {
+    return {};
+}
+std::vector<std::string> GeneratorScalar::genGlobalVars() {
+    return {};
+}
+std::vector<std::string> GeneratorScalar::genParams(std::string paramName, std::vector<GeneratorVariable*> varsParams) {}
 
 std::string VariableFactory::genTypeString(std::string type) {
     GeneratorVariable* var = createVariable(type, 0);
@@ -29,313 +437,6 @@ std::vector<std::string> VariableFactory::genParams(std::string type, std::strin
     delete var;
     return params;
 }
-
-// ARRAY
-
-GeneratorArray::GeneratorArray(int size, int id) {
-    this->typeString = "array_t";
-    this->totalSize = size;
-    this->id = id;
-    this->name = VarTypes::ARRAY + std::to_string(id);
-}
-
-std::vector<std::string> GeneratorArray::new_(bool inFunction) {
-    std::vector<std::string> temp = {this->typeString + "* " + this->name + ";"};
-    if (inFunction) {
-        temp.push_back("if (pCounter > 0) {");
-        temp.push_back("   " + this->name + " = vars->data[--pCounter];");
-        temp.push_back("   " + this->name + "->refC++;");
-        temp.push_back("   DEBUG_COPY(" + this->name + "->id);");
-        temp.push_back("} else {");
-        temp.push_back("   " + this->name + " = (" + this->typeString + "*)malloc(sizeof(" + this->typeString + "));");
-        temp.push_back("   " + this->name + "->size = " + std::to_string(this->totalSize) + ";");
-        temp.push_back("   " + this->name + "->refC = 1;");
-        temp.push_back("   " + this->name + "->id = " + std::to_string(this->id) + ";");
-        temp.push_back("   " + this->name + "->data = (unsigned int*)malloc(" + this->name + "->size*sizeof(unsigned int));");
-        temp.push_back("   memset(" + this->name + "->data, 0, " + this->name + "->size*sizeof(unsigned int));");
-        temp.push_back("   DEBUG_NEW(" + this->name + "->id);");
-        temp.push_back("}");
-    } else {
-        temp.push_back(this->name + " = (" + this->typeString + "*)malloc(sizeof(" + this->typeString + "));");
-        temp.push_back(this->name + "->size = " + std::to_string(this->totalSize) + ";");
-        temp.push_back(this->name + "->refC = 1;");
-        temp.push_back("   " + this->name + "->id = " + std::to_string(this->id) + ";");
-        temp.push_back(this->name + "->data = (unsigned int*)malloc(" + this->name + "->size*sizeof(unsigned int));");
-        temp.push_back("memset(" + this->name + "->data, 0, " + this->name + "->size*sizeof(unsigned int));");
-        temp.push_back("DEBUG_NEW(" + this->name + "->id);");
-    }
-    return temp;
-}
-
-std::vector<std::string> GeneratorArray::insert() {
-    std::vector<std::string> temp = {"for (int i = 0; i < " + this->name + "->size; i++) {"};
-    temp.push_back("   " + this->name + "->data[i]++;");
-    temp.push_back("}");
-    temp.push_back("COUNT_INSERT();");
-    return temp;
-}
-
-std::vector<std::string> GeneratorArray::remove() {
-    std::vector<std::string> temp = {"for (int i = 0; i < " + this->name + "->size; i++) {"};
-    temp.push_back("   " + this->name + "->data[i]--;");
-    temp.push_back("}");
-    temp.push_back("COUNT_REMOVE();");
-    return temp;
-}
-
-std::vector<std::string> GeneratorArray::contains(bool shouldReturn) {
-    int compare = rand() % 100;  // Random value to compare against
-    std::vector<std::string> temp = {};
-    temp.push_back("for (int i = 0; i < " + this->name + "->size; i++) {");
-    temp.push_back("   if (" + this->name + "->data[i] == " + std::to_string(compare) + ") { ");
-    if (shouldReturn) {
-        temp.push_back("      return " + this->name + ";");
-    } else {
-        temp.push_back("      " + this->name + "->data[i] += " + std::to_string(compare) + ";");
-    }
-    temp.push_back("   }");
-    temp.push_back("}");
-    temp.push_back("COUNT_CONTAINS();");
-    return temp;
-}
-
-std::vector<std::string> GeneratorArray::free() {
-    std::vector<std::string> temp = {};
-    temp.push_back(this->name + "->refC--;");
-    temp.push_back("if(" + this->name + "->refC == 0) {");
-    temp.push_back("   free(" + this->name + "->data);");
-    temp.push_back("   free(" + this->name + ");");
-    temp.push_back("   DEBUG_FREE(" + this->name + "->id);");
-    temp.push_back("}");
-    return temp;
-}
-
-std::vector<std::string> GeneratorArray::genIncludes() {
-    return {};
-}
-
-std::vector<std::string> GeneratorArray::genGlobalVars() {
-    std::vector<std::string> temp = {};
-    temp.push_back("typedef struct {");
-    temp.push_back("   unsigned int* data;");
-    temp.push_back("   size_t size;");
-    temp.push_back("   size_t refC;");
-    temp.push_back("    int id;");
-    temp.push_back("} " + this->typeString + ";");
-    temp.push_back("typedef struct {");
-    temp.push_back("   " + this->typeString + "** data;");
-    temp.push_back("   size_t size;");
-    temp.push_back("} " + this->typeString + "_param;");
-    return temp;
-}
-
-std::vector<std::string> GeneratorArray::genParams(std::string paramName, std::vector<GeneratorVariable*> varsParams) {
-    std::vector<std::string> temp = {};
-    temp.push_back(this->typeString + "_param " + paramName + ";");
-    temp.push_back(paramName + ".size = " + std::to_string(varsParams.size()) + ";");
-    temp.push_back(paramName + ".data = (" + this->typeString + "**)malloc(" + paramName + ".size*sizeof(" + this->typeString + "*));");
-    for (int i = 0; i < (int)varsParams.size(); i++) {
-        temp.push_back(paramName + ".data[" + std::to_string(i) + "] = " + varsParams[i]->name + ";");
-    }
-    return temp;
-}
-
-GeneratorArray::~GeneratorArray() {
-}
-
-// SORTED LIST
-
-GeneratorSortedList::GeneratorSortedList(int id) {
-    this->typeString = "sortedlist_t";
-    this->id = id;
-    this->name = VarTypes::SORTEDLIST + std::to_string(id);
-}
-
-GeneratorSortedList::~GeneratorSortedList() {
-}
-
-std::vector<std::string> GeneratorSortedList::genIncludes() {
-    std::vector<std::string> temp = {};
-    temp.push_back("#include <stdbool.h>");
-    return temp;
-}
-
-std::vector<std::string> GeneratorSortedList::new_(bool inFunction) {
-    std::vector<std::string> tmp = {};
-
-    if (inFunction) {
-        tmp.push_back("sortedlist_t* " + this->name + ";");
-        tmp.push_back("if (pCounter > 0) {");
-        tmp.push_back("   " + this->name + " = vars->data[--pCounter];");
-        tmp.push_back("   " + this->name + "->refC++;");
-        tmp.push_back("   DEBUG_COPY(" + this->name + "->id);");
-        tmp.push_back("} else {");
-        tmp.push_back("   " + this->name + " = (sortedlist_t*)malloc(sizeof(sortedlist_t));");
-        tmp.push_back("   " + this->name + "->refC = 1;");
-        tmp.push_back("   " + this->name + "->id = " + std::to_string(this->id) + ";");
-        tmp.push_back("   " + this->name + "->n = 0;");
-        tmp.push_back("   " + this->name + "->root = NULL;");
-        tmp.push_back("   DEBUG_NEW(" + this->name + "->id);");
-        tmp.push_back("}");
-    } else {
-        tmp.push_back("sortedlist_t* " + this->name + " = (sortedlist_t*)malloc(sizeof(sortedlist_t));");
-        tmp.push_back(this->name + "->refC = 1;");
-        tmp.push_back(this->name + "->id = " + std::to_string(this->id) + ";");
-        tmp.push_back(this->name + "->n = 0;");
-        tmp.push_back(this->name + "->root = NULL;");
-        tmp.push_back("DEBUG_NEW(" + this->name + "->id);");
-    }
-    return tmp;
-}
-
-std::vector<std::string> GeneratorSortedList::insert() {
-    std::vector<std::string> tmp = {};
-
-    int value = rand() % 100;
-
-    std::string cell_varname = "cell" + std::to_string(VariableFactory::var_counter);
-    std::string tmp_varname = "tmp" + std::to_string(VariableFactory::var_counter);
-    std::string int_tmp_varname = "tmp_val" + std::to_string(VariableFactory::var_counter);
-
-    tmp.push_back("if(" + this->name + " != NULL && " + this->name + "->n > 0) {");
-    tmp.push_back("     cell_t* " + cell_varname + " = " + this->name + "->root;");
-    tmp.push_back("     if(" + this->name + "->n == 0) {");
-    tmp.push_back("         " + this->name + "->root = (cell_t*)malloc(sizeof(cell_t));");
-    tmp.push_back("         " + this->name + "->root->val  = " + std::to_string(value) + ";");
-    tmp.push_back("         " + this->name + "->root->next = NULL;");
-    tmp.push_back("         " + this->name + "->n++;");
-    tmp.push_back("     } else {");
-    tmp.push_back("         while(" + cell_varname + " != NULL)");
-    tmp.push_back("         {");
-    tmp.push_back("             if(" + cell_varname + "->next == NULL && " + cell_varname + "->val < " + std::to_string(value) + ") {");
-    tmp.push_back("                 " + cell_varname + "->next = (cell_t*)malloc(sizeof(cell_t));");
-    tmp.push_back("                 " + cell_varname + "->next->next = NULL;");
-    tmp.push_back("                 " + cell_varname + "->next->val  = " + std::to_string(value) + ";");
-    tmp.push_back("                 " + this->name + "->n++;");
-    tmp.push_back("                 break;");
-    tmp.push_back("             } else if(" + std::to_string(value) + " < " + cell_varname + "->val) {");
-    tmp.push_back("                 cell_t* " + tmp_varname + " = " + cell_varname + "->next;");
-    tmp.push_back("                 " + cell_varname + "->next = (cell_t*)malloc(sizeof(cell_t));");
-    tmp.push_back("                 " + cell_varname + "->next->next = " + tmp_varname + ";");
-    tmp.push_back("                 int " + int_tmp_varname + " = " + cell_varname + "->val;");
-    tmp.push_back("                 " + cell_varname + "->val = " + std::to_string(value) + ";");
-    tmp.push_back("                 " + cell_varname + "->next->val = " + int_tmp_varname + ";");
-    tmp.push_back("                 " + this->name + "->n++;");
-    tmp.push_back("                 break;");
-    tmp.push_back("             }");
-    tmp.push_back("             " + cell_varname + " = " + cell_varname + "->next;");
-    tmp.push_back("         }");
-    tmp.push_back("     }");
-    tmp.push_back("}");
-    tmp.push_back("COUNT_INSERT();");
-    VariableFactory::var_counter++;
-    return tmp;
-}
-
-std::vector<std::string> GeneratorSortedList::remove() {
-    std::vector<std::string> tmp = {};
-
-    int value = rand() % 100;
-
-    std::string cell_varname = "cell" + std::to_string(VariableFactory::var_counter);
-
-    tmp.push_back("if(" + this->name + " != NULL && " + this->name + "->n > 0)");
-    tmp.push_back("{");
-    tmp.push_back("    cell_t* " + cell_varname + " = " + this->name + "->root;");
-    tmp.push_back("    if(" + cell_varname + "->val == " + std::to_string(value) + ")");
-    tmp.push_back("    {");
-    tmp.push_back("        " + cell_varname + " = " + cell_varname + "->next;");
-    tmp.push_back("        " + this->name + "->n--;");
-    tmp.push_back("    }else{");
-    tmp.push_back("        while(" + cell_varname + "->next != NULL && " + cell_varname + "->next->val != " + std::to_string(value) + ") " + cell_varname + " = " + cell_varname + "->next;");
-    tmp.push_back("        if(" + cell_varname + "->next != NULL)");
-    tmp.push_back("        {");
-    tmp.push_back("            " + cell_varname + " = " + cell_varname + "->next->next;");
-    tmp.push_back("            " + this->name + "->n--;");
-    tmp.push_back("        }");
-    tmp.push_back("     }");
-    tmp.push_back("}");
-    tmp.push_back("COUNT_REMOVE();");
-    VariableFactory::var_counter++;
-
-    return tmp;
-}
-
-std::vector<std::string> GeneratorSortedList::contains(bool shouldReturn) {
-    std::vector<std::string> tmp = {};
-    int value = rand() % 100;
-
-    std::string cell_varname = "cell" + std::to_string(VariableFactory::var_counter);
-    tmp.push_back("if(" + this->name + " != NULL && " + this->name + "->n > 0){");
-    tmp.push_back("     cell_t* " + cell_varname + " = " + this->name + "->root;");
-    tmp.push_back("     while(" + cell_varname + " != NULL && " + cell_varname + "->val != " + std::to_string(value) + ") " + cell_varname + " = " + cell_varname + "->next;");
-    if (shouldReturn) {
-        tmp.push_back("     return " + cell_varname + " != NULL ? " + this->name + " : NULL;");
-    }
-    tmp.push_back("}");
-    tmp.push_back("COUNT_CONTAINS();");
-    VariableFactory::var_counter++;
-
-    return tmp;
-}
-
-std::vector<std::string> GeneratorSortedList::free() {
-    std::vector<std::string> tmp = {};
-
-    std::string cell_varname = "cell" + std::to_string(VariableFactory::var_counter);
-    std::string tmp_varname = "tmp" + std::to_string(VariableFactory::var_counter);
-
-    tmp.push_back(this->name + "->refC--;");
-    tmp.push_back("if(" + this->name + "->refC == 0){");
-    tmp.push_back("     cell_t* " + cell_varname + " = " + this->name + "->root;");
-    tmp.push_back("     cell_t* " + tmp_varname + "  = NULL;");
-    tmp.push_back("     while(" + cell_varname + " != NULL) {");
-    tmp.push_back("         " + tmp_varname + " = " + cell_varname + "->next;");
-    tmp.push_back("         free(" + cell_varname + ");");
-    tmp.push_back("         " + cell_varname + " = " + tmp_varname + ";");
-    tmp.push_back("     }");
-    tmp.push_back("     free(" + this->name + ");");
-    tmp.push_back("     DEBUG_FREE(" + this->name + "->id);");
-    tmp.push_back("}");
-    VariableFactory::var_counter++;
-    return tmp;
-}
-
-std::vector<std::string> GeneratorSortedList::genGlobalVars() {
-    std::vector<std::string> tmp = {};
-
-    tmp.push_back("typedef struct cell_t {");
-    tmp.push_back("     struct cell_t* next;");
-    tmp.push_back("     unsigned int val;");
-    tmp.push_back("} cell_t;");
-
-    tmp.push_back("typedef struct sortedlist_t {");
-    tmp.push_back("     cell_t* root;");
-    tmp.push_back("     size_t refC;");
-    tmp.push_back("     int id;");
-    tmp.push_back("     unsigned int n;");
-    tmp.push_back("} sortedlist_t;");
-
-    tmp.push_back("typedef struct {");
-    tmp.push_back("   sortedlist_t** data;");
-    tmp.push_back("   size_t size;");
-    tmp.push_back("} " + this->typeString + "_param;");
-    return tmp;
-}
-
-std::vector<std::string> GeneratorSortedList::genParams(std::string paramName, std::vector<GeneratorVariable*> varsParams) {
-    std::vector<std::string> tmp = {};
-    tmp.push_back(this->typeString + "_param " + paramName + ";");
-    tmp.push_back(paramName + ".size = " + std::to_string(varsParams.size()) + ";");
-    tmp.push_back(paramName + ".data = (" + this->typeString + "**)malloc(" + paramName + ".size*sizeof(" + this->typeString + "*));");
-    for (int i = 0; i < (int)varsParams.size(); i++) {
-        tmp.push_back(paramName + ".data[" + std::to_string(i) + "] = " + varsParams[i]->name + ";");
-    }
-
-    return tmp;
-}
-
-
 GeneratorGHashTable::GeneratorGHashTable(int id) {
     this->typeString = "ghash_t";
     this->id = id;

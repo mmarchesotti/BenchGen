@@ -1,0 +1,55 @@
+#ifndef VARTYPES_H
+#define VARTYPES_H
+
+#include "globalIncludes.h"
+
+/**
+ * @brief Class that defines various variable types as constants.
+ *
+ * This class is used to store static constants for different variable types
+ * that might be used throughout the application.
+ */
+class VarTypes {
+   public:
+    // Constant string representing the "array" variable type
+    inline static const std::string ARRAY       = "array";
+    inline static const std::string SORTEDLIST  = "sortedlist";
+    inline static const std::string SCALAR      = "scalar";
+    inline static const std::string TENSOR      = "tensor";
+    inline static const std::string GHASH_TABLE = "ghash";
+    inline static const std::string GLIST       = "glist";
+    inline static const std::string GARRAY      = "garray";
+    inline static const std::string GTREE       = "gtree";
+    inline static const std::string GQUEUE      = "gqueue";
+    inline static const std::string GSTRING     = "gstring";
+};
+
+class Parameters{
+    public:
+    inline static int ITERATIONS = -1;
+};
+
+class Registers{
+    public:
+    inline static int REGISTER_COUNTER = 0;
+};
+class ProgrammingLanguage {
+    public:
+    
+    inline static const std::string C      = "c";
+    inline static const std::string CPP    = "cpp";
+    inline static const std::string RUST   = "rust";
+    inline static const std::string JULIA  = "julia";
+    inline static const std::string GO     = "go";
+    inline static const std::string V      = "v";
+    inline static const std::string CARBON = "carbon";
+    inline static const std::string ZIG    = "zig";
+    inline static const std::string ODIN   = "odin";
+    inline static const std::string MLIR   = "mlir";
+    inline static const std::string D      = "d";
+
+
+    inline static std::string LANGUAGE = "";
+};
+
+#endif
