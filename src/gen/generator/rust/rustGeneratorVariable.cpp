@@ -12,36 +12,30 @@ RustGeneratorArray::RustGeneratorArray(int size, int id) {
 std::vector<std::string> RustGeneratorArray::new_(bool inFunction) {
     std::vector<std::string> temp = {};
     if (inFunction) {
-       temp.push_back("let mut "+this->name+".data = Array::new_infunction(&mut vars, &mut counter,"+std::to_string(this->totalSize)+","+this->name + "->id);");
+        temp.push_back("let " + this->name + " = Array::new_infunc(vars, &mut pCounter, " +
+                       std::to_string(this->totalSize) + ", " + std::to_string(this->id) + ");");
     } else {
-       temp.push_back("let mut "+this->name+".data = Array::new_outfunc("+std::to_string(this->totalSize)+","+this->name + "->id);");
+        temp.push_back("let " + this->name + " = Array::new_outfunc(" +
+                       std::to_string(this->totalSize) + ", " + std::to_string(this->id) + ");");
     }
     return temp;
 }
 
 std::vector<std::string> RustGeneratorArray::insert() {
-    std::vector<std::string> temp = {};
-    temp.push_back(this->name + ".insert();");
-    return temp;
+    return {"array_insert(&" + this->name + ");"};
 }
 
 std::vector<std::string> RustGeneratorArray::remove() {
-    std::vector<std::string> temp = {};
-    temp.push_back(this->name + ".remove();");
-    return temp;
+    return {"array_remove(&" + this->name + ");"};
 }
 
 std::vector<std::string> RustGeneratorArray::contains(bool shouldReturn) {
     int compare = rand() % 100;  // Random value to compare against
-    std::vector<std::string> temp = {};
-    temp.push_back(this->name + ".contains("+std::to_string(compare)+",true);");
-    return temp;
+    return {"let _ = array_contains(&" + this->name + ", " + std::to_string(compare) + ");"};
 }
 
 std::vector<std::string> RustGeneratorArray::free() {
-    std::vector<std::string> temp = {};
-    temp.push_back(this->name + ".free();");
-    return temp;
+    return {"array_free(&" + this->name + ");"};
 }
 
 std::vector<std::string> RustGeneratorArray::genIncludes() {
@@ -49,87 +43,66 @@ std::vector<std::string> RustGeneratorArray::genIncludes() {
 }
 
 std::vector<std::string> RustGeneratorArray::genGlobalVars() {
-    std::vector<std::string> temp = {};
-    temp.push_back("pub struct "+this->typeString+" {");
-    temp.push_back("    pub data: Vec<u32>,");
-    temp.push_back("    pub refc: usize,");
-    temp.push_back("    pub id: i32,");
-    temp.push_back("}\n");
-    temp.push_back("pub struct "+this->typeString+"_param {");
-    temp.push_back("    pub data: Vec<"+this->typeString+">,");
-    temp.push_back("}\n\n");
-
-    temp.push_back("impl Array {");
-    temp.push_back("    fn free(&mut self) {");
-    temp.push_back("        if self.refc > 0 {");
-    temp.push_back("            self.refc -= 1;");
-    temp.push_back("        }\n");
-    temp.push_back("        if self.refc == 0 {");
-    temp.push_back("            debug_free(self.id);");
-    temp.push_back("        }");
-    temp.push_back("    }\n");
-    temp.push_back("    fn contains(&mut self, compare: i32, should_return: bool) -> Option<&Self> {");
-    temp.push_back("        for i in 0..self.data.len() {");
-    temp.push_back("            if self.data[i] == compare {");
-    temp.push_back("                if should_return {");
-    temp.push_back("                    return Some(self);");
-    temp.push_back("                } else {");
-    temp.push_back("                    self.data[i] += compare;");
-    temp.push_back("                }");
-    temp.push_back("            }");
-    temp.push_back("        }");
-    temp.push_back("        None");
-    temp.push_back("    }\n");
-    temp.push_back("    fn remove(&mut self) {");
-    temp.push_back("        for val in &mut self.data {");
-    temp.push_back("            *val -= 1;");
-    temp.push_back("        }");
-    temp.push_back("    }\n");
-    temp.push_back("    fn insert(&mut self) {");
-    temp.push_back("        for val in &mut self.data {");
-    temp.push_back("            *val += 1;");
-    temp.push_back("        }");
-    temp.push_back("    }\n");
-    temp.push_back("    fn new_infunction(vars: &mut Vars, p_counter: &mut usize, total_size: usize, id: usize) -> Box<Array> {");
-    temp.push_back("        if *p_counter > 0 {");
-    temp.push_back("            *p_counter -= 1;");
-    temp.push_back("            let mut obj = vars.data.remove(*p_counter);");
-    temp.push_back("            obj.refc += 1;");
-    temp.push_back("            debug_copy(obj.id);");
-    temp.push_back("            obj");
-    temp.push_back("        } else {");
-    temp.push_back("            let obj = Box::new(Array {");
-    temp.push_back("                size: total_size,");
-    temp.push_back("                refc: 1,");
-    temp.push_back("                id,");
-    temp.push_back("                data: vec![0; total_size],");
-    temp.push_back("            });");
-    temp.push_back("            debug_new(obj.id);");
-    temp.push_back("            obj");
-    temp.push_back("        }");
-    temp.push_back("    }\n");
-    temp.push_back("    fn new_outfunc(total_size: usize, id: usize) -> Self {");
-    temp.push_back("           let obj = Array {");
-    temp.push_back("               size: total_size,");
-    temp.push_back("               refc: 1,");
-    temp.push_back("               id,");
-    temp.push_back("               data: vec![0; total_size],");
-    temp.push_back("           };\n");
-    temp.push_back("            debug_new(obj.id);");
-    temp.push_back("            obj");
-    temp.push_back("    }\n");
-    temp.push_back("}\n");
-
-    return temp;
+    return {
+        "pub struct Array {",
+        "    pub data: Vec<u32>,",
+        "    pub size: usize,",
+        "    pub refc: usize,",
+        "    pub id: i32,",
+        "}",
+        "",
+        "pub type ArrayRc = std::rc::Rc<std::cell::RefCell<Array>>;",
+        "",
+        "pub struct ArrayParam {",
+        "    pub data: Vec<ArrayRc>,",
+        "}",
+        "",
+        "impl Array {",
+        "    pub fn new_infunc(vars: &mut ArrayParam, p_counter: &mut usize, size: usize, id: i32) -> ArrayRc {",
+        "        if *p_counter > 0 {",
+        "            *p_counter -= 1;",
+        "            let obj = vars.data.swap_remove(*p_counter);",
+        "            obj.borrow_mut().refc += 1;",
+        "            obj",
+        "        } else {",
+        "            std::rc::Rc::new(std::cell::RefCell::new(Array { data: vec![0u32; size], size, refc: 1, id }))",
+        "        }",
+        "    }",
+        "    pub fn new_outfunc(size: usize, id: i32) -> ArrayRc {",
+        "        std::rc::Rc::new(std::cell::RefCell::new(Array { data: vec![0u32; size], size, refc: 1, id }))",
+        "    }",
+        "}",
+        "",
+        "pub fn array_insert(a: &ArrayRc) {",
+        "    let mut x = a.borrow_mut();",
+        "    for v in x.data.iter_mut() { *v = v.wrapping_add(1); }",
+        "}",
+        "pub fn array_remove(a: &ArrayRc) {",
+        "    let mut x = a.borrow_mut();",
+        "    for v in x.data.iter_mut() { *v = v.wrapping_sub(1); }",
+        "}",
+        "pub fn array_contains(a: &ArrayRc, compare: u32) -> bool {",
+        "    let mut x = a.borrow_mut();",
+        "    let mut found = false;",
+        "    for v in x.data.iter_mut() {",
+        "        if *v == compare { *v = v.wrapping_add(compare); found = true; }",
+        "    }",
+        "    found",
+        "}",
+        "pub fn array_free(a: &ArrayRc) {",
+        "    let mut x = a.borrow_mut();",
+        "    if x.refc > 0 { x.refc -= 1; }",
+        "}",
+        "",
+    };
 }
 
 std::vector<std::string> RustGeneratorArray::genParams(std::string paramName, std::vector<GeneratorVariable*> varsParams) {
     std::vector<std::string> temp = {};
-
-    temp.push_back("let mut "+paramName+".data = Array_param { data: Vec::with_capacity("+std::to_string(varsParams.size())+"), };");
-
+    temp.push_back("let mut " + paramName + " = ArrayParam { data: Vec::with_capacity(" +
+                   std::to_string(varsParams.size()) + ") };");
     for (int i = 0; i < (int)varsParams.size(); i++) {
-        temp.push_back(paramName+".data.push("+varsParams[i]->name+");");
+        temp.push_back(paramName + ".data.push(std::rc::Rc::clone(&" + varsParams[i]->name + "));");
     }
     return temp;
 }

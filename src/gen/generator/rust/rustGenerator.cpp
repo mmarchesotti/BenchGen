@@ -14,49 +14,12 @@ RustGenerator::RustGenerator(std::string variableType) {
 }
 
 void RustGenerator::generateIncludes() {
-    includes.push_back("use std::ffi::CString;");
-    includes.push_back("use std::os::raw::c_char;\n\n");
-    includes.push_back("#[cfg(debug_assertions)]");
-    includes.push_back("macro_rules! debug_new {");
-    includes.push_back("    ($id:expr) => {");
-    includes.push_back("        println!(\"[NEW]\t\tId {} created\", $id);");
-    includes.push_back("    };");
-    includes.push_back("}\n");
-    includes.push_back("#[cfg(not(debug_assertions))]");
-    includes.push_back("macro_rules! debug_new {");
-    includes.push_back("    ($id:expr) => {};\n");
-    includes.push_back("#[cfg(debug_assertions)]");
-    includes.push_back("macro_rules! debug_copy {\n");
-    includes.push_back("    ($id:expr) => {\n");
-    includes.push_back("        println!(\"[COPY]\t\tId {} copied\", $id);\n");
-    includes.push_back("    };\n");
-    includes.push_back("}\n");
-    includes.push_back("#[cfg(not(debug_assertions))]");
-    includes.push_back("macro_rules! debug_copy {\n");
-    includes.push_back("    ($id:expr) => {};\n");
-    includes.push_back("}\n");
-    includes.push_back("#[cfg(debug_assertions)]");
-    includes.push_back("macro_rules! debug_return {");
-    includes.push_back("    ($id:expr) => {");
-    includes.push_back("        println!(\"[RETURN]\tId {} returned\", $id);");
-    includes.push_back("    };\n");
-    includes.push_back("#[cfg(not(debug_assertions))]");
-    includes.push_back("macro_rules! debug_return {");
-    includes.push_back("    ($id:expr) => {};");
-    includes.push_back("}\n");
-    includes.push_back("#[cfg(debug_assertions)]");
-    includes.push_back("macro_rules! debug_free {");
-    includes.push_back("    ($id:expr) => {");
-    includes.push_back("        println!(\"[FREE]\t\tId {} freed\", $id);");
-    includes.push_back("    };");
-    includes.push_back("}\n");
-    includes.push_back("#[cfg(not(debug_assertions))]\n");
-    includes.push_back("macro_rules! debug_free {\n");
-    includes.push_back("    ($id:expr) => {};\n");
-    includes.push_back("}\n");
+    includes.push_back("#![allow(unused_mut, unused_variables, unused_parens, dead_code, non_snake_case, non_camel_case_types)]");
+    includes.push_back("use std::env;");
+    includes.push_back("");
     std::vector<std::string> varIncludes = VariableFactory::genIncludes(varType);
     for (auto var : varIncludes) {
-        globalVars.push_back(var);
+        includes.push_back(var);
     }
 }
 
@@ -69,53 +32,52 @@ void RustGenerator::generateGlobalVars() {
 
 void RustGenerator::generateRandomNumberGenerator() {
     GeneratorFunction rngFunction = GeneratorFunction(-1);
-    rngFunction.addLine({"use std::env;",
-                     "use rand::Rng;\n",
-                     "fn get_path() -> u64 {",
-                     "    if let Ok(path) = env::var(\"BENCH_PATH\") {",
-                     "        if let Ok(num) = path.parse::<u64>() {",
-                     "            return num;",
-                     "        }",
-                     "    }",
-                     "    let mut rng = rand::thread_rng();",
-                     "    rng.gen::<u64>()",
-                    "}"});
-
+    rngFunction.addLine({
+        "fn get_path() -> u64 {",
+        "    if let Ok(path) = env::var(\"BENCH_PATH\") {",
+        "        if let Ok(num) = path.parse::<u64>() {",
+        "            return num;",
+        "        }",
+        "    }",
+        "    ((benchgen_rand() as u64) << 32) | (benchgen_rand() as u64)",
+        "}",
+    });
     functions.push_back(rngFunction);
 }
 
 void RustGenerator::generateMainFunction() {
     mainFunction = GeneratorFunction(-1);
-    mainFunction.addLine({"use std::env;\n",
-                          "fn main() {",
-                          "    let mut loops_factor = 100;",
-                          "    let mut rng_seed: Option<u64> = Some(0);\n",
-                          "    let args: Vec<String> = env::args().collect();",
-                          "    let mut i = 1;",
-                          "    while i < args.len() {",
-                          "        match args[i].as_str() {",
-                          "            \"-path-seed\" => {",
-                          "                 i += 1;",
-                          "                if i < args.len() {",
-                          "                    if let Ok(seed) = args[i].parse::<u64>() {",
-                          "                        rng_seed = Some(seed);",
-                          "                    }",
-                          "                }",
-                          "            }",
-                          "            \"-loops-factor\" => {",
-                          "                i += 1;",
-                          "                if i < args.len() {",
-                          "                    if let Ok(val) = args[i].parse::<i32>() {",
-                          "                        loops_factor = val;",
-                          "                    }",
-                          "                }",
-                          "            }",
-                          "            _ => {}",
-                          "        }",
-                          "        i += 1;",
-                          "    }",
-                          "\n",
-                          "}"});
+    mainFunction.addLine({
+        "fn main() {",
+        "    let mut loopsFactor: i32 = 100;",
+        "    benchgen_srand(0);",
+        "    let args: Vec<String> = env::args().collect();",
+        "    let mut i = 1usize;",
+        "    while i < args.len() {",
+        "        match args[i].as_str() {",
+        "            \"-path-seed\" => {",
+        "                i += 1;",
+        "                if i < args.len() {",
+        "                    if let Ok(seed) = args[i].parse::<u64>() {",
+        "                        benchgen_srand(seed);",
+        "                    }",
+        "                }",
+        "            }",
+        "            \"-loops-factor\" => {",
+        "                i += 1;",
+        "                if i < args.len() {",
+        "                    if let Ok(val) = args[i].parse::<i32>() {",
+        "                        loopsFactor = val;",
+        "                    }",
+        "                }",
+        "            }",
+        "            _ => {}",
+        "        }",
+        "        i += 1;",
+        "    }",
+        "    let _ = loopsFactor;",
+        "}",
+    });
     mainFunction.insertBack = true;
     currentFunction.push(&mainFunction);
     startScope();
@@ -139,20 +101,23 @@ void RustGenerator::startScope() {
 
 void RustGenerator::startFunc(int funcId, int nParameters) {
     GeneratorFunction func = GeneratorFunction(funcId);
-    std::string funcHeader = "fn func" + std::to_string(funcId) + "(vars: "+VariableFactory::genTypeString(varType) + "_param, ";
-    
+    std::string funcHeader = "fn func" + std::to_string(funcId) + "(vars: &mut " +
+                             VariableFactory::genTypeString(varType) + "Param, ";
+
     for (int i = 0; i < nParameters; i++) {
         funcHeader += "PATH" + std::to_string(i) + ": u64, ";
     }
     funcHeader += "loopsFactor: i32";
-    funcHeader += ") -> "+ VariableFactory::genTypeString(varType) +" {";
+    funcHeader += ") -> " + VariableFactory::genTypeString(varType) + "Rc {";
     func.addLine(funcHeader);
     functions.push_back(func);
     currentFunction.push(&(functions.back()));
     GeneratorScope scope = GeneratorScope();
     currentScope.push(scope);
     this->ifCounter.push(0);
-    addLine("let mut pCounter = vars.size;");
+    addLine("let mut pCounter: usize = vars.data.len();");
+    addLine("let _ = pCounter;");
+    addLine("let _ = loopsFactor;");
 }
 
 bool RustGenerator::functionExists(int funcId) {
@@ -176,20 +141,16 @@ std::string RustGenerator::createParams() {
 }
 
 void RustGenerator::callFunc(int funcId, int nParameters) {
-    std::string param = "";
-    param = createParams();
+    std::string param = createParams();
 
     int id = addVar(varType);
     GeneratorVariable* var = variables[id];
-    std::string line = "let mut " + var->name + " = func" + std::to_string(funcId) + "(" + param + ", ";
+    std::string line = "let " + var->name + " = func" + std::to_string(funcId) + "(&mut " + param + ", ";
 
     for (int i = 0; i < nParameters; i++)
         line += "get_path(), ";
     line += "loopsFactor";
     line += ");";
-    addLine(line);
-
-    line = "debug_return(" + var->name + ".id);";
     addLine(line);
 }
 
@@ -232,88 +193,40 @@ void RustGenerator::genMakefile(std::string dir, std::string target) {
     std::ofstream makefile;
 
     makefile.open(dir + "Makefile");
-    makefile << "RUSTC=rustc\n";
-    makefile << "LLVMFLAGS = -DDEBUG -S -emit-llvm\n";
+    makefile << "RUSTC = rustc\n";
+    makefile << "RUSTFLAGS = -O\n";
     makefile << "TARGET = " + target + "\n";
     makefile << "SRC_DIR = src\n";
-    makefile << "OBJ_DIR = obj\n";
-    makefile << "LL_DIR = ll\n\n";
-
-    makefile << "SRC = $(wildcard $(SRC_DIR)/*.rs)\n";
-    makefile << "OBJ = $(patsubst $(SRC_DIR)/%.rs, $(OBJ_DIR)/%.o, $(SRC))\n";
-    makefile << "LL = $(patsubst $(SRC_DIR)/%.rs, $(LL_DIR)/%.ll, $(SRC))\n\n";
+    makefile << "SRC = $(SRC_DIR)/$(TARGET).rs\n\n";
 
     makefile << "all: $(TARGET)\n\n";
 
-    makefile << "$(TARGET): $(OBJ)\n";
-    makefile << "\t$(RUSTC) $(OBJ) -o $(TARGET) \n\n";
-
-    makefile << "$(OBJ_DIR)/%.o: $(SRC_DIR)/%.rs | $(OBJ_DIR)\n";
-    makefile << "\t$(RUSTC) ${CFLAGS} -c $< -o $@\n\n";
-
-    makefile << "$(LL_DIR)/%.ll: $(SRC_DIR)/%.rs | $(LL_DIR)\n";
-    makefile << "\t$(RUSTC) ${LLVMFLAGS} $< -o $@\n\n";
-
-    makefile << "$(OBJ_DIR) $(LL_DIR):\n";
-    makefile << "\tmkdir -p $@\n\n";
-
-    makefile << "llvm: $(LL)\n";
-    makefile << "\t$(RUSTC) ./ll/*.ll -o llvm_${TARGET}\n\n";
+    makefile << "$(TARGET): $(SRC)\n";
+    makefile << "\t$(RUSTC) $(RUSTFLAGS) $(SRC) -o $(TARGET)\n\n";
 
     makefile << "clean:\n";
-    makefile << "\trm -f $(OBJ) $(LL) $(TARGET) llvm_${TARGET}\n";
-    makefile << "\trm -rf $(OBJ_DIR) $(LL_DIR)\n\n";
+    makefile << "\trm -f $(TARGET)\n";
 }
 
 void RustGenerator::genReadme(std::string dir, std::string target) {
     std::ofstream readme;
     readme.open(dir + "README.md");
-    readme << "# " + target + " Program\n\n";
-    readme << "This program was generated by the **BenchGen** tool.\n\n";
-
+    readme << "# " + target + " Program (Rust)\n\n";
+    readme << "Generated by the **BenchGen** tool.\n\n";
     readme << "## Compilation\n\n";
-    readme << "There are two ways to compile the program:\n\n";
-    readme << "1. Standard Compilation:\n\n";
-    readme << "    ```bash\n";
-    readme << "    make\n";
-    readme << "    ```\n\n";
-    readme << "    This will create:\n\n";
-    readme << "    - The executable file `" + target + "`\n\n";
-    readme << "    - The object files in the `obj` directory\n\n";
-    readme << "2. LLVM Compilation:\n\n";
-    readme << "    ```bash\n";
-    readme << "    make llvm\n";
-    readme << "    ```\n\n";
-    readme << "    This will create and `ll` folder containing `.ll` files, which are LLVM IR (Intermediate Representation).\n\n";
-
-    readme << "### Compiling with debug mode:\n\n";
-    readme << "If you want to include debug prints in the output, compile the program with the `-DDEBUG` flag by modifying the `CFLAGS` during the `make` command:\n\n";
-    readme << "```bash\n";
-    readme << "make CFLAGS=\"-DDEBUG\"\n";
-    readme << "```\n\n";
-    readme << "This will create an executable with debug mode enabled, which prints additional debugging information to the terminal during execution.\n\n";
-
+    readme << "```bash\nmake\n```\n\n";
+    readme << "Produces executable `" + target + "`.\n\n";
     readme << "## Run\n\n";
-    readme << "To run the program, execute the following command:\n\n";
-    readme << "```bash\n";
-    readme << "./" + target + "\n";
-    readme << "```\n\n";
-
+    readme << "```bash\n./" + target + "\n```\n\n";
     readme << "### Optional Arguments\n\n";
-    readme << "This program accepts the following optional arguments:\n\n";
-    readme << "-   `-path-seed <seed>`: Sets the seed for the random number generator. Default is `0`.\n\n";
-    readme << "-   `-loops-factor <factor>`: Sets the factor for the number of loops. Default is `100`.\n\n";
-
-    readme << "#### Example:\n\n";
-    readme << "```bash\n";
-    readme << "./" + target + " -loops-factor 50 -path-seed 123\n";
-    readme << "```";
+    readme << "- `-path-seed <seed>`: seed for the RNG (default 0)\n";
+    readme << "- `-loops-factor <factor>`: loops factor (default 100)\n";
 }
 
 void RustGenerator::generateFiles(std::string benchmarkName) {
     std::string benchDir = benchmarkName + "/";
-    std::string sourceFile = benchmarkName + ".rs";
-    std::string includeName = benchmarkName + "_head.rs";
+    std::string baseName = std::filesystem::path(benchmarkName).filename().string();
+    std::string sourceFile = baseName + ".rs";
     std::string sourceDir = benchDir + "src/";
 
     std::filesystem::create_directory(benchDir);
@@ -322,53 +235,38 @@ void RustGenerator::generateFiles(std::string benchmarkName) {
     std::ofstream file;
     file.open(sourceDir + sourceFile);
 
-    std::ofstream includeFile;
-    includeFile.open(sourceDir + includeName);
-
-
-    for (auto include : includes) {
-        includeFile << include << std::endl;
+    for (auto& inc : includes) {
+        file << inc << "\n";
     }
-    file << "use crate::" << includeName;
-    file << std::endl;
+    file << "\n";
 
-    // Global variables
-    for (auto var : globalVars) {
-        includeFile << var << std::endl;
+    for (auto& gvar : globalVars) {
+        file << gvar << "\n";
     }
-    includeFile << std::endl;
+    file << "\n";
 
-    // Headers
-    file << std::endl;
+    file << "thread_local! { pub static BENCHGEN_STATE: std::cell::Cell<u64> = std::cell::Cell::new(1); }\n";
+    file << "pub fn benchgen_srand(seed: u64) { BENCHGEN_STATE.with(|s| s.set(seed)); }\n";
+    file << "pub fn benchgen_rand() -> u32 {\n";
+    file << "    BENCHGEN_STATE.with(|s| {\n";
+    file << "        let new_state = s.get().wrapping_mul(6364136223846793005u64).wrapping_add(1);\n";
+    file << "        s.set(new_state);\n";
+    file << "        (new_state >> 32) as u32\n";
+    file << "    })\n";
+    file << "}\n\n";
 
-    // Main function
-    auto lines = mainFunction.getLines();
-    for (auto line : lines) {
-        file << line << std::endl;
-    }
-    file << std::endl;
-
-    // Functions
-    for (auto func : functions) {
-        std::string funcSource;
-        if (func.getId() == -1) {
-            funcSource = "path.rs";
-        } else {
-            funcSource = "func" + std::to_string(func.getId()) + ".rs";
+    for (auto& func : functions) {
+        for (auto& line : func.getLines()) {
+            file << line << "\n";
         }
-        std::ofstream funcFile;
-        funcFile.open(sourceDir + funcSource);
-        funcFile << "use crate::" << includeName << "\n";
-
-        lines = func.getLines();
-        for (auto line : lines) {
-            funcFile << line << std::endl;
-        }
-        funcFile << std::endl;
-        funcFile.close();
+        file << "\n";
     }
-    this->genMakefile(benchDir, benchmarkName);
-    this->genReadme(benchDir, benchmarkName);
-    includeFile.close();
+
+    for (auto& line : mainFunction.getLines()) {
+        file << line << "\n";
+    }
+
+    genMakefile(benchDir, baseName);
+    genReadme(benchDir, baseName);
     file.close();
 }

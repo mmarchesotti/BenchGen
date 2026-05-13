@@ -11,12 +11,12 @@ void rustprintIndentationSpaces(int indent) {
 std::string rustgenerateIfCondition(ProgrammingLanguageGenerator& generator) {
     bool isMain = generator.currentFunction.top()->insertBack;
     if (isMain) {
-        return "get_path() & 1";
+        return "(get_path() & 1) != 0";
     }
     int ifCounter = generator.ifCounter.top();
     int pathNumber = std::ceil((ifCounter + 1) / 64.0) - 1;
-    int bit = std::pow(2, ifCounter % 64);
-    std::string condition = "PATH" + std::to_string(pathNumber) + " & " + std::to_string(bit);
+    unsigned long long bit = 1ULL << (ifCounter % 64);
+    std::string condition = "(PATH" + std::to_string(pathNumber) + " & " + std::to_string(bit) + "u64) != 0";
     return condition;
 }
 
@@ -75,16 +75,13 @@ void RustContains::gen(ProgrammingLanguageGenerator& generator) {
 
 void RustLoop::gen(ProgrammingLanguageGenerator& generator) {
     std::string loopVar = "loop" + std::to_string(generator.loopCounter);
-
     std::string loopLimitVar = "loopLimit" + std::to_string(generator.loopCounter);
-    std::string loopLimitValue = "(1000%loopsFactor)/" + std::to_string(generator.loopLevel + 1) + " + 1";
-    std::string loopLimitLine = "let mut " + loopLimitVar + " = " + loopLimitValue + ";";
-    generator.addLine(loopLimitLine);
-    generator.addLine("let mut i"+loopVar+" = "+ loopVar);
-    std::string forLine = "for "+loopVar+" in i..."+loopLimitVar + " {";
-    generator.addLine(forLine);
+    std::string loopLimitValue = "((1000i32 % loopsFactor) / " + std::to_string(generator.loopLevel + 1) + " + 1)";
+    generator.addLine("let " + loopLimitVar + ": i32 = " + loopLimitValue + ";");
+    generator.addLine("for " + loopVar + " in 0..(" + loopLimitVar + ".max(0) as usize) {");
 
     generator.startScope();
+    generator.addLine("let _ = " + loopVar + ";");
     generator.loopLevel++;
     generator.loopCounter++;
     code->gen(generator);
