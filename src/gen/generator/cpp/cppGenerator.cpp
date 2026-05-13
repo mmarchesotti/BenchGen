@@ -304,8 +304,9 @@ void CppGenerator::genReadme(std::string dir, std::string target) {
 
 void CppGenerator::generateFiles(std::string benchmarkName) {
     std::string benchDir = benchmarkName + "/";
-    std::string sourceFile = benchmarkName + ".cpp";
-    std::string includeName = benchmarkName + ".hpp";
+    std::string baseName = std::filesystem::path(benchmarkName).filename().string();
+    std::string sourceFile = baseName + ".cpp";
+    std::string includeName = baseName + ".hpp";
     std::string sourceDir = benchDir + "src/";
 
     std::filesystem::create_directory(benchDir);
@@ -318,8 +319,8 @@ void CppGenerator::generateFiles(std::string benchmarkName) {
     includeFile.open(sourceDir + includeName);
 
     // Includes
-    includeFile << "#ifndef " + benchmarkName + "\n";
-    includeFile << "#define " + benchmarkName + "\n";
+    includeFile << "#ifndef " + baseName + "\n";
+    includeFile << "#define " + baseName + "\n";
 
     for (auto include : includes) {
         includeFile << include << std::endl;
@@ -400,8 +401,8 @@ void CppGenerator::generateFiles(std::string benchmarkName) {
         }
     }
     includeFile << "#endif";
-    this->genMakefile(benchDir, benchmarkName);
-    this->genReadme(benchDir, benchmarkName);
+    this->genMakefile(benchDir, baseName);
+    this->genReadme(benchDir, baseName);
     includeFile.close();
     file.close();
 }
