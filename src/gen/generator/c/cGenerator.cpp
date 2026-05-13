@@ -281,8 +281,9 @@ void CGenerator::genReadme(std::string dir, std::string target) {
 
 void CGenerator::generateFiles(std::string benchmarkName) {
     std::string benchDir = benchmarkName + "/";
-    std::string sourceFile = benchmarkName + ".c";
-    std::string includeName = benchmarkName + ".h";
+    std::string baseName = std::filesystem::path(benchmarkName).filename().string();
+    std::string sourceFile = baseName + ".c";
+    std::string includeName = baseName + ".h";
     std::string sourceDir = benchDir + "src/";
 
     std::filesystem::create_directory(benchDir);
@@ -295,8 +296,8 @@ void CGenerator::generateFiles(std::string benchmarkName) {
     includeFile.open(sourceDir + includeName);
 
     // Includes
-    includeFile << "#ifndef " + benchmarkName + "\n";
-    includeFile << "#define " + benchmarkName + "\n";
+    includeFile << "#ifndef " + baseName + "\n";
+    includeFile << "#define " + baseName + "\n";
 
     for (auto include : includes) {
         includeFile << include << std::endl;
@@ -351,8 +352,8 @@ void CGenerator::generateFiles(std::string benchmarkName) {
         funcFile.close();
     }
     includeFile << "#endif";
-    this->genMakefile(benchDir, benchmarkName);
-    this->genReadme(benchDir, benchmarkName);
+    this->genMakefile(benchDir, baseName);
+    this->genReadme(benchDir, baseName);
     includeFile.close();
     file.close();
 }
