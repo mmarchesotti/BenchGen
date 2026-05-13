@@ -54,7 +54,7 @@ LANG_CONFIG: dict[str, dict] = {
     "v":      {"tools": ["make", "v"],      "build": lambda d: ["make"],                                    "binary": BENCH_NAME},
     "carbon": {"tools": ["make", "carbon"], "build": lambda d: ["make"],                                    "binary": BENCH_NAME},
     "zig":    {"tools": ["zig"],            "build": zig_build,                                             "binary": f"zig-out/bin/{BENCH_NAME}"},
-    "odin":   {"tools": ["odin"],           "build": lambda d: ["odin", "build", "./src", f"-out:{BENCH_NAME}", "-o:speed"], "binary": BENCH_NAME},
+    "odin":   {"tools": ["odin"],           "build": lambda d: ["odin", "build", "./src", f"-out:{BENCH_NAME}", "-o:aggressive"], "binary": BENCH_NAME},
     "d":      {"tools": ["make", "dmd"],    "build": lambda d: ["make"],                                    "binary": BENCH_NAME},
     "nim":    {"tools": ["make", "nim"],    "build": lambda d: ["make"],                                    "binary": BENCH_NAME},
 }
