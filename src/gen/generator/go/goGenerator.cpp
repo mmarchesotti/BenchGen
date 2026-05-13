@@ -202,37 +202,18 @@ void GoGenerator::genMakefile(std::string dir, std::string target) {
     std::ofstream makefile;
 
     makefile.open(dir + "Makefile");
-    makefile << "CC = clang\n";
-    makefile << "LLVMFLAGS = -DDEBUG -S -emit-llvm\n";
     makefile << "TARGET = " + target + "\n";
-    makefile << "SRC_DIR = src\n";
-    makefile << "OBJ_DIR = obj\n";
-    makefile << "LL_DIR = ll\n\n";
+    makefile << "SRC_DIR = src\n\n";
 
-    makefile << "SRC = $(wildcard $(SRC_DIR)/*.c)\n";
-    makefile << "OBJ = $(patsubst $(SRC_DIR)/%.c, $(OBJ_DIR)/%.o, $(SRC))\n";
-    makefile << "LL = $(patsubst $(SRC_DIR)/%.c, $(LL_DIR)/%.ll, $(SRC))\n\n";
+    makefile << "SRC = $(wildcard $(SRC_DIR)/*.go)\n\n";
 
     makefile << "all: $(TARGET)\n\n";
 
-    makefile << "$(TARGET): $(OBJ)\n";
-    makefile << "\t$(CC) $(OBJ) -o $(TARGET) \n\n";
-
-    makefile << "$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c | $(OBJ_DIR)\n";
-    makefile << "\t$(CC) ${CFLAGS} -c $< -o $@\n\n";
-
-    makefile << "$(LL_DIR)/%.ll: $(SRC_DIR)/%.c | $(LL_DIR)\n";
-    makefile << "\t$(CC) ${LLVMFLAGS} $< -o $@\n\n";
-
-    makefile << "$(OBJ_DIR) $(LL_DIR):\n";
-    makefile << "\tmkdir -p $@\n\n";
-
-    makefile << "llvm: $(LL)\n";
-    makefile << "\t$(CC) ./ll/*.ll -o llvm_${TARGET}\n\n";
+    makefile << "$(TARGET): $(SRC)\n";
+    makefile << "\tcd $(SRC_DIR) && go build -o ../$(TARGET) .\n\n";
 
     makefile << "clean:\n";
-    makefile << "\trm -f $(OBJ) $(LL) $(TARGET) llvm_${TARGET}\n";
-    makefile << "\trm -rf $(OBJ_DIR) $(LL_DIR)\n\n";
+    makefile << "\trm -f $(TARGET)\n";
 }
 
 void GoGenerator::genReadme(std::string dir, std::string target) {
@@ -282,12 +263,19 @@ void GoGenerator::genReadme(std::string dir, std::string target) {
 
 void GoGenerator::generateFiles(std::string benchmarkName) {
     std::string benchDir = benchmarkName + "/";
-    std::string sourceFile = benchmarkName + ".go";
-    std::string includeName = benchmarkName + "_head.go";
+    std::string baseName = std::filesystem::path(benchmarkName).filename().string();
+    std::string sourceFile = baseName + ".go";
+    std::string includeName = baseName + "_head.go";
     std::string sourceDir = benchDir + "src/";
 
     std::filesystem::create_directory(benchDir);
     std::filesystem::create_directory(sourceDir);
+
+    std::ofstream goMod;
+    goMod.open(sourceDir + "go.mod");
+    goMod << "module " << baseName << "\n\n";
+    goMod << "go 1.21\n";
+    goMod.close();
 
     std::ofstream file;
     file.open(sourceDir + sourceFile);
@@ -353,8 +341,8 @@ void GoGenerator::generateFiles(std::string benchmarkName) {
         funcFile << std::endl;
         funcFile.close();
     }
-    this->genMakefile(benchDir, benchmarkName);
-    this->genReadme(benchDir, benchmarkName);
+    this->genMakefile(benchDir, baseName);
+    this->genReadme(benchDir, baseName);
     includeFile.close();
     file.close();
 }
