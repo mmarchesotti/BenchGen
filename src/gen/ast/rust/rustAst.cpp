@@ -76,7 +76,7 @@ void RustContains::gen(ProgrammingLanguageGenerator& generator) {
 void RustLoop::gen(ProgrammingLanguageGenerator& generator) {
     std::string loopVar = "loop" + std::to_string(generator.loopCounter);
     std::string loopLimitVar = "loopLimit" + std::to_string(generator.loopCounter);
-    std::string loopLimitValue = "((1000i32 % loopsFactor) / " + std::to_string(generator.loopLevel + 1) + " + 1)";
+    std::string loopLimitValue = "(50)/" + std::to_string(generator.loopLevel + 1) + " + 1";
     generator.addLine("let " + loopLimitVar + ": i32 = " + loopLimitValue + ";");
     generator.addLine("for " + loopVar + " in 0..(" + loopLimitVar + ".max(0) as usize) {");
 
