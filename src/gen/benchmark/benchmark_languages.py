@@ -157,6 +157,33 @@ def write_csv(path: Path, rows: list[dict]) -> None:
             w.writerow(out)
 
 
+def load_existing_results(path: Path) -> list[dict]:
+    """Load rows previously written by write_csv. Returns [] if the file is missing."""
+    if not path.exists():
+        return []
+    rows: list[dict] = []
+    with path.open(newline="") as f:
+        for row in csv.DictReader(f):
+            try:
+                depth = int(row["depth"])
+            except (KeyError, ValueError):
+                continue
+            seconds_raw = row.get("seconds", "")
+            try:
+                seconds = float(seconds_raw) if seconds_raw else None
+            except ValueError:
+                seconds = None
+            rows.append({
+                "language": row.get("language", ""),
+                "depth": depth,
+                "example": row.get("example", ""),
+                "status": row.get("status", ""),
+                "seconds": seconds,
+                "detail": row.get("detail", ""),
+            })
+    return rows
+
+
 def aggregate(rows: list[dict], languages: list[str], depths: list[int]) -> dict[str, list[float | None]]:
     out: dict[str, list[float | None]] = {lang: [] for lang in languages}
     for lang in languages:
@@ -200,6 +227,7 @@ def main() -> int:
     ap.add_argument("--strict", action="store_true", help="exit non-zero at the end if any combination failed")
     ap.add_argument("--no-plot", action="store_true", help="skip plotting (useful for smoke tests)")
     ap.add_argument("--loops-factor", type=int, default=None, help="pass -loops-factor N to each run (default: binary's own default)")
+    ap.add_argument("--force", action="store_true", help="ignore cached results in --output and re-run every requested combination")
     args = ap.parse_args()
 
     os.chdir(GEN_DIR)
@@ -216,21 +244,31 @@ def main() -> int:
         print("ERROR no languages with available toolchains", file=sys.stderr)
         return 1
 
-    if RUNS_DIR.exists():
-        shutil.rmtree(RUNS_DIR)
-    RUNS_DIR.mkdir(parents=True)
+    RUNS_DIR.mkdir(parents=True, exist_ok=True)
 
-    rows: list[dict] = []
+    output_path = Path(args.output)
+    existing_rows = [] if args.force else load_existing_results(output_path)
+    done_keys = {
+        (r["language"], r["depth"], r["example"])
+        for r in existing_rows if r["status"] == "ok"
+    }
+
+    new_rows: list[dict] = []
     total = len(languages) * len(depths) * len(examples)
     done = 0
+    skipped = 0
     aborted = False
     for lang in languages:
         for depth in depths:
             for example in examples:
                 done += 1
+                if (lang, depth, example) in done_keys:
+                    skipped += 1
+                    print(f"[{done}/{total}] {lang} d={depth} {example}: cached, skipping", flush=True)
+                    continue
                 run_args = ["-loops-factor", str(args.loops_factor)] if args.loops_factor is not None else None
                 status, seconds, detail = run_one(lang, depth, example, args.timeout, run_args)
-                rows.append({
+                new_rows.append({
                     "language": lang, "depth": depth, "example": example,
                     "status": status, "seconds": seconds, "detail": detail,
                 })
@@ -247,25 +285,33 @@ def main() -> int:
         if aborted:
             break
 
-    write_csv(Path(args.output), rows)
-    print(f"wrote {args.output}", flush=True)
+    new_keys = {(r["language"], r["depth"], r["example"]) for r in new_rows}
+    merged = [r for r in existing_rows if (r["language"], r["depth"], r["example"]) not in new_keys] + new_rows
+    merged.sort(key=lambda r: (r["language"], r["depth"], r["example"]))
+
+    write_csv(output_path, merged)
+    print(f"wrote {output_path}", flush=True)
+
+    plot_languages = sorted({r["language"] for r in merged if r["status"] == "ok"})
+    plot_depths = sorted({r["depth"] for r in merged if r["status"] == "ok"}) or depths
+    means = aggregate(merged, plot_languages, plot_depths)
 
     if not args.no_plot and not aborted:
-        means = aggregate(rows, languages, depths)
-        plot(means, depths, Path(args.plot))
-    else:
-        means = aggregate(rows, languages, depths)
+        plot(means, plot_depths, Path(args.plot))
 
     print("\n--- summary ---")
-    for lang in languages:
-        attempted = sum(1 for r in rows if r["language"] == lang)
-        ok = sum(1 for r in rows if r["language"] == lang and r["status"] == "ok")
+    summary_langs = sorted({r["language"] for r in merged})
+    for lang in summary_langs:
+        attempted = sum(1 for r in merged if r["language"] == lang)
+        ok = sum(1 for r in merged if r["language"] == lang and r["status"] == "ok")
         print(f"  {lang}: {ok}/{attempted} successful runs")
+    if skipped:
+        print(f"  {skipped} combination(s) skipped (already cached in {output_path})")
     dropped = [l for l, ys in means.items() if all(y is None for y in ys)]
     if dropped:
         print(f"  dropped (no data): {', '.join(dropped)}")
 
-    failures = [r for r in rows if r["status"] != "ok"]
+    failures = [r for r in new_rows if r["status"] != "ok"]
     if failures and (args.strict or args.fail_fast):
         print(f"\n{len(failures)} failure(s) — exiting non-zero", file=sys.stderr)
         return 1
