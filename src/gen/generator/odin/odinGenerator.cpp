@@ -30,7 +30,8 @@ void OdinGenerator::generateRandomNumberGenerator() {
   GeneratorFunction rngFunction = GeneratorFunction(-1);
   rngFunction.addLine(
       {"get_path :: proc() -> u64 {",
-       "    path := os.get_env(\"BENCH_PATH\");",
+       "    path := os.get_env(\"BENCH_PATH\", context.allocator);",
+       "    defer delete(path, context.allocator);",
        "    if val, ok := strconv.parse_u64(path, 10); ok {",
        "        return val;", "        }",
        "    return u64(benchgen_rand());", "}"});
