@@ -190,37 +190,19 @@ void JuliaGenerator::genMakefile(std::string dir, std::string target) {
     std::ofstream makefile;
 
     makefile.open(dir + "Makefile");
-    makefile << "RUSTC=rustc\n";
-    makefile << "LLVMFLAGS = -DDEBUG -S -emit-llvm\n";
     makefile << "TARGET = " + target + "\n";
-    makefile << "SRC_DIR = src\n";
-    makefile << "OBJ_DIR = obj\n";
-    makefile << "LL_DIR = ll\n\n";
-
-    makefile << "SRC = $(wildcard $(SRC_DIR)/*.rs)\n";
-    makefile << "OBJ = $(patsubst $(SRC_DIR)/%.rs, $(OBJ_DIR)/%.o, $(SRC))\n";
-    makefile << "LL = $(patsubst $(SRC_DIR)/%.rs, $(LL_DIR)/%.ll, $(SRC))\n\n";
+    makefile << "SRC_DIR = src\n\n";
 
     makefile << "all: $(TARGET)\n\n";
 
-    makefile << "$(TARGET): $(OBJ)\n";
-    makefile << "\t$(RUSTC) $(OBJ) -o $(TARGET) \n\n";
-
-    makefile << "$(OBJ_DIR)/%.o: $(SRC_DIR)/%.rs | $(OBJ_DIR)\n";
-    makefile << "\t$(RUSTC) ${CFLAGS} -c $< -o $@\n\n";
-
-    makefile << "$(LL_DIR)/%.ll: $(SRC_DIR)/%.rs | $(LL_DIR)\n";
-    makefile << "\t$(RUSTC) ${LLVMFLAGS} $< -o $@\n\n";
-
-    makefile << "$(OBJ_DIR) $(LL_DIR):\n";
-    makefile << "\tmkdir -p $@\n\n";
-
-    makefile << "llvm: $(LL)\n";
-    makefile << "\t$(RUSTC) ./ll/*.ll -o llvm_${TARGET}\n\n";
+    makefile << "$(TARGET): $(SRC_DIR)/$(TARGET).jl\n";
+    makefile << "\t@echo '#!/bin/sh' > $(TARGET)\n";
+    makefile << "\t@echo 'cd \"$$(dirname \"$$0\")\" || exit 1' >> $(TARGET)\n";
+    makefile << "\t@echo 'exec julia $(SRC_DIR)/$(TARGET).jl \"$$@\"' >> $(TARGET)\n";
+    makefile << "\t@chmod +x $(TARGET)\n\n";
 
     makefile << "clean:\n";
-    makefile << "\trm -f $(OBJ) $(LL) $(TARGET) llvm_${TARGET}\n";
-    makefile << "\trm -rf $(OBJ_DIR) $(LL_DIR)\n\n";
+    makefile << "\trm -f $(TARGET)\n";
 }
 
 void JuliaGenerator::genReadme(std::string dir, std::string target) {
@@ -270,8 +252,9 @@ void JuliaGenerator::genReadme(std::string dir, std::string target) {
 
 void JuliaGenerator::generateFiles(std::string benchmarkName) {
     std::string benchDir = benchmarkName + "/";
-    std::string sourceFile = benchmarkName + ".jl";
-    std::string includeName = benchmarkName + "_head.jl";
+    std::string baseName = std::filesystem::path(benchmarkName).filename().string();
+    std::string sourceFile = baseName + ".jl";
+    std::string includeName = baseName + "_head.jl";
     std::string sourceDir = benchDir + "src/";
 
     std::filesystem::create_directory(benchDir);
@@ -342,8 +325,8 @@ void JuliaGenerator::generateFiles(std::string benchmarkName) {
         funcFile << std::endl;
         funcFile.close();
     }
-    this->genMakefile(benchDir, benchmarkName);
-    this->genReadme(benchDir, benchmarkName);
+    this->genMakefile(benchDir, baseName);
+    this->genReadme(benchDir, baseName);
     includeFile.close();
     file.close();
 }
