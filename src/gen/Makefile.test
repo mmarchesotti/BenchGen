@@ -1,0 +1,19 @@
+# Smoke test: generate, build, and run one example for every installed language
+# at a few depths (including one large enough to exercise call-graph sharing).
+# Languages whose toolchain is missing are skipped with a warning. Exits non-zero
+# on the first generate/build/run failure.
+TARGET = benchGen
+
+$(TARGET):
+	$(MAKE) -f Makefile $(TARGET)
+
+.PHONY: test
+test: $(TARGET)
+	python3 benchmark/benchmark_languages.py \
+	    --depths 2,4 \
+	    --examples ex0 \
+	    --timeout 60 \
+	    --loops-factor 1 \
+	    --no-plot \
+	    --output test_results.csv \
+	    --strict
