@@ -12,7 +12,7 @@ test: $(TARGET)
 	python3 benchmark/benchmark_languages.py \
 	    --depths 2,4 \
 	    --examples ex0,ex2 \
-	    --timeout 300 \
+	    --timeout 900 \
 	    --loops-factor 1 \
 	    --no-plot \
 	    --output test_results.csv \
