@@ -24,7 +24,7 @@ EXAMPLES_DIR = GEN_DIR / "examples"
 RUNS_DIR = GEN_DIR / "benchmark_runs"
 BENCH_NAME = "benchmark"
 
-DEFAULT_LANGUAGES = ["c", "cpp", "rust", "julia", "go", "v", "carbon", "zig", "odin", "d", "nim", "ada"]
+DEFAULT_LANGUAGES = ["c", "cpp", "rust", "julia", "go", "v", "carbon", "zig", "odin", "d", "nim", "ada", "vale"]
 DEFAULT_DEPTHS = list(range(4, 12))
 
 
@@ -58,6 +58,7 @@ LANG_CONFIG: dict[str, dict] = {
     "d":      {"tools": ["make", "dmd"],    "build": lambda d: ["make"],                                    "binary": BENCH_NAME},
     "nim":    {"tools": ["make", "nim"],    "build": lambda d: ["make"],                                    "binary": BENCH_NAME},
     "ada":    {"tools": ["make", "gnatmake"], "build": lambda d: ["make"],                                  "binary": BENCH_NAME},
+    "vale":   {"tools": ["make", "valec"],  "build": lambda d: ["make"],                                    "binary": BENCH_NAME},
 }
 
 
