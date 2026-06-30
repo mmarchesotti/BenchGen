@@ -38,7 +38,7 @@ std::vector<std::string> VGeneratorArray::new_(bool inFunction) {
 std::vector<std::string> VGeneratorArray::insert() {
     std::vector<std::string> temp;
     temp.push_back("for i := 0; i < " + this->name + ".size; i++ {");
-    temp.push_back("    " + this->name + ".data[i] = u32(i)");
+    temp.push_back("    " + this->name + ".data[i]++");
     temp.push_back("}");
     return temp;
 }

@@ -79,8 +79,8 @@ void VGenerator::generateMainFunction() {
         "            else {}",
         "        }",
         "    }",
-            "",
         "    functions.benchgen_srand(path_seed)",
+            "",
         "}"
     });
     mainFunction.insertBack = true;
